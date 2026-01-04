@@ -1,7 +1,18 @@
+import sys
+from subprocess import check_call
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError:
+    print("\nA python package 'matplotlib' is required before running.")
+    if input("Install now? [y/n]: ").lower() != 'y':
+        raise SystemExit()
+    check_call([sys.executable, '-m', 'pip', 'install', 'matplotlib'])
+    print("\nInstallation complete!")
+    print("Resuming program...\n")
+    import matplotlib.pyplot as plt
 
 if TYPE_CHECKING:
     from day_quality_tracker import DayQualityTracker
@@ -42,8 +53,8 @@ class DQTGraph:
         # Close existing windows to prevent overlapping
         plt.close('all')
 
-        dates = list(self.dqt.saved_ratings.keys())
-        ratings = list(self.dqt.saved_ratings.values())
+        dates = list(self.dqt.json.saved_ratings.keys())
+        ratings = list(self.dqt.json.saved_ratings.values())
 
         formatted_dates = [
             datetime.strptime(date, self.date_format)
