@@ -9,7 +9,7 @@ Before using the program, ensure you have a Python interpreter installed on your
 
 1. To start the program, **run `day_quality_tracker.py`**, or
    
-   ```
+   ```python
    from day_quality_tracker import DayQualityTracker
    
    dqt = DayQualityTracker()
