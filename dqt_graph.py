@@ -7,7 +7,7 @@ try:
     import matplotlib.pyplot as plt
 except ModuleNotFoundError:
     print("\nA python package 'matplotlib' is required before running.")
-    if input("Install now? [y/n]: ").lower() != 'y':
+    if input("Install now? [Y/N]: ").lower() != 'y':
         raise SystemExit()
     check_call([sys.executable, '-m', 'pip', 'install', 'matplotlib'])
     print("\nInstallation complete!")
@@ -19,13 +19,13 @@ if TYPE_CHECKING:
 
 
 class DQTGraph:
-    """Manage graph plotting for day_quality_tracker."""
+    """A class to manage graph plotting for day_quality_tracker."""
 
     def __init__(self, dqt: DayQualityTracker):
         """Get required DQT attributes and initialize graph settings."""
         # Get DayQualityTracker attributes
         self.dqt = dqt
-        self.date_format = dqt.date_format
+        self.dqt_date_format = dqt.date_format
         self.min_rating = dqt.min_rating
         self.max_rating = dqt.max_rating
 
@@ -57,7 +57,7 @@ class DQTGraph:
         ratings = list(self.dqt.json.saved_ratings.values())
 
         formatted_dates = [
-            datetime.strptime(date, self.date_format)
+            datetime.strptime(date, self.dqt_date_format)
             .strftime(self.graph_date_format)
             for date in dates
         ]
@@ -88,7 +88,7 @@ class DQTGraph:
 
         # Draw year labels on the top of the graph
         for i, date_str in enumerate(dates):
-            date = datetime.strptime(date_str, self.date_format)
+            date = datetime.strptime(date_str, self.dqt_date_format)
             year = date.year
 
             if year not in shown_years:
