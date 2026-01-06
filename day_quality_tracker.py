@@ -20,6 +20,7 @@ class DayQualityTracker:
         self.rating_inp_dp = 3
 
         self.date_format = '%Y-%m-%d'
+        self.date_format_print = "YYYY-MM-DD"
         # Format printed time using 12-hour clock if True
         self.clock_format_12 = True
 
@@ -32,6 +33,7 @@ class DayQualityTracker:
     def run(self):
         """Run Day Quality Tracker."""
         print("\n*--- Day Quality Tracker! ---*")
+        sleep(1)
 
         if not self._today_rated():
             self._input_todays_rating()
@@ -42,7 +44,7 @@ class DayQualityTracker:
             print("\nChoose what to do: ")
             print("1) [V]iew current ratings graph")
             print("2) [C]hange today's rating")
-            print("3) Change previous rating")
+            print("3) Change previous rating...")
             print("4) [P]rint ratings here")
             print("5) E[x]it")
 
@@ -154,7 +156,7 @@ class DayQualityTracker:
     def _change_previous_rating(self):
         while True:
             inp = input("\nEnter the number of days ago or exact date "
-                        "('YYYY-MM-DD'): ").strip()
+                        f"('{self.date_format_print}'): ").strip()
             selected_date = None
 
             # If number of days ago specified, get date
@@ -171,7 +173,7 @@ class DayQualityTracker:
                     datetime.strptime(inp, self.date_format)
                 except ValueError:
                     print("\nError: Enter a valid date in the "
-                          "format YYYY-MM-DD (with dashes).")
+                          f"format {self.date_format_print}.")
                     sleep(1)
                     continue
                 selected_date = inp

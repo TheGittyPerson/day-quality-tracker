@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 class DQTJSON:
-    """Manage Day Quality Tracker JSON contents handling"""
+    """A class to manage Day Quality Tracker JSON contents handling."""
 
     def __init__(self, dqt: DayQualityTracker):
         self.dqt = dqt
