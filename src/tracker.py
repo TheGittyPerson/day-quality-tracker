@@ -16,7 +16,7 @@ class Tracker:
     """Track and visualize day quality ratings in a graph."""
     
     RELEASE_NUM: int = 5
-    SEMVER: str = 'v1.0.0'
+    SEMVER: str = 'v1.0.1'
     
     _CONFIG_KEYS: dict[str, type | tuple[type, ...]] = {
         'min_time': int,
