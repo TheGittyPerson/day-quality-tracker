@@ -6,6 +6,9 @@ if __name__ == '__main__':
             import sys
             import traceback
             
+            from utils.package_installer import install_dependencies
+            install_dependencies()
+            
             from dqt.tracker import Tracker
             from settings import CONFIGS
             from dqt.styletext import StyleText as Txt
