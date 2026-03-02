@@ -7,6 +7,8 @@ daily “day quality” ratings and visualize them over time using the
 It is designed to be lightweight, flexible, and reflective — combining numeric 
 ratings with short memory entries so you can track both trends and moments.
 
+> By _[Morpheus](https://github.com/TheGittyPerson)_
+
 ---
 
 ## Installation
@@ -169,3 +171,8 @@ Feel free to experiment with each setting to tune DQT to your preferences.
 ## License
 
 This project is licensed under the MIT License.
+
+---
+
+Like my project? 
+[Drop me a star](https://github.com/TheGittyPerson/day-quality-tracker)!
