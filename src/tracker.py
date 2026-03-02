@@ -1,12 +1,12 @@
 from datetime import datetime
 from types import NoneType
 
-from dqt.dqt_json import DQTJSON
-from dqt.manager import Manager
-from dqt.graph import Graph
-from dqt.stats import Stats
-from dqt.ui_utils import cont_on_enter, err, invalid_choice, menu
-from dqt.styletext import StyleText as Txt
+from src.dqt_json import DQTJSON
+from src.manager import Manager
+from src.graph import Graph
+from src.stats import Stats
+from src.ui_utils import cont_on_enter, err, invalid_choice, menu
+from src.styletext import StyleText as Txt
 
 _UNSET: object = object()
 _today: datetime = datetime.today()

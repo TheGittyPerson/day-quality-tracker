@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from types import NoneType
 
-from dqt.dqt_json import DQTJSON
-from dqt.ui_utils import err, confirm
+from src.dqt_json import DQTJSON
+from src.ui_utils import err, confirm
 
 try:
     import matplotlib.pyplot as plt
@@ -34,7 +34,7 @@ except ModuleNotFoundError:
 
 
 if TYPE_CHECKING:
-    from dqt.tracker import Tracker
+    from src.tracker import Tracker
 
 
 class Graph:

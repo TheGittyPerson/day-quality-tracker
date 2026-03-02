@@ -34,9 +34,9 @@ system **(version 3.12+ required)**.
 
 To start the program, **run `main.py`**, or initialize and run the tracker 
 manually:
-   
+
 ```python
-from dqt.tracker import Tracker
+from src.tracker import Tracker
 
 dqt = Tracker()
 dqt.run()
@@ -46,11 +46,11 @@ To set a configuration manually:
 
 ```python
 # Example:
-from dqt.tracker import Tracker
- 
+from src.tracker import Tracker
+
 dqt = Tracker()
 dqt.configure(
-    enable_ansi=False,
+  enable_ansi=False,
 )
 dqt.run()
 ```
@@ -58,9 +58,9 @@ dqt.run()
 Or use `settings.py`:
 
 ```python
-from dqt.tracker import Tracker
+from src.tracker import Tracker
 from settings import CONFIGS
- 
+
 dqt = Tracker()
 dqt.configure(*CONFIGS['tracker'])
 dqt.run()
