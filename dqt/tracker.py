@@ -24,7 +24,7 @@ class Tracker:
         'min_rating': int,
         'max_rating': int,
         'rating_inp_dp': int,
-        'linewrap_maxcol': (int, Literal['inf']),
+        'linewrap_maxcol': int,
         'date_format': str,
         'date_format_print': str,
         'clock_format_12': bool,
