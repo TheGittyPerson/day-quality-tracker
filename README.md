@@ -7,6 +7,8 @@ daily “day quality” ratings and visualize them over time using the
 It is designed to be lightweight, flexible, and reflective — combining numeric 
 ratings with short memory entries so you can track both trends and moments.
 
+> By _[Morpheus](https://github.com/TheGittyPerson)_
+
 ---
 
 ## Installation
@@ -34,9 +36,9 @@ system **(version 3.12+ required)**.
 
 To start the program, **run `main.py`**, or initialize and run the tracker 
 manually:
-   
+
 ```python
-from dqt.tracker import Tracker
+from src.tracker import Tracker
 
 dqt = Tracker()
 dqt.run()
@@ -46,11 +48,11 @@ To set a configuration manually:
 
 ```python
 # Example:
-from dqt.tracker import Tracker
- 
+from src.tracker import Tracker
+
 dqt = Tracker()
 dqt.configure(
-    enable_ansi=False,
+  enable_ansi=False,
 )
 dqt.run()
 ```
@@ -58,9 +60,9 @@ dqt.run()
 Or use `settings.py`:
 
 ```python
-from dqt.tracker import Tracker
+from src.tracker import Tracker
 from settings import CONFIGS
- 
+
 dqt = Tracker()
 dqt.configure(*CONFIGS['tracker'])
 dqt.run()
@@ -169,3 +171,8 @@ Feel free to experiment with each setting to tune DQT to your preferences.
 ## License
 
 This project is licensed under the MIT License.
+
+---
+
+Like my project? 
+[Drop me a star](https://github.com/TheGittyPerson/day-quality-tracker)!

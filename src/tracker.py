@@ -1,13 +1,12 @@
 from datetime import datetime
-from typing import Literal
 from types import NoneType
 
-from dqt.dqt_json import DQTJSON
-from dqt.manager import Manager
-from dqt.graph import Graph
-from dqt.stats import Stats
-from dqt.ui_utils import cont_on_enter, err, invalid_choice, menu
-from dqt.styletext import StyleText as Txt
+from src.dqt_json import DQTJSON
+from src.manager import Manager
+from src.graph import Graph
+from src.stats import Stats
+from src.ui_utils import cont_on_enter, err, invalid_choice, menu
+from src.styletext import StyleText as Txt
 
 _UNSET: object = object()
 _today: datetime = datetime.today()
@@ -24,7 +23,7 @@ class Tracker:
         'min_rating': int,
         'max_rating': int,
         'rating_inp_dp': int,
-        'linewrap_maxcol': (int, Literal['inf']),
+        'linewrap_maxcol': int,
         'date_format': str,
         'date_format_print': str,
         'clock_format_12': bool,
@@ -40,7 +39,7 @@ class Tracker:
         self.max_rating: int = 20  # Even number recommended
         self.neutral_rating: int = round(self.max_rating / 2)
         self.rating_inp_dp: int = 2
-        self.linewrap_maxcol: int | Literal['inf'] = 70
+        self.linewrap_maxcol: int = 70
         
         self.date_format: str = '%Y-%m-%d'
         self.date_format_print: str = "YYYY-MM-DD"

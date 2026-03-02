@@ -6,9 +6,12 @@ if __name__ == '__main__':
             import sys
             import traceback
             
-            from dqt.tracker import Tracker
+            from utils.package_installer import install_dependencies
+            install_dependencies()
+            
+            from src.tracker import Tracker
             from settings import CONFIGS
-            from dqt.styletext import StyleText as Txt
+            from src.styletext import StyleText as Txt
         except ModuleNotFoundError as e:
             print("\n*!* —————————————————————————————— *!*")
             print(Txt("\n❌ Error!").bold().red())

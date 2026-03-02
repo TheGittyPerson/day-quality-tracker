@@ -2,8 +2,8 @@ from textwrap import dedent
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
-from dqt.dqt_json import DQTJSON
-from dqt.ui_utils import (
+from src.dqt_json import DQTJSON
+from src.ui_utils import (
     confirm,
     err,
     invalid_choice,
@@ -11,7 +11,7 @@ from dqt.ui_utils import (
     menu,
     print_wrapped
 )
-from dqt.styletext import StyleText as Txt
+from src.styletext import StyleText as Txt
 
 if TYPE_CHECKING:
     from tracker import Tracker
@@ -86,7 +86,7 @@ class Manager:
                         
                         self.json.add(date_str, rating, memory)
                     
-                    log_saved()
+                    log_saved("Logs saved!")
                     
                     return choice
                 

@@ -18,7 +18,7 @@ CONFIGS: dict[str, dict[str, ...]] = {
         'min_rating': 1,  #                    Minimum day quality rating (1 recommended)
         'max_rating': 20,  #                   Maximum day quality rating (even number recommended)
         'rating_inp_dp': 2,  #                 Number of decimal units ratings are rounded to
-        'linewrap_maxcol': 70,  #              Line width at which long lines are wrapped ('inf' = no line wrapping)
+        'linewrap_maxcol': 70,  #              Line width at which long lines are wrapped
         'date_format': '%Y-%m-%d',  #          ★ Date format used
         'date_format_print': 'YYYY-MM-DD',  #  Date format represented as a user-friendly string
         'clock_format_12': True,  #            Whether time will be printed in 12-hour clock format (24-hour otherwise)

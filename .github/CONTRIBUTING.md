@@ -22,8 +22,9 @@ Any addition to the project will be very much appreciated.
 1. Create a fork of 
    [the repository](https://github.com/TheGittyPerson/day-quality-tracker)
 2. Clone the forked repository to your local machine
-3. Create a new branch with a meaningful name
-   - e.g.) `add-feature-xyz`, `fix-issue-12`
+3. Create a new branch with a meaningful name (include the type of change 
+   followed by a slash)
+   - e.g.) `feature/feature-name`, `fix/issue-12`
 4. Make and commit your changes
 5. Push commits to GitHub (if you have made changes locally on your machine)
 6. Create a pull request and await review
