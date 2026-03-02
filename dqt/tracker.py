@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Literal
 from types import NoneType
 
 from dqt.dqt_json import DQTJSON
@@ -40,7 +39,7 @@ class Tracker:
         self.max_rating: int = 20  # Even number recommended
         self.neutral_rating: int = round(self.max_rating / 2)
         self.rating_inp_dp: int = 2
-        self.linewrap_maxcol: int | Literal['inf'] = 70
+        self.linewrap_maxcol: int = 70
         
         self.date_format: str = '%Y-%m-%d'
         self.date_format_print: str = "YYYY-MM-DD"

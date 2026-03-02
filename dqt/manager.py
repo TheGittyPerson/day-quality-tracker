@@ -86,7 +86,7 @@ class Manager:
                         
                         self.json.add(date_str, rating, memory)
                     
-                    log_saved()
+                    log_saved("Logs saved!")
                     
                     return choice
                 
