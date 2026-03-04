@@ -8,12 +8,19 @@ if TYPE_CHECKING:
     from src.styletext import StyleText
 
 
-def confirm(message: str, confirm_char: str = 'y') -> bool:
-    """Prompt the user for confirmation.
-
+def confirm(message: str, confirm_char: str = 'y',
+            err_msg: str = "Only enter 'y' or 'n'.") -> bool:
+    """Prompt the user for confirmation and validate input.
+    
+    Keep looping until user enters 'y' or 'n'.
     Return whether user input (lowercased) is equal to `confirm_char`.
     """
-    inp = input(f"\n{message} [y/n]: ").strip().lower()
+    while True:
+        inp = input(f"\n{message} [y/n]: ").strip().lower()
+        if inp not in ['y', 'n']:
+            err(err_msg)
+            continue
+        break
     return inp == confirm_char.lower()
 
 
