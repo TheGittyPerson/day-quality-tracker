@@ -12,10 +12,9 @@ for, and how to report bugs or suggest improvements.
 ## Contributions You Can Make
 
 There are many ways you can contribute: submitting suggestions or bug 
-reports, improving documentation, or writing some code yourself!
+reports, improving documentation or code, or writing some code yourself!
 
-I'm primarily looking for any ideas on how to make this project more useful. 
-Any addition to the project will be very much appreciated.
+Any addition to the project will be very much appreciated, even small ones.
 
 ### Steps
 
@@ -23,8 +22,23 @@ Any addition to the project will be very much appreciated.
    [the repository](https://github.com/TheGittyPerson/day-quality-tracker)
 2. Clone the forked repository to your local machine
 3. Create a new branch with a meaningful name (include the type of change 
-   followed by a slash)
+   followed by a slash; hierarchical branch naming)
+
+   | Prefix       | Description                                    |
+   |--------------|------------------------------------------------|
+   | `bugfix`     | Bug fix (minor, not urgent)                    |
+   | `hotfix`     | Urgent, critical fix                           |
+   | `feature`    | New feature/functionality                      |
+   | `docs`       | Documentation only                             |
+   | `format`     | Formatting fixes                               |
+   | `refact`     | Code improvements that do not affect behaviour |
+   | `wip`        | Work in progress                               |
+   | `experiment` | Temporary, experimental code                   |
+   | `mix`        | A combination of different fixes/changes       |
+   | `misc`       | Other (not recommended)                        |
+
    - e.g.) `feature/feature-name`, `fix/issue-12`
+   
 4. Make and commit your changes
 5. Push commits to GitHub (if you have made changes locally on your machine)
 6. Create a pull request and await review
@@ -50,21 +64,21 @@ Here are **3 rules** I have with writing (Python) code:
 
 Unfortunately I am the type of person who likes beautiful, formatted code.
 **However, it is completely fine if you are unfamiliar with PEP 8 or styling 
-guidelines**. We can work on it together after you make your pull request.
+guidelines**.
 
-Key things to keep in mind include (feel free to do quick Google Searches):
+Key things to keep in mind include:
 - **Line lengths** (try to keep line **below 80 characters**; PEP 8 says 79 but 
   whichever works)
 - **Naming conventions** (module, variable, class, and function names)
-- **Docstring formatting**
+  - `variable_must_be_named_like_this`
+  - `functions_too`
+  - `also_modules`
+  - `ClassesMustBeNamedLikeThis`
+- **Docstring and comments formatting**
 - **Line separations** (2 blank lines around classes and functions, etc.)
 - **Order of import statements** (standard → third-party → local)
-- This is a strange unspoken rule I invented; this you don't have to follow. 
-  All strings must use single quotes unless the text will be seen, or is meant 
-  to be seen, by users (not including docstrings). For example, strings in 
-  `print()` statements. The purpose of this is so that it is easy to tell in 
-  future if a string is to be seen by users. Again, this is 
-  **completely optional**.
+
+Take a look at existing code on the repo to get an idea of the code style.
 
 ===============================================
 
