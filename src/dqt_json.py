@@ -346,6 +346,104 @@ class DQTJSON:
             return file_logs == self.logs
         return set(file_logs.items()) == set(self.logs.items())
     
+    def import_json_file(self):
+        src_path = self._prompt_filepath(
+            "Enter the path of the JSON file to import from"
+        )
+        try:
+            print("\nReading JSON file...")
+            with open(src_path, 'r') as file:
+                source_contents: dict = json.load(file)
+        except json.decoder.JSONDecodeError as e:
+            err(
+                "Couldn't load JSON file contents:",
+                str(e),
+            )
+            return
+        except Exception as e:
+            err(
+                "An unexpected error occurred while loading the JSON file:",
+                str(e),
+            )
+            return
+        
+        if not isinstance(source_contents, dict):
+            err(
+                "Invalid JSON file contents; the file must contain valid "
+                "key-value pairs.",
+            )
+            return
+        
+        if not source_contents:
+            print(
+                f"{Txt("WARNING:").bold().yellow()} The provided JSON "
+                f"contains an empty object."
+            )
+        else:  # If not Falsey, check if there are fewer logs in src than dst
+            len_diff = len(self.logs.items()) - len(source_contents.items())
+            if len_diff > 0:
+                print(
+                    f"{Txt("WARNING:").bold().yellow()} There are {len_diff} "
+                    f"fewer log entries in the provided JSON file compared to "
+                    f"your current JSON file."
+                )
+                
+        if not confirm(
+            "The logs in your current JSON file will be overwritten. This "
+            "may be difficult or impossible to undo (consider backing up "
+            "your current JSON file first). Are you sure?",
+        ):
+            return
+        
+        print("\nBeginning import process...")
+        success = self._start_json_file_import_process(source_contents)
+        if success:
+            log_saved("Import process completed successfully!")
+        return
+    
+    def _start_json_file_import_process(self,
+                                        src_contents: dict) -> bool:
+        print("\nValidating and normalizing data...")
+        try:
+            cleaned = self._validate_and_normalize_logs(src_contents)
+        except (ValueError, KeyError) as e:
+            err(
+                "Invalid log format found:",
+                str(e),
+                "\nPlease ensure that the logs in the provided JSON file are "
+                "properly formatted and try again."
+            )
+            return False
+        
+        print("Saving to runtime memory...")
+        self.logs = cleaned
+        
+        print(f"Writing contents from runtime memory to '{self.filepath}'...")
+        self._dump(prevent_empty_overwrite=False)
+        
+        return True
+    
+    @staticmethod
+    def _prompt_filepath(prompt: str, from_home_dir: bool = True) -> Path:
+        """Prompt and validate file path input.
+
+        If `from_home_dir` is True, the user's path input will be appended to
+        the home directory. e.g. If the user inputs "Desktop/file.json",
+        the final path will be Path("User/username/Desktop/file.json").
+        """
+        home_dir = Path.home() if from_home_dir else None
+        while True:
+            if from_home_dir:
+                base = home_dir
+                filepath = base / input(f"\n{prompt}: \n{base}").lstrip('/')
+            else:
+                filepath = Path(input(f"\n{prompt}: ").strip())
+            if not filepath.is_file():
+                err("The file path does not exist.", "Try again.")
+                continue
+            break
+        return filepath
+    
     def _touch(self) -> None:
         """Check if JSON file exists, create if not."""
         if not self.filedirpath.exists():
@@ -465,7 +563,8 @@ class DQTJSON:
         return validated
     
     def _dump(self,
-              logs: dict[str, dict[str, float | None | str]] = None) -> None:
+              logs: dict[str, dict[str, float | None | str]] = None,
+              prevent_empty_overwrite: bool = True) -> None:
         """Dump logs to the JSON file.
 
         If `logs` is None (default), dump the contents of `self.logs`.
@@ -478,7 +577,7 @@ class DQTJSON:
         raw_json = self._load_raw_json()
         
         # Prevent overwriting existing data with an empty logs dict
-        if raw_json and not logs_to_dump:
+        if prevent_empty_overwrite and raw_json and not logs_to_dump:
             print(
                 Txt(
                     "\n(The program tried to save an empty logs dict. Logs "
