@@ -287,11 +287,11 @@ class DQTJSON:
     
     @staticmethod
     def _prompt_dirpath(prompt: str, from_home_dir: bool = True) -> Path:
-        """Prompt and validate path input.
+        """Prompt and validate directory path input.
         
-        If `home_dir` is True, the user's path input will be appended to the
-        home directory. e.g. If the user inputs "Desktop", the final path will
-        be Path("User/username/Desktop").
+        If `from_home_dir` is True, the user's path input will be appended to
+        the home directory. e.g. If the user inputs "Desktop", the final path
+        will be Path("User/username/Desktop").
         """
         home_dir = Path.home() if from_home_dir else None
         while True:
@@ -456,7 +456,7 @@ class DQTJSON:
             else:
                 raise ValueError(
                     f"Invalid log format for date '{date}'; "
-                    f"value must be a dict"
+                    f"must be a valid key-value pair"
                 )
         
         if updated:
