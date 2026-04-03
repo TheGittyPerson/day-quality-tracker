@@ -75,7 +75,7 @@ class Manager:
                         rating = self._input_rating(
                             f"Enter your rating for {date} "
                             f"({self.dqt.min_rating}~{self.dqt.max_rating}, "
-                            f"or 'null' to skip): ",
+                            f"or '-' to skip): ",
                         )
                         
                         memory = self._input_memory(
@@ -139,16 +139,15 @@ class Manager:
                 f"\n(enter '-' to skip): "
             )
             
-            if not confirm("Would you like to enter a memory entry?"):
+            tdys_memory = self._input_memory(
+                f"Enter a memory entry; write a few sentences about your "
+                f"day. \nLeave this blank to skip: "
+            )
+            
+            if not tdys_memory:
                 print(
                     "\nTo enter your memory entry later: "
                     "\nMain menu -> Edit today's/previous log -> Edit memory"
-                )
-                tdys_memory = ''
-            else:
-                tdys_memory = self._input_memory(
-                    f"Enter a memory entry; write a few sentences about your "
-                    f"day. \nLeave this blank to skip: "
                 )
             
             # Save data
