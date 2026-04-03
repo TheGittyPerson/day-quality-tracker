@@ -75,7 +75,7 @@ class Manager:
                         rating = self._input_rating(
                             f"Enter your rating for {date} "
                             f"({self.dqt.min_rating}~{self.dqt.max_rating}, "
-                            f"or 'null' to skip): ",
+                            f"or '-' to skip): ",
                         )
                         
                         memory = self._input_memory(
