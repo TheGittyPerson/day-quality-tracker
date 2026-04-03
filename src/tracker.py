@@ -13,7 +13,10 @@ _today: datetime = datetime.today()
 
 
 class Tracker:
-    """Track and visualize day quality ratings in a graph."""
+    """Track and visualize day quality ratings in a graph.
+    
+    This class controls the main menu algorithm/logic.
+    """
     
     RELEASE_NUM: int = 5
     SEMVER: str = 'v1.0.1'
