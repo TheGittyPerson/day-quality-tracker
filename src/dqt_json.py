@@ -355,7 +355,8 @@ class DQTJSON:
         imports, and ask for confirmation before overwriting.
         """
         src_path = self._prompt_filepath(
-            "Enter the path of the JSON file to import from"
+            "Enter the path of the JSON file to import from",
+            auto_append='.json'
         )
         try:
             print("\nReading JSON file...")
@@ -475,22 +476,39 @@ class DQTJSON:
         return True
     
     @staticmethod
-    def _prompt_filepath(prompt: str, from_home_dir: bool = True) -> Path:
+    def _prompt_filepath(prompt: str, from_home_dir: bool = True,
+                         auto_append: str | None = None) -> Path:
         """Prompt and validate file path input.
 
         If `from_home_dir` is True, the user's path input will be appended to
         the home directory. e.g. If the user inputs "Desktop/file.json",
         the final path will be Path("User/username/Desktop/file.json").
+        If `auto_append` is provided, it will be appended to the input when
+        the input does not already end with it.
+
+        Args:
+            prompt: Text shown to the user before reading input.
+            from_home_dir: Whether to interpret the input as relative to
+                the home directory.
+            auto_append: Optional suffix to append when missing (e.g. ".json").
         """
         home_dir = Path.home() if from_home_dir else None
         while True:
             if from_home_dir:
                 base = home_dir
-                filepath = base / input(f"\n{prompt}: \n{base}").lstrip('/')
+                raw = input(f"\n{prompt}: \n{base}").lstrip('/').strip()
             else:
-                filepath = Path(input(f"\n{prompt}: ").strip())
+                base = ''
+                raw = input(f"\n{prompt}: ").strip()
+            if auto_append is not None:
+                raw += auto_append if not raw.endswith(auto_append) else ''
+            filepath = base / Path(raw)
+            
             if not filepath.is_file():
-                err("The file path does not exist.", "Try again.")
+                err(
+                    f"The file path '{filepath}' does not exist.",
+                    "Try again."
+                )
                 continue
             break
         return filepath
