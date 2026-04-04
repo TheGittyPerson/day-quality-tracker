@@ -97,7 +97,8 @@ class Tracker:
                 "4) 📊 See [S]tats",
                 "5) 📂 View [A]ll logs...",
                 "6) 💾 [B]ack up logs...",
-                "7) E[x]it",
+                "7) 📥 [I]mport logs...",
+                "8) E[x]it",
                 title=None
             )
             
@@ -236,8 +237,11 @@ class Tracker:
                         err("You haven't entered any logs yet!")
                         continue
                     self.json.backup_json_file()
+                    
+                case '7' | 'i':
+                    self.json.import_logs()
                 
-                case '7' | 'x':
+                case '8' | 'x':
                     print("\n*⎋* —————————————————————————————— *⎋*")
                     print("\nBye!")
                     raise SystemExit()
