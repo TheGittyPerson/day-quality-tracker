@@ -166,7 +166,11 @@ class Graph:
         if not logs:
             raise ValueError("No logs saved")
         
-        plt.style.use(self.graph_style)
+        if self.graph_style is None:
+            plt.style.use('ggplot')
+        else:
+            plt.style.use(self.graph_style)
+        
         fig, ax = plt.subplots()
         
         self._set_title(ax)

@@ -9,7 +9,9 @@ the issue before proceeding.
 If any configuration is removed, the default value will be used.
 """
 
-CONFIGS: dict[str, dict[str, ...]] = {
+from typing import Any
+
+CONFIGS: dict[str, dict[str, Any]] = {
     
     # UI BEHAVIOR & SETTINGS
     #                                          CONFIGURATION DESCRIPTION:

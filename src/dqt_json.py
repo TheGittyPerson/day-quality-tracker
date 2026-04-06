@@ -5,7 +5,7 @@ import shutil
 import subprocess
 from pathlib import Path
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from src.ui_utils import confirm, cont_on_enter, err, log_saved, print_wrapped
 from src.styletext import StyleText as Txt
@@ -290,7 +290,7 @@ class DQTJSON:
         """
         if not exist_ok and target_path.exists():
             raise FileExistsError
-        return shutil.copy2(self.filepath, target_path)
+        return str(shutil.copy2(self.filepath, target_path))
     
     @staticmethod
     def _prompt_dirpath(prompt: str, from_home_dir: bool = True) -> Path:
@@ -300,13 +300,13 @@ class DQTJSON:
         the home directory. e.g. If the user inputs "Desktop", the final path
         will be Path("User/username/Desktop").
         """
-        home_dir = Path.home() if from_home_dir else None
+        home_dir = Path.home() if from_home_dir else Path()
         while True:
             base = home_dir if from_home_dir else Path('/')
             if from_home_dir:
                 dirpath = base / input(f"\n{prompt}: \n{base}").lstrip('/')
             else:
-                dirpath = input(f"\n{prompt}: \n{base}")
+                dirpath = Path(input(f"\n{prompt}: \n{base}"))
             if not dirpath.is_dir():
                 err(
                     f"Directory '{dirpath}' not found.",
@@ -499,13 +499,13 @@ class DQTJSON:
                 the home directory.
             auto_append: Optional suffix to append when missing (e.g. ".json").
         """
-        home_dir = Path.home() if from_home_dir else None
+        home_dir = Path.home() if from_home_dir else Path()
         while True:
             if from_home_dir:
                 base = home_dir
                 raw = input(f"\n{prompt}: \n{base}").lstrip('/').strip()
             else:
-                base = ''
+                base = Path()
                 raw = input(f"\n{prompt}: ").strip()
             if auto_append is not None:
                 raw += auto_append if not raw.endswith(auto_append) else ''
@@ -579,6 +579,7 @@ class DQTJSON:
             
             # ---------- Validate date order ----------
             if prev_date is not None:
+                prev_date: str  # Assumptions, assumptions, assumptions
                 prev_d = datetime.strptime(prev_date, self.dqt.date_format)
                 d = datetime.strptime(date, self.dqt.date_format)
                 diff = (d - prev_d).days
@@ -611,7 +612,13 @@ class DQTJSON:
                             f"'{date}'")
                     raw_rating = None
                     updated = True
-                rating = None if raw_rating is None else float(raw_rating)
+                    
+                if raw_rating is None:
+                    rating = None
+                else:
+                    raw_rating: Any
+                    rating = float(raw_rating)
+                    
                 try:
                     memory = value[self.memory_kyname]
                 except KeyError:
