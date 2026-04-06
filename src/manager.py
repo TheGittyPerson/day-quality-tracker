@@ -179,10 +179,10 @@ class Manager:
     
     def prompt_prev_date(self) -> str:
         """Prompt the user to enter a previous date."""
+        selected_date = ''
         while True:
             inp = input("\nEnter the number of days ago or exact date "
                         f"('{self.dqt.date_format_print}'): ").strip()
-            selected_date = None
             
             # If number of days ago specified, get date
             if inp.isdigit():
@@ -196,8 +196,8 @@ class Manager:
                 try:
                     datetime.strptime(inp, self.dqt.date_format)
                 except ValueError:
-                    err("Enter wither a valid date in the "
-                        f"format {self.dqt.date_format_print} or a positive "
+                    err("Enter either a valid date in the format "
+                        f"{self.dqt.date_format_print} or a positive "
                         "integer.")
                     continue
                 selected_date = inp

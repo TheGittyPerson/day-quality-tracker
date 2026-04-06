@@ -62,6 +62,8 @@ def menu(*options: str | StyleText,
     if title is not None:
         print(Txt(f"\n{title}").bold())
     for i, o in enumerate(options, 1):
+        if isinstance(o, StyleText):
+            o = str(o)
         print(Txt(f"{i})").bold(), o.removeprefix(f'{i}) '))
     return len(options)
 
