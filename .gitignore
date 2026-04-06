@@ -45,6 +45,5 @@ Thumbs.db
 *.tmp
 *.temp
 
-# Other
-data/dq_logs.json
-plan.md
+# Project-specific
+data/
