@@ -13,7 +13,14 @@ from src.styletext import StyleText as Txt
 if TYPE_CHECKING:
     from tracker import Tracker
 
-_UNSET: object = object()
+
+class UnsetType:
+    def __repr__(self) -> str:
+        return "UNSET"
+
+
+_UNSET = UnsetType()
+
 _today: datetime = datetime.today()
 
 
@@ -43,8 +50,8 @@ class DQTJSON:
     
     def update(self,
                date: str = None,
-               rating: float | None = _UNSET,
-               memory: str = _UNSET) -> None:
+               rating: float | None | UnsetType = _UNSET,
+               memory: str | UnsetType = _UNSET) -> None:
         """Dump updated logs to JSON file.
 
         Update with new rating and memory values if provided before dumping.
@@ -100,9 +107,9 @@ class DQTJSON:
         return today in self.logs
     
     def print_log(self,
-                  date: str = _UNSET,
-                  rating: float | None = _UNSET,
-                  memory: str = _UNSET,
+                  date: str | UnsetType = _UNSET,
+                  rating: float | None | UnsetType = _UNSET,
+                  memory: str | UnsetType = _UNSET,
                   linewrap_memory: bool = False) -> None:
         """Print a formatted log, and represent 'empty' values with text.
 
@@ -115,14 +122,14 @@ class DQTJSON:
         """
         
         # ----- Date -----
-        if date is not _UNSET:
+        if not isinstance(date, UnsetType):
             if date == 'today':
                 print(Txt("\nToday's log:").bold().yellow())
             else:
                 print(Txt(f"Date: ").bold() + date)
         
         # ----- Rating -----
-        if rating is not _UNSET:
+        if not isinstance(rating, UnsetType):
             if rating is None:
                 print(Txt("Rating: ").bold() + "-")
             else:
@@ -132,7 +139,7 @@ class DQTJSON:
                 )
         
         # ----- Memory -----
-        if memory is not _UNSET:
+        if not isinstance(memory, UnsetType):
             if memory:
                 print(Txt("Memory:").bold())
                 if linewrap_memory:

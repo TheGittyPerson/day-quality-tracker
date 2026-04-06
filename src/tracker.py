@@ -8,7 +8,6 @@ from src.stats import Stats
 from src.ui_utils import cont_on_enter, err, invalid_choice, menu
 from src.styletext import StyleText as Txt
 
-_UNSET: object = object()
 _today: datetime = datetime.today()
 
 
