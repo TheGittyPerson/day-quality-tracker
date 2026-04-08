@@ -240,10 +240,10 @@ class DQTJSON:
                 f"Backup created successfully at '{dst_filepath}'!"
             )
     
-    def _start_file_backup_process(self) -> tuple[bool, str | None]:
+    def _start_file_backup_process(self) -> tuple[bool, str]:
         """Start the backup JSON prompting and file creation process.
         
-        Return success.
+        Return success and file path as a string.
         """
         dst = None
         while True:
@@ -278,10 +278,10 @@ class DQTJSON:
                     f"Error message: {e}.",
                     "Try again."
                 )
-                return False, dst
+                return False, str(chosen_filepath)
             else:
                 break
-        return True, dst
+        return True, str(dst)
     
     def _create_json_copy(self, target_path: Path, exist_ok: bool) -> str:
         """Create a copy of the JSON file in a chosen directory.
