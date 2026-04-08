@@ -257,20 +257,20 @@ class DQTJSON:
                 "\n(Tip: include a date or number for future reference)"
             )
             chosen_filepath = dirpath / filename
-            if not confirm(
-                f"Backup file will be created at '{chosen_filepath}'. Confirm?"
-            ):
+            if chosen_filepath.exists():
+                print(
+                    f"\n{Txt("WARNING:").bold().yellow()} The file path "
+                    f"'{chosen_filepath}' already exists."
+                    f"Continuing will overwrite data in {filename}."
+                )
+            else:
+                print(f"\nBackup file will be created at '{chosen_filepath}'.")
+            if not confirm("Confirm?"):
                 continue
             
             print("\nCreating backup file...")
             try:
-                dst = self._create_json_copy(chosen_filepath, exist_ok=False)
-            except FileExistsError:
-                if confirm(f"The filename '{filename}' already exists in the "
-                           f"directory '{dirpath}'. Overwrite?"):
-                    self._create_json_copy(chosen_filepath, exist_ok=True)
-                    return True, dst
-                continue
+                dst = self._create_json_copy(chosen_filepath, exist_ok=True)
             except Exception as e:
                 err(
                     "An error occurred while trying to create the backup "
