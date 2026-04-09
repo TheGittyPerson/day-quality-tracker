@@ -659,7 +659,7 @@ class DQTJSON:
         contains data and the logs to be dumped are empty.
         """
         logs_to_dump = self.logs if logs is None else logs
-        if not prevent_empty_overwrite:
+        if prevent_empty_overwrite:
             raw_json = self._load_raw_json()
             
             # Prevent overwriting existing data with an empty logs dict
