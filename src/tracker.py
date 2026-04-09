@@ -53,7 +53,7 @@ class Tracker:
             self.json: DQTJSON = DQTJSON(self)
         except ValueError as e:
             err(
-                f"Something's wrong with '{self.json.filename}'...",
+                f"Something's wrong with the JSON file...",
                 f"\"{e}.\"",
                 "Please correct the file before starting the program.",
                 pause=False
