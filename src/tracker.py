@@ -39,7 +39,6 @@ class Tracker:
         self.min_time: int = 20  # Earliest hour the of day to enter rating
         self.min_rating: int = 1  # 1 recommended
         self.max_rating: int = 20  # Even number recommended
-        self.neutral_rating: int = round(self.max_rating / 2)
         self.rating_inp_dp: int = 2
         self.linewrap_maxcol: int = 70
         
@@ -63,6 +62,15 @@ class Tracker:
         self.graph: Graph = Graph(self)
         self.manager: Manager = Manager(self)
         self.stats: Stats = Stats(self)
+
+    @property
+    def neutral_rating(self) -> int:
+        """The neutral, baseline or "middle" rating.
+        
+        Derived from the floor-division half of `max_rating`.
+        Only rounds down.
+        """
+        return (self.min_rating + self.max_rating) // 2
     
     def run(self) -> None:
         """Run Day Quality Tracker."""
