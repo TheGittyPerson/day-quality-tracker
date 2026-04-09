@@ -322,6 +322,7 @@ class DQTJSON:
             filename = input(f"\n{prompt}: ").strip()
             if not filename:
                 err("File name must not be empty.", "Try again.")
+                continue
             if not filename.endswith('.json'):
                 filename += '.json'
             
@@ -333,7 +334,8 @@ class DQTJSON:
                     )
                     break
             else:
-                return filename
+                break
+        return filename
     
     @staticmethod
     def _invalid_filename_chars() -> str:
