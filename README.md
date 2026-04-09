@@ -14,11 +14,6 @@ ratings with short memory entries so you can track both trends and moments.
 ## Installation
 
 On the [GitHub page](https://github.com/TheGittyPerson/day-quality-tracker):
-* Click the green "Code" button
-* Select "Download ZIP"
-* Unzip the ZIP file on your machine.
-
-Or, to install the latest _stable_ version:
 * Scroll down on the right column
 * Under
   "[Releases](https://github.com/TheGittyPerson/day-quality-tracker/releases)", 
@@ -133,6 +128,14 @@ periodically.
 
 This option creates a copy of your log JSON file in a directory of your 
 choosing.
+
+#### Import logs
+
+You can easily migrate your logs between versions of DQT or between different 
+devices.
+
+The program reads and copies the data from a chosen JSON file over to the 
+current JSON file used by the program.
 
 ---
 
