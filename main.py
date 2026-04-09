@@ -2,23 +2,15 @@
 
 if __name__ == '__main__':
     try:
-        try:
-            import sys
-            import traceback
-            
-            from utils.package_installer import install_dependencies
-            install_dependencies()
-            
-            from src.tracker import Tracker
-            from settings import CONFIGS
-            from src.styletext import StyleText as Txt
-        except ModuleNotFoundError as e:
-            print("\n*!* —————————————————————————————— *!*")
-            print(Txt("\n❌ Error!").bold().red())
-            print(f"{e}.")
-            print(f"Ensure that module '{e.name}' exists in the current "
-                  f"working directory.")
-            sys.exit(1)
+        import sys
+        import traceback
+        
+        from utils.package_installer import install_dependencies
+        install_dependencies()
+        
+        from src.tracker import Tracker
+        from settings import CONFIGS
+        from src.styletext import StyleText as Txt
         
         dqt: Tracker = Tracker()
         

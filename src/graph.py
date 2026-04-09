@@ -167,7 +167,7 @@ class Graph:
             raise ValueError("No logs saved")
         
         if self.graph_style is None:
-            plt.style.use('ggplot')
+            plt.style.use('default')
         else:
             plt.style.use(self.graph_style)
         

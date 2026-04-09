@@ -240,10 +240,10 @@ class DQTJSON:
                 f"Backup created successfully at '{dst_filepath}'!"
             )
     
-    def _start_file_backup_process(self) -> tuple[bool, str | None]:
+    def _start_file_backup_process(self) -> tuple[bool, str]:
         """Start the backup JSON prompting and file creation process.
         
-        Return success.
+        Return success and file path as a string.
         """
         dst = None
         while True:
@@ -257,20 +257,20 @@ class DQTJSON:
                 "\n(Tip: include a date or number for future reference)"
             )
             chosen_filepath = dirpath / filename
-            if not confirm(
-                f"Backup file will be created at '{chosen_filepath}'. Confirm?"
-            ):
+            if chosen_filepath.exists():
+                print(
+                    f"\n{Txt("WARNING:").bold().yellow()} The file path "
+                    f"'{chosen_filepath}' already exists."
+                    f"Continuing will overwrite data in {filename}."
+                )
+            else:
+                print(f"\nBackup file will be created at '{chosen_filepath}'.")
+            if not confirm("Confirm?"):
                 continue
             
             print("\nCreating backup file...")
             try:
-                dst = self._create_json_copy(chosen_filepath, exist_ok=False)
-            except FileExistsError:
-                if confirm(f"The filename '{filename}' already exists in the "
-                           f"directory '{dirpath}'. Overwrite?"):
-                    self._create_json_copy(chosen_filepath, exist_ok=True)
-                    return True, dst
-                continue
+                dst = self._create_json_copy(chosen_filepath, exist_ok=True)
             except Exception as e:
                 err(
                     "An error occurred while trying to create the backup "
@@ -278,10 +278,10 @@ class DQTJSON:
                     f"Error message: {e}.",
                     "Try again."
                 )
-                return False, dst
+                return False, str(chosen_filepath)
             else:
                 break
-        return True, dst
+        return True, str(dst)
     
     def _create_json_copy(self, target_path: Path, exist_ok: bool) -> str:
         """Create a copy of the JSON file in a chosen directory.
@@ -322,6 +322,7 @@ class DQTJSON:
             filename = input(f"\n{prompt}: ").strip()
             if not filename:
                 err("File name must not be empty.", "Try again.")
+                continue
             if not filename.endswith('.json'):
                 filename += '.json'
             
@@ -333,7 +334,8 @@ class DQTJSON:
                     )
                     break
             else:
-                return filename
+                break
+        return filename
     
     @staticmethod
     def _invalid_filename_chars() -> str:
@@ -659,7 +661,7 @@ class DQTJSON:
         contains data and the logs to be dumped are empty.
         """
         logs_to_dump = self.logs if logs is None else logs
-        if not prevent_empty_overwrite:
+        if prevent_empty_overwrite:
             raw_json = self._load_raw_json()
             
             # Prevent overwriting existing data with an empty logs dict
