@@ -260,7 +260,7 @@ class DQTJSON:
             if chosen_filepath.exists():
                 print(
                     f"\n{Txt("WARNING:").bold().yellow()} The file path "
-                    f"'{chosen_filepath}' already exists."
+                    f"'{chosen_filepath}' already exists. "
                     f"Continuing will overwrite data in {filename}."
                 )
             else:
