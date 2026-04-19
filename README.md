@@ -1,4 +1,4 @@
-# Day Quality Tracker 5 <sub><sup>(v1.1.0)</sup></sub>
+# Day Quality Tracker 5 <sub><sup>(v1.2.0)</sup></sub>
 
 Day Quality Tracker (DQT) is a simple Python CLI that helps you record and track
 daily “day quality” ratings and visualize them over time using the 
@@ -27,6 +27,13 @@ Then, from the project directory, install the dependencies:
 ```bash
 cd path/to/day_quality_tracker
 python -m pip install -r requirements.txt
+```
+
+Or let DQT do that step for you:
+
+```bash
+cd path/to/day_quality_tracker
+python scripts/package_installer.py
 ```
 
 ---
@@ -65,7 +72,7 @@ dqt.configure(
 dqt.run()
 ```
 
-Or use `settings.py`:
+Or use `dqt/settings.py`:
 
 ```python
 from dqt.tracker import Tracker
@@ -136,7 +143,7 @@ Choose either to:
 
 #### Open settings
 
-Open `settings.py` to customize your experience. See more 
+Open `dqt/settings.py` to customize your experience. See more 
 [below](#custom-configurations).
 
 #### Back up logs
