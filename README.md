@@ -134,6 +134,11 @@ Choose either to:
 * Print logs as standard output
 * Open the file with your system's default application
 
+#### Open settings
+
+Open `settings.py` to customize your experience. See more 
+[below](#custom-configurations).
+
 #### Back up logs
 
 Occasionally, errors or interruptions may corrupt or erase the JSON file where 
