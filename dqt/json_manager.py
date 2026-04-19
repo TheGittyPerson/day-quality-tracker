@@ -7,8 +7,8 @@ from pathlib import Path
 from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
-from src.ui_utils import confirm, cont_on_enter, err, log_saved, print_wrapped
-from src.styletext import StyleText as Txt
+from dqt.ui_utils import confirm, cont_on_enter, err, log_saved, print_wrapped
+from dqt.styletext import StyleText as Txt
 
 if TYPE_CHECKING:
     from tracker import Tracker

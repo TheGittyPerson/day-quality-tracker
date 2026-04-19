@@ -1,7 +1,7 @@
 import textwrap
 from time import sleep
 
-from src.styletext import StyleText
+from dqt.styletext import StyleText
 
 
 def confirm(message: str, confirm_char: str = 'y',

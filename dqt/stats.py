@@ -2,8 +2,8 @@ from datetime import datetime
 from collections import defaultdict
 from typing import TYPE_CHECKING
 
-from src.dqt_json import DQTJSON
-from src.styletext import StyleText as Txt
+from dqt.json_manager import DQTJSON
+from dqt.styletext import StyleText as Txt
 
 if TYPE_CHECKING:
     from tracker import Tracker

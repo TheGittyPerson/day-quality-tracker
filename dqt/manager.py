@@ -2,8 +2,8 @@ from textwrap import dedent
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
-from src.dqt_json import DQTJSON
-from src.ui_utils import (
+from dqt.json_manager import DQTJSON
+from dqt.ui_utils import (
     confirm,
     err,
     invalid_choice,
@@ -11,7 +11,7 @@ from src.ui_utils import (
     menu,
     print_wrapped
 )
-from src.styletext import StyleText as Txt
+from dqt.styletext import StyleText as Txt
 
 if TYPE_CHECKING:
     from tracker import Tracker

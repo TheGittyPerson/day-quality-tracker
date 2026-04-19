@@ -3,13 +3,12 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from types import NoneType
 
-from src.dqt_json import DQTJSON
-from src.ui_utils import err, confirm
+from dqt.json_manager import DQTJSON
 
 import matplotlib.pyplot as plt
 
 if TYPE_CHECKING:
-    from src.tracker import Tracker
+    from dqt.tracker import Tracker
 
 
 class Graph:

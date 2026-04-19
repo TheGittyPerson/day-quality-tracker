@@ -1,13 +1,13 @@
 from datetime import datetime
 from types import NoneType
 
-from src.dqt_json import DQTJSON
-from src.manager import Manager
-from src.graph import Graph
-from src.stats import Stats
-from src.settings_manager import SettingsManager
-from src.ui_utils import cont_on_enter, err, invalid_choice, menu
-from src.styletext import StyleText as Txt
+from dqt.json_manager import DQTJSON
+from dqt.manager import Manager
+from dqt.graph import Graph
+from dqt.stats import Stats
+from dqt.settings_manager import SettingsManager
+from dqt.ui_utils import cont_on_enter, err, invalid_choice, menu
+from dqt.styletext import StyleText as Txt
 
 _today: datetime = datetime.today()
 
@@ -244,7 +244,7 @@ class Tracker:
 
                 case '6' | 'o':
                     self.settings.open_file()
-                
+
                 case '7' | 'b':
                     if self.json.no_logs():
                         err("You haven't entered any logs yet!")
@@ -254,7 +254,7 @@ class Tracker:
                 case '8' | 'i':
                     self.json.import_logs()
                     cont_on_enter()
-                
+
                 case '9' | 'x':
                     print("\n*⎋* —————————————————————————————— *⎋*")
                     print("\nBye!")
