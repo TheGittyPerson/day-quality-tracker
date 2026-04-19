@@ -12,7 +12,7 @@ class SettingsManager:
     def __init__(self):
         """Initialize the settings manager."""
         self.filename: str = 'settings.py'
-        rootdir: Path = Path(__file__).resolve().parent.parent
+        rootdir: Path = Path(__file__).resolve().parent
         self.settings_path: Path = rootdir / Path(self.filename)
         
     def open_file(self):
