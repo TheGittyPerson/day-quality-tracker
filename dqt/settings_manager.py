@@ -3,7 +3,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-from src.ui_utils import err
+from dqt.ui_utils import err
 
 
 class SettingsManager:
