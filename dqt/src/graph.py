@@ -1,6 +1,4 @@
-import sys
 import math
-from subprocess import check_call
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from types import NoneType
@@ -8,30 +6,7 @@ from types import NoneType
 from src.dqt_json import DQTJSON
 from src.ui_utils import err, confirm
 
-try:
-    import matplotlib.pyplot as plt
-except ModuleNotFoundError:
-    print("\nThe python package 'matplotlib' is required before running.")
-
-    if not confirm("Install now?"):
-        raise SystemExit()
-
-    check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
-    check_call([sys.executable, "-m", "pip", "install", "matplotlib"])
-
-    print("\nInstallation complete!")
-
-    try:
-        import matplotlib.pyplot as plt
-    except ModuleNotFoundError:
-        err(
-            "Matplotlib was installed, but could not be imported.",
-            "Please restart the program."
-        )
-        raise SystemExit()
-
-    print("Resuming program...\n")
-
+import matplotlib.pyplot as plt
 
 if TYPE_CHECKING:
     from src.tracker import Tracker
