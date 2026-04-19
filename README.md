@@ -22,6 +22,13 @@ On the [GitHub page](https://github.com/TheGittyPerson/day-quality-tracker):
 * Click on "Source code (zip)" (recommended for basic installation)
 * Unzip the ZIP file on your machine.
 
+Then, from the project directory, install the dependencies:
+
+```bash
+cd path/to/day_quality_tracker
+python -m pip install -r requirements.txt
+```
+
 ---
 
 ## How to use
@@ -29,11 +36,17 @@ On the [GitHub page](https://github.com/TheGittyPerson/day-quality-tracker):
 Before using the program, ensure you have a Python interpreter installed on your
 system **(version 3.12+ required)**.
 
-To start the program, **run `main.py`**, or initialize and run the tracker 
-manually:
+To start the program from the project directory, run:
+
+```bash
+cd path/to/day_quality_tracker
+python -m dqt
+```
+
+You can also initialize and run the tracker manually:
 
 ```python
-from src.tracker import Tracker
+from dqt.tracker import Tracker
 
 dqt = Tracker()
 dqt.run()
@@ -43,11 +56,11 @@ To set a configuration manually:
 
 ```python
 # Example:
-from src.tracker import Tracker
+from dqt.tracker import Tracker
 
 dqt = Tracker()
 dqt.configure(
-  enable_ansi=False,
+    enable_ansi=False,
 )
 dqt.run()
 ```
@@ -55,11 +68,12 @@ dqt.run()
 Or use `settings.py`:
 
 ```python
-from src.tracker import Tracker
-from settings import CONFIGS
+from dqt.tracker import Tracker
+from dqt.settings import CONFIGS
 
 dqt = Tracker()
-dqt.configure(*CONFIGS['tracker'])
+dqt.configure(**CONFIGS['tracker'])
+dqt.graph.configure(**CONFIGS['graph'])
 dqt.run()
 ```
 
@@ -154,9 +168,9 @@ entry.
 
 ### Custom Configurations
 
-To configure and customize DQT, open `settings.py`. Each configuration comes 
-with a description, and to change a setting, simply change the value after the 
-colon.
+To configure and customize DQT, open `dqt/settings.py`. Each configuration
+comes with a description, and to change a setting, simply change the value
+after the colon.
 
 For example, to set the earliest hour of day a log entry is accepted to 
 **10:00 PM**:
