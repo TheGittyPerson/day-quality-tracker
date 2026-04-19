@@ -24,7 +24,7 @@ _UNSET = UnsetType()
 _today: datetime = datetime.today()
 
 
-class DQTJSON:
+class JSONManager:
     """A class to manage Day Quality Tracker JSON contents handling."""
     
     def __init__(self, dqt: Tracker):

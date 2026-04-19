@@ -1,7 +1,7 @@
 from datetime import datetime
 from types import NoneType
 
-from dqt.json_manager import DQTJSON
+from dqt.json_manager import JSONManager
 from dqt.manager import Manager
 from dqt.graph import Graph
 from dqt.stats import Stats
@@ -50,7 +50,7 @@ class Tracker:
         self.autofill_json: bool = True
         
         try:
-            self.json: DQTJSON = DQTJSON(self)
+            self.json: JSONManager = JSONManager(self)
         except ValueError as e:
             err(
                 f"Something's wrong with the JSON file...",

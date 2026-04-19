@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from types import NoneType
 
-from dqt.json_manager import DQTJSON
+from dqt.json_manager import JSONManager
 
 import matplotlib.pyplot as plt
 
@@ -53,7 +53,7 @@ class Graph:
         """Get required DQT attributes and initialize graph settings."""
         # DayQualityTracker attributes
         self.dqt: Tracker = dqt
-        self.json: DQTJSON = dqt.json
+        self.json: JSONManager = dqt.json
         
         # Graph settings
         self.graph_show_block: bool = True

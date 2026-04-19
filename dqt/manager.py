@@ -2,7 +2,7 @@ from textwrap import dedent
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
-from dqt.json_manager import DQTJSON
+from dqt.json_manager import JSONManager
 from dqt.ui_utils import (
     confirm,
     err,
@@ -24,7 +24,7 @@ class Manager:
     
     def __init__(self, dqt: Tracker):
         self.dqt: Tracker = dqt
-        self.json: DQTJSON = dqt.json
+        self.json: JSONManager = dqt.json
         
         self.memory_edit_placeholder: str = '{}'
         self.memory_edit_length_diff_alert_threshold: int = 100
@@ -233,7 +233,7 @@ class Manager:
         at the start of runtime) will be used.
         
         Parameter `changing` must be either the rating or memory key name
-        specified in DQTJSON (raises a ValueError otherwise).
+        specified in JSONManager (raises a ValueError otherwise).
         """
         if changing not in (self.json.rating_kyname, self.json.memory_kyname):
             raise ValueError(
