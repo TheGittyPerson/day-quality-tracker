@@ -305,9 +305,9 @@ class Manager:
             len_diff = len(original) - len(new_memory)
             if len_diff > self.memory_edit_length_diff_alert_threshold:
                 if not confirm(
-                        "The new memory entry is significantly shorter than "
-                        f"the original (by {len_diff} characters). Are you "
-                        "sure?"
+                    "The new memory entry is significantly shorter than "
+                    f"the original (by {len_diff} characters). Are you "
+                    "sure?"
                 ):
                     raw = self._input_memory(
                         f"Enter new memory entry for {date}"

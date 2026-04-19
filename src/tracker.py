@@ -5,6 +5,7 @@ from src.dqt_json import DQTJSON
 from src.manager import Manager
 from src.graph import Graph
 from src.stats import Stats
+from src.settings_manager import SettingsManager
 from src.ui_utils import cont_on_enter, err, invalid_choice, menu
 from src.styletext import StyleText as Txt
 
@@ -62,6 +63,7 @@ class Tracker:
         self.graph: Graph = Graph(self)
         self.manager: Manager = Manager(self)
         self.stats: Stats = Stats(self)
+        self.settings: SettingsManager = SettingsManager()
 
     @property
     def neutral_rating(self) -> int:
@@ -103,9 +105,10 @@ class Tracker:
                 "3) 🕗 Edit [P]revious log...",
                 "4) 📊 See [S]tats",
                 "5) 📂 View [A]ll logs...",
-                "6) 💾 [B]ack up logs...",
-                "7) 📥 [I]mport logs...",
-                "8) E[x]it",
+                "6) 🛠️ [O]pen settings",
+                "7) 💾 [B]ack up logs...",
+                "8) 📥 [I]mport logs...",
+                "9) E[x]it",
                 title=None
             )
             
@@ -238,17 +241,21 @@ class Tracker:
                                 invalid_choice(opts)
                                 continue
                         break
+
+                case '6' | 'o':
+                    self.settings.open_file()
                 
-                case '6' | 'b':
+                case '7' | 'b':
                     if self.json.no_logs():
                         err("You haven't entered any logs yet!")
                         continue
                     self.json.backup_json_file()
                     
-                case '7' | 'i':
+                case '8' | 'i':
                     self.json.import_logs()
+                    cont_on_enter()
                 
-                case '8' | 'x':
+                case '9' | 'x':
                     print("\n*⎋* —————————————————————————————— *⎋*")
                     print("\nBye!")
                     raise SystemExit()
