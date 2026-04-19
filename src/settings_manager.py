@@ -28,13 +28,13 @@ class SettingsManager:
                 result = subprocess.call(['open', self.settings_path])
                 if result != 0:
                     raise RuntimeError(
-                        f"`open` exited with status code {result}."
+                        f"`open` exited with status code {result}"
                     )
             elif sys.platform.startswith('linux'):
                 result = subprocess.call(['xdg-open', self.settings_path])
                 if result != 0:
                     raise RuntimeError(
-                        f"`xdg-open` exited with status code {result}."
+                        f"`xdg-open` exited with status code {result}"
                     )
             else:
                 print("\nYou will have to open the file manually. "
