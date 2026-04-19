@@ -39,7 +39,7 @@ if __name__ == '__main__':
             sys.exit()
     except Exception:
         print("\n*!* —————————————————————————————— *!*")
-        print(Txt("\n❌ Error!").bold().red())
+        print("\n❌ Error!")
         print("An unexpected error occurred...")
         traceback.print_exc()
         sys.exit(1)

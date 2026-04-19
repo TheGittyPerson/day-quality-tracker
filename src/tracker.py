@@ -253,6 +253,7 @@ class Tracker:
                     
                 case '8' | 'i':
                     self.json.import_logs()
+                    cont_on_enter()
                 
                 case '9' | 'x':
                     print("\n*⎋* —————————————————————————————— *⎋*")

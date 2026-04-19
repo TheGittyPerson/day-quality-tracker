@@ -3,7 +3,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-from ui_utils import err
+from src.ui_utils import err
 
 
 class SettingsManager:
@@ -50,6 +50,6 @@ class SettingsManager:
             print(exc)
             return
 
-        print(f"File opened in a new window.")
+        print(f"\nFile opened in a new window.")
         print("Remember to save changes before closing the file!")
         print("(Rerun the program for changes to take effect)")
