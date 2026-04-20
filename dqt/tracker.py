@@ -244,6 +244,7 @@ class Tracker:
 
                 case '6' | 'o':
                     self.settings.open_file()
+                    cont_on_enter()
 
                 case '7' | 'b':
                     if self.json.no_logs():
