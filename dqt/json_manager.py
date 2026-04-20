@@ -7,8 +7,8 @@ from pathlib import Path
 from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
-from src.ui_utils import confirm, cont_on_enter, err, log_saved, print_wrapped
-from src.styletext import StyleText as Txt
+from dqt.ui_utils import confirm, cont_on_enter, err, log_saved, print_wrapped
+from dqt.styletext import StyleText as Txt
 
 if TYPE_CHECKING:
     from tracker import Tracker
@@ -24,7 +24,7 @@ _UNSET = UnsetType()
 _today: datetime = datetime.today()
 
 
-class DQTJSON:
+class JSONManager:
     """A class to manage Day Quality Tracker JSON contents handling."""
     
     def __init__(self, dqt: Tracker):
@@ -32,12 +32,12 @@ class DQTJSON:
         self.dqt: Tracker = dqt
         
         self.filedirname: str = 'data'
-        self.rootdir: Path = Path(__file__).resolve().parent.parent
-        self.filedirpath: Path = self.rootdir / self.filedirname
+        rootdir: Path = Path(__file__).resolve().parent.parent
+        self.filedirpath: Path = rootdir / self.filedirname
         self.filename: str = 'dq_logs.json'
         self.filepath: Path = self.filedirpath / self.filename
         self._filename_pre5: str = 'dq_ratings.json'
-        self._filepath_pre5: Path = self.rootdir / self._filename_pre5
+        self._filepath_pre5: Path = rootdir / self._filename_pre5
         
         self.rating_kyname: str = 'rating'
         self.memory_kyname: str = 'memory'
@@ -194,12 +194,12 @@ class DQTJSON:
         """Open the JSON file in the default system application."""
         print("\nOpening JSON file...")
         
-        if sys.platform == "win32":
+        if sys.platform == 'win32':
             os.startfile(self.filepath)  # Windows
-        elif sys.platform == "darwin":
-            subprocess.call(["open", self.filepath])  # macOS
-        elif sys.platform.startswith("linux"):
-            subprocess.call(["xdg-open", self.filepath])  # Linux
+        elif sys.platform == 'darwin':
+            subprocess.call(['open', self.filepath])  # macOS
+        elif sys.platform.startswith('linux'):
+            subprocess.call(['xdg-open', self.filepath])  # Linux
         else:
             print("\nYou will have to open the file manually. "
                   f"\nPath: {self.filepath}")

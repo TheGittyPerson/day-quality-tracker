@@ -1,67 +1,123 @@
-# Day Quality Tracker 5 <sub><sup>(v1.1.0)</sup></sub>
+# Day Quality Tracker 5 <sub><sup>(v1.2.0)</sup></sub>
 
 Day Quality Tracker (DQT) is a simple Python CLI that helps you record and track
 daily “day quality” ratings and visualize them over time using the 
 `matplotlib.pyplot` module.
 
-It is designed to be lightweight, flexible, and reflective — combining numeric 
-ratings with short memory entries so you can track both trends and moments.
+> By _[Morpheus][profile]_
 
-> By _[Morpheus](https://github.com/TheGittyPerson)_
+---
+
+## Pre-installation Requirements
+
+- Python 3.12 or later
+- An internet connection (only for dependency installation)
+
+---
+
+## Quick Start
+
+If you want the shortest path to running DQT:
+
+1. Download and unzip the project from the latest release
+2. Open a terminal in the project folder
+3. Install dependencies with `python -m pip install -r requirements.txt`
+4. Start the program with `python -m dqt`
 
 ---
 
 ## Installation
 
-On the [GitHub page](https://github.com/TheGittyPerson/day-quality-tracker):
-* Scroll down on the right column
-* Under
-  "[Releases](https://github.com/TheGittyPerson/day-quality-tracker/releases)", 
-  select the option labeled "Latest"
-* Scroll down to "Assets"
-* Click on "Source code (zip)" (recommended for basic installation)
-* Unzip the ZIP file on your machine.
+On the [GitHub page][repo]:
+- Scroll down on the right column
+- Under "[Releases][releases]", select the option labeled "Latest"
+- Scroll down to "Assets"
+- Click on "Source code (zip)" (recommended for basic installation)
+- Unzip the ZIP file on your machine to produce a new folder.
+
+---
+
+## Notes
+
+Before running any commands from this guide in your terminal, ensure your
+terminal is running from the correct directory. You can open a terminal window
+from the new dqt folder:
+
+- macOS:
+  1. Open the folder in finder
+  2. Right-click the folder and select **"New Terminal at folder"**
+- Windows (10/11):
+  1. Click on the address bar in File Explorer (or press Alt + D), type `cmd` 
+     or `powershell`, and **press Enter**. To use the Windows Terminal app, 
+     **type `wt` instead**.
+  2. **Hold the Shift key and right-click** on an empty space inside the folder
+     or on the folder icon itself. Select "Open PowerShell window here" or 
+     "Open Command Prompt here".
+  - Windows 11 Context Menu: 
+    - **Right-click an empty space** in the folder and select "Open in Terminal" 
+      directly from the context menu.
+
+Alternatively:
+1. Open a new Terminal window
+2. Run `cd path/to/day_quality_tracker`
+   - Replace `path/to/day_quality_tracker` with the actual path to the DQT 
+     folder
+
+If the command `python` does not work on your system, try `python3` (common on 
+macOS/Linux) or `py` (common on Windows).
+
+## Installing Dependencies
+
+Then, from the project directory, install the required dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Alternatively, run `scripts/package_installer.py` to install everything listed
+in `requirements.txt` for you:
+
+```bash
+python scripts/package_installer.py
+```
+
+After the dependencies are installed, you can [start DQT](#how-to-use).
 
 ---
 
 ## How to use
 
-Before using the program, ensure you have a Python interpreter installed on your
-system **(version 3.12+ required)**.
+To start the program from the project directory, run:
 
-To start the program, **run `main.py`**, or initialize and run the tracker 
-manually:
+```bash
+python -m dqt
+```
+
+You can also initialize and run the tracker manually by opening and running 
+`dqt/__main__.py` with an editor.
 
 ```python
-from src.tracker import Tracker
+from dqt.tracker import Tracker
 
 dqt = Tracker()
 dqt.run()
 ```
 
-To set a configuration manually:
+### What happens on first run
 
-```python
-# Example:
-from src.tracker import Tracker
+On the first run, DQT will create its logs file automatically if it does not
+already exist.
 
-dqt = Tracker()
-dqt.configure(
-  enable_ansi=False,
-)
-dqt.run()
-```
+- If the `data/` directory does not exist yet, DQT will create it.
+- Your logs are stored in `data/dq_logs.json`
 
-Or use `settings.py`:
+You usually do not need to create this file manually.
 
-```python
-from src.tracker import Tracker
-from settings import CONFIGS
+### Useful files
 
-dqt = Tracker()
-dqt.configure(*CONFIGS['tracker'])
-dqt.run()
-```
+- `dqt/settings.py`: user-editable configuration file
+- `data/dq_logs.json`: where your ratings and memory entries are stored
+- `requirements.txt`: Python dependencies needed by the app
 
 ---
 
@@ -94,6 +150,7 @@ After entering your log for the day, you have a number of options:
 
 Visually display your ratings on a line graph.
 The graph also shows your average, highest, and lowest ratings.
+When the graph window opens, close it to return to the program.
 
 #### Edit today's log
 
@@ -119,6 +176,11 @@ and more.
 Choose either to:
 * Print logs as standard output
 * Open the file with your system's default application
+
+#### Open settings
+
+Open `dqt/settings.py` to customize your experience. See more 
+[below](#custom-configurations).
 
 #### Back up logs
 
@@ -154,9 +216,11 @@ entry.
 
 ### Custom Configurations
 
-To configure and customize DQT, open `settings.py`. Each configuration comes 
-with a description, and to change a setting, simply change the value after the 
-colon.
+To configure and customize DQT, open `dqt/settings.py` (the main menu provides
+an option to do this).
+
+Each configuration comes with a description, and to change a setting, simply 
+change the value after the colon.
 
 For example, to set the earliest hour of day a log entry is accepted to 
 **10:00 PM**:
@@ -166,6 +230,9 @@ CONFIGS: dict[str, dict[str, ...]] = {
     'tracker': {
         'min_time': 22,  # Earliest hour of day a log entry is accepted...
 ```
+
+**Remember to save any changes made** and rerun the program for changes to take
+effect.
 
 Feel free to experiment with each setting to tune DQT to your preferences.
 
@@ -177,5 +244,9 @@ This project is licensed under the MIT License.
 
 ---
 
-Like my project? 
-[Drop me a star](https://github.com/TheGittyPerson/day-quality-tracker)!
+Like my project? [Drop me a star][repo]!
+
+
+[profile]: https://github.com/TheGittyPerson
+[repo]: https://github.com/TheGittyPerson/day-quality-tracker
+[releases]: https://github.com/TheGittyPerson/day-quality-tracker/releases

@@ -1,40 +1,14 @@
-import sys
 import math
-from subprocess import check_call
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from types import NoneType
 
-from src.dqt_json import DQTJSON
-from src.ui_utils import err, confirm
+from dqt.json_manager import JSONManager
 
-try:
-    import matplotlib.pyplot as plt
-except ModuleNotFoundError:
-    print("\nThe python package 'matplotlib' is required before running.")
-
-    if not confirm("Install now?"):
-        raise SystemExit()
-
-    check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
-    check_call([sys.executable, "-m", "pip", "install", "matplotlib"])
-
-    print("\nInstallation complete!")
-
-    try:
-        import matplotlib.pyplot as plt
-    except ModuleNotFoundError:
-        err(
-            "Matplotlib was installed, but could not be imported.",
-            "Please restart the program."
-        )
-        raise SystemExit()
-
-    print("Resuming program...\n")
-
+import matplotlib.pyplot as plt
 
 if TYPE_CHECKING:
-    from src.tracker import Tracker
+    from dqt.tracker import Tracker
 
 
 class Graph:
@@ -79,7 +53,7 @@ class Graph:
         """Get required DQT attributes and initialize graph settings."""
         # DayQualityTracker attributes
         self.dqt: Tracker = dqt
-        self.json: DQTJSON = dqt.json
+        self.json: JSONManager = dqt.json
         
         # Graph settings
         self.graph_show_block: bool = True

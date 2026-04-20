@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "day-quality-tracker"
+version = "1.2.0"
+description = "A CLI for tracking daily day quality ratings."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE.txt" }
+authors = [
+    { name = "Morpheus" }
+]
+dynamic = ["dependencies"]
+
+[project.urls]
+Homepage = "https://github.com/TheGittyPerson/day-quality-tracker"
+Repository = "https://github.com/TheGittyPerson/day-quality-tracker"
+
+[tool.setuptools]
+packages = ["dqt"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
