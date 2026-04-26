@@ -421,9 +421,10 @@ class JSONManager:
                 )
         
         if not confirm(
-                "The logs in your current JSON file will be overwritten. This "
-                "may be difficult or impossible to undo (consider backing up "
-                "your current JSON file first). Are you sure?",
+            "The logs in your current JSON file will be overwritten. This "
+            "may be difficult or impossible to undo (consider backing up "
+            "your current JSON file first, unless you are sure that it is "
+            "empty). Are you sure?",
         ):
             return
         
