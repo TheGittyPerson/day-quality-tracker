@@ -15,8 +15,8 @@ document for you).
 
 ## 📝 Table of Contents
 
-- [✨ Contributions You Can Make](#contributions-you-can-make)
-- [📐 Requirements](#requirements)
+- [✨ Contributions You Can Make](#-contributions-you-can-make)
+- [📐 Requirements](#-requirements)
 - [🚦 Opening Issues](#-opening-issues)
   - [🐛 Reporting Bugs](#-reporting-bugs)
   - [☝️ Suggesting Features](#-suggesting-features)
@@ -173,11 +173,12 @@ Key things to keep in mind include:
 
 —————————————————————————————————————————————————————————————————————
 
-> `2.` Always assume the user is stupid
+> `2.` Always assume the user doesn't know what they're doing
 
 Special cases (almost) always exist. Make sure you take into account as many 
 input possibilities as you can, even those that anyone in their right mind 
-would never think of.
+would never think of. Ensure that you any documentation is written clearly and
+avoid _too_ much jargon or unnecessarily complicated language
 
 —————————————————————————————————————————————————————————————————————
 
