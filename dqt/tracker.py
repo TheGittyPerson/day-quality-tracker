@@ -105,7 +105,7 @@ class Tracker:
                 "3) 🕗 Edit [P]revious log...",
                 "4) 📊 See [S]tats",
                 "5) 📂 View [A]ll logs...",
-                "6) 🛠️ [O]pen settings",
+                "6) 🔧 [O]pen settings",
                 "7) 💾 [B]ack up logs...",
                 "8) 📥 [I]mport logs...",
                 "9) E[x]it",
