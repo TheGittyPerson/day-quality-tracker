@@ -49,7 +49,7 @@ class JSONManager:
         self.logs: dict = self._load_json()
     
     def update(self,
-               date: str = None,
+               date: str | None = None,
                rating: float | None | UnsetType = _UNSET,
                memory: str | UnsetType = _UNSET) -> None:
         """Dump updated logs to JSON file.
@@ -651,7 +651,7 @@ class JSONManager:
         return validated
     
     def _dump(self,
-              logs: dict[str, dict[str, float | None | str]] = None,
+              logs: dict[str, dict[str, float | None | str]] | None = None,
               prevent_empty_overwrite: bool = True) -> None:
         """Dump logs to the JSON file.
 
