@@ -39,7 +39,7 @@ class Manager:
         if self.json.no_logs():  # Ignore for first-time runs (empty dict)
             return None
         
-        last_date_str = max(self.dqt.json.logs.keys())
+        last_date_str: str = max(self.dqt.json.logs.keys())
         last_date = datetime.strptime(
             last_date_str, self.dqt.date_format
         ).date()
@@ -47,9 +47,31 @@ class Manager:
         
         if days_since_last <= 1:
             return None
-        
-        # Else:
-        print(f"\nYou haven't logged data since {last_date} (last log).")
+
+        date_to_semantic_map: dict[int, str] = {
+            2: "yesterday",
+            3: "two days ago",
+            4: "three days ago",
+            5: "four days ago",
+            6: "five days ago",
+            7: "six days ago",
+            8: "a week ago",
+            30: "a month ago",
+            60: "two months ago",
+            90: "three months ago",
+            120: "four months ago",
+            150: "five months ago",
+            180: "six months ago",
+            365: "a year ago",
+        }
+        first_missed_date = date_to_semantic_map.get(
+            days_since_last,
+            last_date + timedelta(days=1)
+        )
+        print(
+            f"\nYou haven't logged any ratings starting from "
+            f"{first_missed_date}."
+        )
         
         while True:
             opts = menu(
