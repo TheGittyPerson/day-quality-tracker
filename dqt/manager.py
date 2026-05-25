@@ -20,7 +20,7 @@ _today: datetime = datetime.today()
 
 
 class Manager:
-    """A class to manage Day Quality Tracker JSON contents handling."""
+    """A class to handle user interactions and main menu options."""
     
     def __init__(self, dqt: Tracker):
         self.dqt: Tracker = dqt
