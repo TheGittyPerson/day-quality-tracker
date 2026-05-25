@@ -39,7 +39,7 @@ class Stats:
             if log[rating_key] is not None
         ]
         
-        self._prnt_days_rated(logs, dates_to_ratings)
+        self._print_days_rated(logs, dates_to_ratings)
         
         if not dates_to_ratings:
             print("Average rating: -")
@@ -53,14 +53,14 @@ class Stats:
         
         ratings_only = [r for _, r in dates_to_ratings]
         
-        self._prnt_avg_rat(ratings_only)
-        self._prnt_hghst_lwst_rat(ratings_only, dates_to_ratings)
-        self._prnt_rats_dstrb(dates_to_ratings)
-        self._prnt_weekdays_rnked(dates_to_ratings)
+        self._print_avg_rating(ratings_only)
+        self._print_highest_and_lowest_ratings(ratings_only, dates_to_ratings)
+        self._print_rating_distribution(dates_to_ratings)
+        self._print_weekdays_ranked(dates_to_ratings)
     
     @staticmethod
-    def _prnt_days_rated(logs: dict[str, dict[str, float | None | str]],
-                         dates_to_ratings: list[tuple[str, float]]) -> None:
+    def _print_days_rated(logs: dict[str, dict[str, float | None | str]],
+                          dates_to_ratings: list[tuple[str, float]]) -> None:
         """Print the number of days rated."""
         days_total = len(logs)
         days_rated = len(dates_to_ratings)
@@ -72,8 +72,10 @@ class Stats:
         
         print(output)
         
-    def _prnt_rats_dstrb(self,
-                         dates_to_ratings: list[tuple[str, float]]) -> None:
+    def _print_rating_distribution(
+            self,
+            dates_to_ratings: list[tuple[str, float]]
+    ) -> None:
         """Print the distribution of ratings.
         
         Show number of ratings over, at, and under the neutral rating.
@@ -94,7 +96,7 @@ class Stats:
         print(Txt(f"Days rated at {neutral_rat}: {at}").bold())
         print(Txt(f"Days rated under {neutral_rat}: {under}").bold())
     
-    def _prnt_avg_rat(self, ratings_only: list[float]) -> None:
+    def _print_avg_rating(self, ratings_only: list[float]) -> None:
         """Print average rating for each day of the week."""
         avg = round(
             sum(ratings_only) / len(ratings_only),
@@ -103,9 +105,11 @@ class Stats:
         print(f"{Txt("Average rating:").bold()} "
               f"{Txt(f"{avg:g}").bold()}/{self.dqt.max_rating}")
     
-    def _prnt_hghst_lwst_rat(self,
-                             ratings_only: list[float],
-                             dates_to_ratings: list[tuple[str, float]]) -> None:
+    def _print_highest_and_lowest_ratings(
+            self,
+            ratings_only: list[float],
+            dates_to_ratings: list[tuple[str, float]]
+    ) -> None:
         """Print highest and lowest ratings, and the date for each.
         
         Prints the dates of ALL days that share the highest/lowest rating.
@@ -133,8 +137,10 @@ class Stats:
             f"on {self._format_dates(lowest_dates)}"
         )
     
-    def _prnt_weekdays_rnked(self,
-                             dates_to_ratings: list[tuple[str, float]]) -> None:
+    def _print_weekdays_ranked(
+            self,
+            dates_to_ratings: list[tuple[str, float]]
+    ) -> None:
         """Print the days of the week in rank order of highest avg rating"""
         weekday_scores: dict[str, list[float]] = defaultdict(list)
         
