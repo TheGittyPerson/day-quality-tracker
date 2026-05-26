@@ -27,7 +27,7 @@ class Manager:
         self.json: JSONManager = dqt.json
         
         self.memory_edit_placeholder: str = '{}'
-        self.memory_edit_length_diff_alert_threshold: int = 100
+        self.memory_edit_length_diff_alert_threshold: int = 200
     
     def handle_missing_logs(self) -> str | None:
         """Check if any previous days are missing ratings.
