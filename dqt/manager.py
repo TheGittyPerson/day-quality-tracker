@@ -20,7 +20,7 @@ _today: datetime = datetime.today()
 
 
 class Manager:
-    """A class to manage Day Quality Tracker JSON contents handling."""
+    """A class to handle user interactions and main menu options."""
     
     def __init__(self, dqt: Tracker):
         self.dqt: Tracker = dqt
@@ -39,7 +39,7 @@ class Manager:
         if self.json.no_logs():  # Ignore for first-time runs (empty dict)
             return None
         
-        last_date_str = max(self.dqt.json.logs.keys())
+        last_date_str: str = max(self.dqt.json.logs.keys())
         last_date = datetime.strptime(
             last_date_str, self.dqt.date_format
         ).date()
@@ -47,9 +47,21 @@ class Manager:
         
         if days_since_last <= 1:
             return None
-        
-        # Else:
-        print(f"\nYou haven't logged data since {last_date} (last log).")
+
+        missing_logs_count = days_since_last - 1
+        first_missed_date = last_date + timedelta(days=1)
+        last_missed_date = _today.date() - timedelta(days=1)
+
+        first_missed_date_str = first_missed_date.strftime(self.dqt.date_format)
+        last_missed_date_str = last_missed_date.strftime(self.dqt.date_format)
+
+        if missing_logs_count == 1:
+            print(f"\nYou have 1 missing log for {first_missed_date_str}.")
+        else:
+            print(
+                f"\nYou have {missing_logs_count} missing logs: "
+                f"{first_missed_date_str} to {last_missed_date_str}."
+            )
         
         while True:
             opts = menu(

@@ -11,12 +11,10 @@ def confirm(message: str, confirm_char: str = 'y',
     Keep looping until user enters 'y' or 'n'.
     Return whether user input (lowercased) is equal to `confirm_char`.
     """
-    while True:
-        inp = input(f"\n{message} [y/n]: ").strip().lower()
-        if inp not in ['y', 'n']:
-            err(err_msg)
-            continue
-        break
+    while (
+            inp := input(f"\n{message} [y/n]: ").strip().lower()
+    ) not in ['y', 'n']:
+        err(err_msg)
     return inp == confirm_char.lower()
 
 
