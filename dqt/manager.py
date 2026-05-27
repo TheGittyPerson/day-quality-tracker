@@ -358,7 +358,7 @@ class Manager:
             
             if raw == '-':
                 if confirm(
-                    "Are you sure you want to enter an empty (null) rating?"
+                    "Are you sure you want to save an empty (null) rating?"
                 ):
                     return None
                 continue
@@ -388,7 +388,7 @@ class Manager:
             
             if not tdys_mem:
                 if confirm(
-                    "Are you sure you want to enter an empty memory entry?"
+                    "Are you sure you want to save an empty memory entry?"
                 ):
                     return tdys_mem
                 continue
