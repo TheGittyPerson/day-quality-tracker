@@ -445,7 +445,8 @@ class _MemoryEditor:
         Return:
             str: new memory entry
         """
-        self._write_initial_contents()
+        self._write_initial_contents(original_entry)
+
         while True:
             self._open_memory_edit_file()
             input(
