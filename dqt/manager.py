@@ -1,5 +1,9 @@
+import os
+import platform
+import subprocess
 from textwrap import dedent
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from dqt.json_manager import JSONManager
@@ -25,8 +29,10 @@ class Manager:
     def __init__(self, dqt: Tracker):
         self.dqt: Tracker = dqt
         self.json: JSONManager = dqt.json
-        
-        self.memory_edit_placeholder: str = '{}'
+
+        # For editing within Terminal CLI only
+        self.memory_edit_placeholder: str = '{}'  # TODO: make attrs like
+        #                                                 this cls attrs
         self.memory_edit_length_diff_alert_threshold: int = 200
     
     def handle_missing_logs(self) -> str | None:
@@ -377,7 +383,11 @@ class Manager:
     
     @staticmethod
     def _input_memory(prompt: str, newline: bool = True) -> str:
-        """Prompt user for today's memory entry."""
+        """Prompt user for today's memory entry via text editor.
+
+        Fall back to input via Terminal if file fails to open or if an error
+        occurs.
+        """
         while True:
             tdys_mem = input(
                 f"{"\n" if newline else ""}"
@@ -395,3 +405,138 @@ class Manager:
             break
         
         return tdys_mem
+
+
+class _MemoryEditor:
+    """A class to handle memory editing in the text file."""
+
+    FILEDIRNAME: str = 'data'
+    FILENAME: str = 'MEMORY_ENTRY_EDIT.txt'
+    COMMENT_CHAR: str = '#'
+    INITIAL_CONTENTS_TEMPLATE: str = (
+        " Lines beginning with '{comment_char}' will be ignored.\n"
+        " Memory entries are NOT saved in this file; this is just a "
+        "temporary editor that is cleared every time you edit or write a "
+        "new memory entry.\n"
+        " Remember to *SAVE THIS FILE* (Ctrl + S / ⌘ + S) before closing!\n"
+        " Write/edit your memory entry below this line.\n"
+        " —————————————————————————————————————————————————————————————\n"
+    )
+
+    def __init__(self, manager: Manager):
+        self.manager = manager
+
+        rootdir: Path = Path(__file__).resolve().parent.parent
+        self.memory_edit_filedirpath: Path =\
+            rootdir / self.FILEDIRNAME
+        self.memory_edit_filepath: Path =\
+            self.memory_edit_filedirpath / self.FILENAME
+
+    def start_memory_editor(self, original_entry: str | None = None) -> str:
+        """Start memory editing process.
+
+        Args:
+            original_entry (str):
+                When `original_contents` is given, it means an existing
+                entry is being edited and the string will be inserted into
+                the initial contents of the file. Otherwise, it means a new
+                entry is being created.
+
+        Return:
+            str: new memory entry
+        """
+        self._write_initial_contents()
+        while True:
+            self._open_memory_edit_file()
+            input(
+                "[Press ENTER once you are done editing and have saved the "
+                "text file]"
+            )
+            contents: list[str] = self._read_text_file()
+            comments_removed = self._remove_commented_lines(contents)
+
+            return_msg = self._check_edit_length(
+                comments_removed,
+                original_entry.splitlines()
+                if original_entry is not None else None,
+            )
+            if return_msg is None:
+                return '\n'.join(comments_removed)
+
+            if confirm(return_msg):
+                return '\n'.join(comments_removed)
+
+    def _write_initial_contents(self, entry_to_load: str | None = None):
+        """Write initial contents (comments) to file.
+
+        If editing existing entry (meaning `entry_to_load` is given),
+        that will also be inserted at the end of the file.
+        """
+        initial_contents_formatted = self._insert_comment_char(
+            self.INITIAL_CONTENTS_TEMPLATE.format(
+                comment_char=self.COMMENT_CHAR
+            ).splitlines()
+        )
+
+        with open(self.memory_edit_filepath, 'w') as f:
+            f.write(initial_contents_formatted)
+            if entry_to_load is not None:
+                f.write(entry_to_load)
+
+    def _open_memory_edit_file(self) -> None:
+        """Open memory edit file."""
+        system_name = platform.system()
+
+        if system_name == 'Windows':
+            os.startfile(self.memory_edit_filepath)
+        elif system_name == 'Darwin':  # macOS
+            subprocess.call(['open', self.memory_edit_filepath])
+        else:  # Linux / Unix
+            subprocess.call(['xdg-open', self.memory_edit_filepath])
+
+    def _insert_comment_char(self, contents: list[str]):
+        """Insert the comment character at the start of each line."""
+        return '\n'.join(
+            self.COMMENT_CHAR + line
+            for line in contents
+        )
+
+    def _read_text_file(self) -> list[str]:
+        """Read the file and return contents as a list of each line."""
+        with open(self.memory_edit_filepath, 'r') as f:
+            return f.readlines()
+
+    def _check_edit_length(
+            self,
+            contents: list[str],
+            original_contents: list[str] | None = None
+    ) -> str | None:
+        """Check the memory edit entered by the user for confirmation.
+
+        When `original_contents` is given, it means an existing entry is
+        being edited. Otherwise, it means a new entry is being created.
+
+        Return user warning if the user needs to be warned. Return None if
+        passed with no issues.
+        """
+        if not any(c.strip() for c in contents):
+            return ("Are you sure you want to save an empty memory entry? (Did "
+                    "you remember to save [Ctrl + S / ⌘ + S] your entry?)")
+
+        if original_contents is None:
+            return None
+
+        len_diff = len(''.join(original_contents)) - len(''.join(contents))
+        if len_diff > self.manager.memory_edit_length_diff_alert_threshold:
+            return (f"Your new memory entry is {len_diff} characters shorter "
+                    "than your original entry. Are you sure you've saved "
+                    "(Ctrl + S / ⌘ + S) your edit?")
+
+        return None
+
+    def _remove_commented_lines(self, contents: list[str]) -> list[str]:
+        return [
+            line
+            for line in contents
+            if not line.startswith(self.COMMENT_CHAR)
+        ]
