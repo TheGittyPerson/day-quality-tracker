@@ -547,8 +547,12 @@ class _MemoryEditor:
         return None
 
     def _remove_commented_lines(self, contents: list[str]) -> list[str]:
+        """Remove all lines starting with the comment char.
+
+        Ignore whitespace and look at first non-whitespace character.
+        """
         return [
             line
             for line in contents
-            if not line.startswith(self.COMMENT_CHAR)
+            if not line.lstrip().startswith(self.COMMENT_CHAR)
         ]
