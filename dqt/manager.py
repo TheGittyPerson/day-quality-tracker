@@ -489,6 +489,7 @@ class _MemoryEditor:
         if not initial_contents_formatted.endswith('\n'):
             initial_contents_formatted += '\n'
 
+        self.memory_edit_filedirpath.mkdir(parents=True, exist_ok=True)
         with open(self.memory_edit_filepath, 'w') as f:
             f.write(initial_contents_formatted)
             if entry_to_load is not None:
