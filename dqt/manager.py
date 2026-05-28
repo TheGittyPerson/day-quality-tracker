@@ -448,9 +448,10 @@ class _MemoryEditor:
         self._write_initial_contents(original_entry)
 
         while True:
+            print("\nOpening memory editor...")
             self._open_memory_edit_file()
             input(
-                "[Press ENTER once you are done editing and have saved the "
+                "\n[Press ENTER once you are done editing and have saved the "
                 "text file]"
             )
             contents: list[str] = self._read_text_file()
@@ -473,8 +474,14 @@ class _MemoryEditor:
         If editing existing entry (meaning `entry_to_load` is given),
         that will also be inserted at the end of the file.
         """
+        initial_contents = (
+            " *CREATING NEW ENTRY*\n \n"
+            if entry_to_load is None
+            else " *EDITING PREVIOUS ENTRY*\n \n"
+        ) + self.INITIAL_CONTENTS_TEMPLATE
+
         initial_contents_formatted: str = self._insert_comment_char(
-            self.INITIAL_CONTENTS_TEMPLATE.format(
+            initial_contents.format(
                 comment_char=self.COMMENT_CHAR
             ).splitlines()
         )
