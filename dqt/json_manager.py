@@ -304,7 +304,9 @@ class JSONManager:
         while True:
             base = home_dir if from_home_dir else Path('/')
             if from_home_dir:
-                dirpath = base / input(f"\n{prompt}: \n{base}").lstrip('/')
+                dirpath = base / input(
+                    f"\n{prompt}: \n{base}"
+                ).lstrip('/').strip()
             else:
                 dirpath = Path(input(f"\n{prompt}: \n{base}"))
             if not dirpath.is_dir():
