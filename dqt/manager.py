@@ -473,11 +473,14 @@ class _MemoryEditor:
         If editing existing entry (meaning `entry_to_load` is given),
         that will also be inserted at the end of the file.
         """
-        initial_contents_formatted = self._insert_comment_char(
+        initial_contents_formatted: str = self._insert_comment_char(
             self.INITIAL_CONTENTS_TEMPLATE.format(
                 comment_char=self.COMMENT_CHAR
             ).splitlines()
         )
+
+        if not initial_contents_formatted.endswith('\n'):
+            initial_contents_formatted += '\n'
 
         with open(self.memory_edit_filepath, 'w') as f:
             f.write(initial_contents_formatted)
