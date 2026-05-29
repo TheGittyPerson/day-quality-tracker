@@ -472,8 +472,8 @@ class _MemoryEditor:
         "temporary editor that is cleared every time you edit or write a "
         "new memory entry.\n"
         " Remember to *SAVE THIS FILE* (Ctrl + S / ⌘ + S) before closing!\n"
-        " Write/edit your memory entry below this line.\n"
-        " —————————————————————————————————————————————————————————————\n"
+        " Write/edit your memory entry below this line.\n \n"
+        " —————————————————————————————————————————————————————————————\n \n"
     )
 
     def __init__(self, manager: Manager):
@@ -547,8 +547,11 @@ class _MemoryEditor:
             ).splitlines()
         )
 
-        if not initial_contents_formatted.endswith('\n'):
-            initial_contents_formatted += '\n'
+        print(initial_contents_formatted.__repr__())
+        if not initial_contents_formatted.endswith('\n\n'):
+            initial_contents_formatted =\
+                initial_contents_formatted.rstrip('\n') + '\n\n'
+        print(initial_contents_formatted.__repr__())
 
         self.memory_edit_filedirpath.mkdir(parents=True, exist_ok=True)
         with open(self.memory_edit_filepath, 'w', encoding='utf-8',
