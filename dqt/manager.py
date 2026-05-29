@@ -463,10 +463,10 @@ class _MemoryEditor:
                 if original_entry is not None else None,
             )
             if return_msg is None:
-                return '\n'.join(comments_removed)
+                return ''.join(comments_removed).strip()
 
             if confirm(return_msg):
-                return '\n'.join(comments_removed)
+                return ''.join(comments_removed).strip()
 
     def _write_initial_contents(self, entry_to_load: str | None = None):
         """Write initial contents (comments) to file.
