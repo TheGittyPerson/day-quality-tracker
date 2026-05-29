@@ -1,7 +1,6 @@
 import os
 import platform
 import subprocess
-from textwrap import dedent
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -29,6 +28,7 @@ class Manager:
     def __init__(self, dqt: Tracker):
         self.dqt: Tracker = dqt
         self.json: JSONManager = dqt.json
+        self.mem_editor = _MemoryEditor(self)
 
         # For editing within Terminal CLI only
         self.memory_edit_placeholder: str = '{}'  # TODO: make attrs like
@@ -159,7 +159,7 @@ class Manager:
             
             tdys_memory = self._input_memory(
                 f"Enter a memory entry; write a few sentences about your "
-                f"day. \nLeave this blank to skip: "
+                f"day. \nLeave this blank to skip."
             )
             
             if not tdys_memory:
@@ -280,21 +280,11 @@ class Manager:
     def _change_memory_for_date(self, date: str) -> None:
         """Prompt the user to update a memory entry for a date and save it."""
         original_mem = self.json.logs[date][self.json.memory_kyname]
-        placeholder = self.memory_edit_placeholder
-        
-        raw = self._input_memory(dedent(f"""
-            Enter new memory entry for {date}.
 
-            To insert your original memory entry into your edit,
-            use '{placeholder}'.
-
-            Examples:
-              → {placeholder} This is a new sentence.
-              → This is a new sentence. {placeholder}
-              → This is new. {placeholder} More text.
-
-            (Only the first '{placeholder}' will be replaced.)
-        """), False)
+        raw = self._input_memory(
+            f"Enter new memory entry for {date}.",
+            terminal_newline=False
+        )
         
         new_memory = self._confirm_memory_edit(raw, original_mem, date)
         self.json.update(date=date, memory=new_memory)
@@ -316,7 +306,7 @@ class Manager:
                         "The original memory entry was empty. Are you sure?"
                 ):
                     raw = self._input_memory(
-                        f"Enter new memory entry for {date}"
+                        f"Enter new memory entry for {date}."
                     )
                     continue
             
@@ -338,9 +328,7 @@ class Manager:
             if confirm("\nConfirm?"):
                 break
             
-            raw = self._input_memory(
-                f"Enter new memory entry for {date}"
-            )
+            raw = self._input_memory(f"Enter new memory entry for {date}")
         return new_memory
     
     def _resolve_memory_edit(self, mem_input: str, original_mem: str) -> str:
@@ -380,12 +368,86 @@ class Manager:
                 continue
             
             return round(value, self.dqt.rating_inp_dp)
-    
-    @staticmethod
-    def _input_memory(prompt: str, newline: bool = True) -> str:
+
+    def _input_memory(self,
+                      prompt: str,
+                      original_mem: str | None = None,
+                      terminal_newline: bool = True) -> str:
         """Prompt user for today's memory entry via text editor.
 
+        Args:
+            prompt (str):
+                Prompt shown at start of temp editor text file.
+                If using Terminal fallback, shown as printed prompt.
+            original_mem (str. optional):
+                If the user is to write a new memory entry, this should be
+                `None`. Otherwise, if a `str` is given, it means the user is
+                editing an existing entry.
+            terminal_newline (bool, optional):
+                Applies to terminal fallback only. Determines whether to
+                print the prompt between two blank lines.
+
         Fall back to input via Terminal if file fails to open or if an error
+        occurs.
+        """
+        try:
+            return self.mem_editor.start_memory_editor(prompt, original_mem)
+        except PermissionError as e:
+            lineno = e.__traceback__.tb_lineno if e.__traceback__ else '-'
+            err(
+                "An error occurred while trying to create or write to the "
+                "memory edit text file.",
+                f"\n{e.__repr__()} (line {lineno})"
+            )
+        except UnicodeError as e:
+            lineno = e.__traceback__.tb_lineno if e.__traceback__ else '-'
+            err(
+                "An error occurred while trying to read or write to the "
+                "memory edit text file",
+                f"\n{e.__repr__()} (line {lineno})"
+            )
+        except subprocess.SubprocessError as e:
+            lineno = e.__traceback__.tb_lineno if e.__traceback__ else '-'
+            err(
+                "An error occurred while trying to open the text editor "
+                "application.",
+                f"\n{e.__repr__()} (line {lineno})"
+            )
+        except Exception as e:
+            lineno = e.__traceback__.tb_lineno if e.__traceback__ else '-'
+            err(
+                "An unexpected error occurred while trying to open, write to, "
+                "or read from the memory edit text file",
+                f"\n{e.__repr__()} (line {lineno})"
+            )
+
+        print(f"\nIf you've made changes to the file, {Txt("DO NOT").bold()} "
+              f"close your text editor yet. Copy and paste any text you want "
+              f"to save to a safe place.")
+
+        while True:
+            opts = menu(
+                "1) Try starting the editor again -> Main menu",
+                "2) Enter your memory entry here in the CLI instead",
+                title="Choose what to do next: "
+            )
+            choice = input("> ").strip()
+
+            match choice:
+                case '1':  # TODO: Remove recursion later when menu() fixed
+                    return self._input_memory(
+                        prompt, original_mem, terminal_newline
+                    )
+                case '2':
+                    return self._input_memory_terminal(prompt, terminal_newline)
+                case _:
+                    invalid_choice(opts)
+
+    @staticmethod
+    def _input_memory_terminal(prompt: str, newline: bool = True) -> str:
+        """Prompt user for today's memory entry via CLI (terminal).
+
+        Fall back to input via terminal if file fails to open or if an error
         occurs.
         """
         while True:
