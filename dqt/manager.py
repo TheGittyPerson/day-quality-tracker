@@ -459,7 +459,7 @@ class _MemoryEditor:
 
             return_msg = self._check_edit_length(
                 comments_removed,
-                original_entry.splitlines()
+                original_entry.splitlines(keepends=True)
                 if original_entry is not None else None,
             )
             if return_msg is None:
