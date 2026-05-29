@@ -490,7 +490,8 @@ class _MemoryEditor:
             initial_contents_formatted += '\n'
 
         self.memory_edit_filedirpath.mkdir(parents=True, exist_ok=True)
-        with open(self.memory_edit_filepath, 'w') as f:
+        with open(self.memory_edit_filepath, 'w', encoding='utf-8',
+                  newline='\n') as f:
             f.write(initial_contents_formatted)
             if entry_to_load is not None:
                 f.write(entry_to_load)
@@ -515,7 +516,7 @@ class _MemoryEditor:
 
     def _read_text_file(self) -> list[str]:
         """Read the file and return contents as a list of each line."""
-        with open(self.memory_edit_filepath, 'r') as f:
+        with open(self.memory_edit_filepath, 'r', encoding='utf-8') as f:
             return f.readlines()
 
     def _check_edit_length(
