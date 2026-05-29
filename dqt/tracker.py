@@ -6,7 +6,7 @@ from dqt.manager import Manager
 from dqt.graph import Graph
 from dqt.stats import Stats
 from dqt.settings_manager import SettingsManager
-from dqt.ui_utils import cont_on_enter, err, invalid_choice, menu
+from dqt.ui_utils import cont_on_enter, err, menu
 from dqt.styletext import StyleText as Txt
 
 _today: datetime = datetime.today()
@@ -99,7 +99,8 @@ class Tracker:
                 f"🏠 {Txt("MAIN MENU").blue().underline().bold()} "
                 f"{Txt("— choose what to do:").bold()}"
             )
-            opts = menu(
+
+            match menu(
                 "1) 📈 View ratings [G]raph",
                 "2) 📝 Edit [T]oday's log...",
                 "3) 🕗 Edit [P]revious log...",
@@ -109,10 +110,8 @@ class Tracker:
                 "7) 💾 [B]ack up logs...",
                 "8) 📥 [I]mport logs...",
                 "9) E[x]it",
-                title=None
-            )
-            
-            match input("> ").lower().strip():
+                prompt=None
+            ):
                 case '1' | 'g':
                     if self.json.no_logs():
                         err("You haven't entered any logs yet!")
@@ -136,30 +135,23 @@ class Tracker:
                         rating=self.json.get_rating(today),
                         memory=self.json.get_memory(today),
                     )
-                    
-                    while True:
-                        opts = menu(
-                            "1) Edit [R]ating",
-                            "2) Edit [M]emory entry",
-                            "3) Edit [B]oth",
-                            "4) [C]ancel -> Main menu",
-                        )
-                        
-                        match input("> ").strip().lower():
-                            case '1' | 'r':
-                                self.manager.change_todays_rating()
-                            case '2' | 'm':
-                                self.manager.change_todays_memory()
-                            case '3' | 'b':
-                                self.manager.change_todays_rating()
-                                self.manager.change_todays_memory()
-                            case '4' | 'c':
-                                break
-                            case _:
-                                invalid_choice(opts)
-                                continue
-                        break
-                
+
+                    match menu(
+                        "1) Edit [R]ating",
+                        "2) Edit [M]emory entry",
+                        "3) Edit [B]oth",
+                        "4) [C]ancel -> Main menu",
+                    ):
+                        case '1' | 'r':
+                            self.manager.change_todays_rating()
+                        case '2' | 'm':
+                            self.manager.change_todays_memory()
+                        case '3' | 'b':
+                            self.manager.change_todays_rating()
+                            self.manager.change_todays_memory()
+                        case '4' | 'c':
+                            continue
+
                 case '3' | 'p':
                     if self.json.no_logs():
                         err("You haven't entered any logs yet!")
@@ -177,70 +169,50 @@ class Tracker:
                             memory=self.json.get_memory(selected_d),
                         )
                         
-                        while True:
-                            opts = menu(
-                                "1) Edit [R]ating",
-                                "2) Edit [M]emory entry",
-                                "3) Edit [B]oth",
-                                "4) Reselect [D]ate",
-                                "5) [C]ancel -> Main menu",
-                            )
-                            
-                            choice = input("> ").strip().lower()
-                            match choice:
-                                case '1' | 'r':
-                                    self.manager.change_previous_rating(
-                                        selected_d
-                                    )
-                                case '2' | 'm':
-                                    self.manager.change_previous_memory(
-                                        selected_d
-                                    )
-                                case '3' | 'b':
-                                    self.manager.change_previous_rating(
-                                        selected_d
-                                    )
-                                    self.manager.change_previous_memory(
-                                        selected_d
-                                    )
-                                case '4' | 'd':
-                                    break
-                                case '5' | 'c':
-                                    break
-                                case _:
-                                    invalid_choice(opts)
-                                    continue
-                            break
-                        
-                        if choice in ['4', 'd']:
-                            continue
-                        break
+                        match menu(
+                            "1) Edit [R]ating",
+                            "2) Edit [M]emory entry",
+                            "3) Edit [B]oth",
+                            "4) Reselect [D]ate",
+                            "5) [C]ancel -> Main menu",
+                        ):
+                            case '1' | 'r':
+                                self.manager.change_previous_rating(
+                                    selected_d
+                                )
+                            case '2' | 'm':
+                                self.manager.change_previous_memory(
+                                    selected_d
+                                )
+                            case '3' | 'b':
+                                self.manager.change_previous_rating(
+                                    selected_d
+                                )
+                                self.manager.change_previous_memory(
+                                    selected_d
+                                )
+                            case '4' | 'd':
+                                continue
+                            case '5' | 'c':
+                                break
                 
                 case '4' | 's':
                     self.stats.show_stats()
                     cont_on_enter()
                 
                 case '5' | 'a':
-                    while True:
-                        opts = menu(
-                            "1) [P]rint logs to standard output",
-                            "2) [O]pen JSON file in default viewer/editor",
-                            "3) [C]ancel -> Main menu",
-                        )
-                        
-                        choice = input("> ").strip().lower()
-                        match choice:
-                            case '1' | 'p':
-                                self.json.print_logs_to_stdout()
-                            case '2' | 'o':
-                                self.json.open_json_file()
-                                cont_on_enter()
-                            case '3' | 'c':
-                                break
-                            case _:
-                                invalid_choice(opts)
-                                continue
-                        break
+                    match menu(
+                        "1) [P]rint logs to standard output",
+                        "2) [O]pen JSON file in default viewer/editor",
+                        "3) [C]ancel -> Main menu",
+                    ):
+                        case '1' | 'p':
+                            self.json.print_logs_to_stdout()
+                        case '2' | 'o':
+                            self.json.open_json_file()
+                            cont_on_enter()
+                        case '3' | 'c':
+                            continue
 
                 case '6' | 'o':
                     self.settings.open_file()
@@ -261,9 +233,6 @@ class Tracker:
                     print("\n*⎋* —————————————————————————————— *⎋*")
                     print("\nBye!")
                     raise SystemExit()
-                
-                case _:
-                    invalid_choice(opts)
     
     def configure(self, **configs: int | str | bool | None) -> None:
         """Update configuration options via keyword arguments.
