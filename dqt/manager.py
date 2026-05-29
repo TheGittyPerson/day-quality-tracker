@@ -580,9 +580,9 @@ class _MemoryEditor:
         if system_name == 'Windows':
             os.startfile(self.memory_edit_filepath)
         elif system_name == 'Darwin':  # macOS
-            subprocess.call(['open', self.memory_edit_filepath])
+            subprocess.run(['open', self.memory_edit_filepath], check=True)
         else:  # Linux / Unix
-            subprocess.call(['xdg-open', self.memory_edit_filepath])
+            subprocess.run(['xdg-open', self.memory_edit_filepath], check=True)
 
     def _insert_comment_char(self, contents: list[str]) -> str:
         """Insert the comment character at the start of each line."""
