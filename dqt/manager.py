@@ -432,10 +432,14 @@ class _MemoryEditor:
         self.memory_edit_filepath: Path =\
             self.memory_edit_filedirpath / self.FILENAME
 
-    def start_memory_editor(self, original_entry: str | None = None) -> str:
+    def start_memory_editor(self,
+                            prompt: str,
+                            original_entry: str | None = None) -> str:
         """Start memory editing process.
 
         Args:
+            prompt (str):
+                prompt inserted to top of file as comment
             original_entry (str):
                 When `original_contents` is given, it means an existing
                 entry is being edited and the string will be inserted into
@@ -445,7 +449,7 @@ class _MemoryEditor:
         Return:
             str: new memory entry
         """
-        self._write_initial_contents(original_entry)
+        self._write_initial_contents(prompt, original_entry)
 
         while True:
             print("\nOpening memory editor...")
@@ -468,16 +472,20 @@ class _MemoryEditor:
             if confirm(return_msg):
                 return ''.join(comments_removed).strip()
 
-    def _write_initial_contents(self, entry_to_load: str | None = None):
+    def _write_initial_contents(self,
+                                prompt: str,
+                                entry_to_load: str | None = None) -> None:
         """Write initial contents (comments) to file.
+
+        Args:
+            prompt (str): Write at the start of file as comment
+            entry_to_load (str, optional): Write to end of file
 
         If editing existing entry (meaning `entry_to_load` is given),
         that will also be inserted at the end of the file.
         """
         initial_contents = (
-            " *CREATING NEW ENTRY*\n \n"
-            if entry_to_load is None
-            else " *EDITING PREVIOUS ENTRY*\n \n"
+            f" {prompt}\n \n"
         ) + self.INITIAL_CONTENTS_TEMPLATE
 
         initial_contents_formatted: str = self._insert_comment_char(
@@ -507,7 +515,7 @@ class _MemoryEditor:
         else:  # Linux / Unix
             subprocess.call(['xdg-open', self.memory_edit_filepath])
 
-    def _insert_comment_char(self, contents: list[str]):
+    def _insert_comment_char(self, contents: list[str]) -> str:
         """Insert the comment character at the start of each line."""
         return '\n'.join(
             self.COMMENT_CHAR + line
