@@ -1,6 +1,7 @@
 import os
 import platform
 import subprocess
+import traceback
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -399,28 +400,28 @@ class Manager:
         try:
             return self.mem_editor.start_memory_editor(prompt, original_mem)
         except PermissionError as e:
-            lineno = e.__traceback__.tb_lineno if e.__traceback__ else '-'
+            lineno = traceback.extract_tb(e.__traceback__)[-1].lineno
             err(
                 "An error occurred while trying to create or write to the "
                 "memory edit text file.",
                 f"\n{e.__repr__()} (line {lineno})"
             )
         except UnicodeError as e:
-            lineno = e.__traceback__.tb_lineno if e.__traceback__ else '-'
+            lineno = traceback.extract_tb(e.__traceback__)[-1].lineno
             err(
                 "An error occurred while trying to read or write to the "
                 "memory edit text file",
                 f"\n{e.__repr__()} (line {lineno})"
             )
         except subprocess.SubprocessError as e:
-            lineno = e.__traceback__.tb_lineno if e.__traceback__ else '-'
+            lineno = traceback.extract_tb(e.__traceback__)[-1].lineno
             err(
                 "An error occurred while trying to open the text editor "
                 "application.",
                 f"\n{e.__repr__()} (line {lineno})"
             )
         except Exception as e:
-            lineno = e.__traceback__.tb_lineno if e.__traceback__ else '-'
+            lineno = traceback.extract_tb(e.__traceback__)[-1].lineno
             err(
                 "An unexpected error occurred while trying to open, write to, "
                 "or read from the memory edit text file",
