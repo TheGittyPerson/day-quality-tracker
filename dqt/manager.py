@@ -283,6 +283,7 @@ class Manager:
 
         raw = self._input_memory(
             f"Enter new memory entry for {date}.",
+            original_mem,
             terminal_newline=False
         )
         
@@ -306,7 +307,8 @@ class Manager:
                         "The original memory entry was empty. Are you sure?"
                 ):
                     raw = self._input_memory(
-                        f"Enter new memory entry for {date}."
+                        f"Enter new memory entry for {date}.",
+                        original
                     )
                     continue
             
@@ -318,7 +320,8 @@ class Manager:
                     "sure?"
                 ):
                     raw = self._input_memory(
-                        f"Enter new memory entry for {date}"
+                        f"Enter new memory entry for {date}",
+                        original
                     )
                     continue
             
@@ -328,7 +331,10 @@ class Manager:
             if confirm("\nConfirm?"):
                 break
             
-            raw = self._input_memory(f"Enter new memory entry for {date}")
+            raw = self._input_memory(
+                f"Enter new memory entry for {date}",
+                original
+            )
         return new_memory
     
     def _resolve_memory_edit(self, mem_input: str, original_mem: str) -> str:
