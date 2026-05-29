@@ -434,7 +434,7 @@ class Manager:
 
         while True:
             opts = menu(
-                "1) Try starting the editor again -> Main menu",
+                "1) Try starting the editor again",
                 "2) Enter your memory entry here in the CLI instead",
                 title="Choose what to do next: "
             )
