@@ -195,6 +195,7 @@ class Tracker:
                                 continue
                             case '5' | 'c':
                                 break
+                        break
                 
                 case '4' | 's':
                     self.stats.show_stats()
