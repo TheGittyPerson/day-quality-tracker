@@ -90,7 +90,7 @@ class Manager:
                         f"or '-' to skip): ",
                     )
 
-                    memory = self._input_memory(
+                    memory, _ = self._input_memory(
                         "Enter a memory entry (leave blank to skip): "
                     )
 
@@ -143,7 +143,7 @@ class Manager:
                 f"\n(enter '-' to skip): "
             )
 
-            tdys_memory = self._input_memory(
+            tdys_memory, _ = self._input_memory(
                 f"Enter a memory entry; write a few sentences about your "
                 f"day. \nLeave this blank to skip."
             )
@@ -267,17 +267,20 @@ class Manager:
         """Prompt the user to update a memory entry for a date and save it."""
         original_mem = self.json.logs[date][self.json.memory_kyname]
 
-        raw = self._input_memory(
+        raw, used_terminal = self._input_memory(
             f"Enter new memory entry for {date}.",
             original_mem,
             terminal_newline=False
         )
 
-        new_memory = self._confirm_memory_edit(raw, original_mem, date)
+        new_memory = self._confirm_memory_edit(
+            raw, original_mem, date, used_terminal
+        )
         self.json.update(date=date, memory=new_memory)
         log_saved("Memory entry updated and saved!")
 
-    def _confirm_memory_edit(self, raw: str, original: str, date: str) -> str:
+    def _confirm_memory_edit(self, raw: str, original: str, date: str,
+                             used_terminal: bool = False) -> str:
         """Validate, preview, and confirm an edited memory entry.
 
         Handles placeholder resolution, length-difference warnings, and
@@ -286,13 +289,16 @@ class Manager:
         """
 
         while True:
-            new_memory = self._resolve_memory_edit(raw, original)
+            if used_terminal:
+                new_memory = self._resolve_memory_edit(raw, original)
+            else:
+                new_memory = raw
 
             if not original.strip() and raw.strip():
                 if not confirm(
                         "The original memory entry was empty. Are you sure?"
                 ):
-                    raw = self._input_memory(
+                    raw, _ = self._input_memory(
                         f"Enter new memory entry for {date}.",
                         original
                     )
@@ -305,7 +311,7 @@ class Manager:
                     f"the original (by {len_diff} characters). Are you "
                     "sure?"
                 ):
-                    raw = self._input_memory(
+                    raw, _ = self._input_memory(
                         f"Enter new memory entry for {date}",
                         original
                     )
@@ -317,7 +323,7 @@ class Manager:
             if confirm("\nConfirm?"):
                 break
 
-            raw = self._input_memory(
+            raw, _ = self._input_memory(
                 f"Enter new memory entry for {date}",
                 original
             )
@@ -364,8 +370,11 @@ class Manager:
     def _input_memory(self,
                       prompt: str,
                       original_mem: str | None = None,
-                      terminal_newline: bool = True) -> str:
+                      terminal_newline: bool = True,) -> tuple[str, bool]:
         """Prompt user for today's memory entry via text editor.
+
+        Fall back to input via Terminal if file fails to open or if an error
+        occurs.
 
         Args:
             prompt (str):
@@ -379,11 +388,15 @@ class Manager:
                 Applies to terminal fallback only. Determines whether to
                 print the prompt between two blank lines.
 
-        Fall back to input via Terminal if file fails to open or if an error
-        occurs.
+        Returns:
+            Return a tuple of the memory entry and whether the fallback was
+            used.
         """
         try:
-            return self.mem_editor.start_memory_editor(prompt, original_mem)
+            return (
+                self.mem_editor.start_memory_editor(prompt, original_mem),
+                False
+            )
         except PermissionError as e:
             lineno = traceback.extract_tb(e.__traceback__)[-1].lineno
             err(
@@ -427,7 +440,10 @@ class Manager:
                     prompt, original_mem, terminal_newline
                 )
             case '2':
-                return self._input_memory_terminal(prompt, terminal_newline)
+                return (
+                    self._input_memory_terminal(prompt, terminal_newline),
+                    True
+                )
             case _:
                 raise RuntimeError(
                     "If you're reading this, something is wrong with "
@@ -473,7 +489,7 @@ class _MemoryEditor:
         "new memory entry.\n"
         " Remember to *SAVE THIS FILE* (Ctrl + S / ⌘ + S) before closing!\n"
         " Write/edit your memory entry below this line.\n \n"
-        " —————————————————————————————————————————————————————————————\n \n"
+        " —————————————————————————————————————————————————————————————"
     )
 
     def __init__(self, manager: Manager):
