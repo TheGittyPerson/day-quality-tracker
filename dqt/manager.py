@@ -296,7 +296,7 @@ class Manager:
 
             if not original.strip() and raw.strip():
                 if not confirm(
-                        "The original memory entry was empty. Are you sure?"
+                    "The original memory entry was empty. Are you sure?"
                 ):
                     raw, _ = self._input_memory(
                         f"Enter new memory entry for {date}.",
@@ -320,7 +320,7 @@ class Manager:
             print("\nNew memory entry:")
             print_wrapped(new_memory, self.dqt.linewrap_maxcol)
 
-            if confirm("\nConfirm?"):
+            if confirm("Confirm?"):
                 break
 
             raw, _ = self._input_memory(

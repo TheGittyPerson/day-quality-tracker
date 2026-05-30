@@ -711,8 +711,8 @@ class JSONManager:
         
         # JSON has data but logs are not loaded
         if confirm(
-                "There seems to be unloaded data from the JSON file. "
-                "Load now?"
+            "There seems to be unloaded data from the JSON file. "
+            "Load now?"
         ):
             self.logs = self._load_json()
             return False
