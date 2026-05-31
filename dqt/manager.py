@@ -490,7 +490,7 @@ class _MemoryEditor:
 
     FILEDIRNAME: str = 'data'
     FILENAME: str = 'MEMORY_ENTRY_EDIT.txt'
-    COMMENT_CHAR: str = '#'
+    COMMENT_CHAR: str = '//'
     INITIAL_CONTENTS_TEMPLATE: str = (
         " Lines beginning with '{comment_char}' will be ignored.\n"
         " Memory entries are NOT saved in this file; this is just a "
