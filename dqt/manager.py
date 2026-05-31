@@ -530,7 +530,7 @@ class _MemoryEditor:
             contents: list[str] = self._read_text_file()
             comments_removed = self._remove_commented_lines(contents)
 
-            return_msg = self._check_edit_length(
+            return_msg = self._check_edit(
                 comments_removed,
                 original_entry.splitlines(keepends=True)
                 if original_entry is not None else None,
@@ -597,12 +597,12 @@ class _MemoryEditor:
         with open(self.memory_edit_filepath, 'r', encoding='utf-8') as f:
             return f.readlines()
 
-    def _check_edit_length(
+    def _check_edit(
             self,
             contents: list[str],
             original_contents: list[str] | None = None
     ) -> str | None:
-        """Check the memory edit entered by the user for confirmation.
+        """Check the memory edit entered by the user to prevent data loss.
 
         When `original_contents` is given, it means an existing entry is
         being edited. Otherwise, it means a new entry is being created.
@@ -611,17 +611,27 @@ class _MemoryEditor:
         passed with no issues.
         """
         if not any(c.strip() for c in contents):
-            return ("Are you sure you want to save an empty memory entry? (Did "
-                    "you remember to save [Ctrl + S / ⌘ + S] your entry?)")
+            return (
+                "Are you sure you want to save an empty memory entry? (Did "
+                "you remember to save [Ctrl + S / ⌘ + S] before closing?)"
+            )
 
         if original_contents is None:
             return None
 
         len_diff = len(''.join(original_contents)) - len(''.join(contents))
         if len_diff > self.manager.memory_edit_length_diff_alert_threshold:
-            return (f"Your new memory entry is {len_diff} characters shorter "
-                    "than your original entry. Are you sure you've saved "
-                    "(Ctrl + S / ⌘ + S) your edit?")
+            return (
+                f"Your new memory entry is {len_diff} characters shorter "
+                "than your original entry. Are you sure you've saved "
+                "(Ctrl + S / ⌘ + S) your edit?"
+            )
+
+        if '\n'.join(original_contents).strip() == '\n'.join(contents).strip():
+            return (
+                f"It looks like your edit matches your original entry. "
+                "Are you sure you've saved (Ctrl + S / ⌘ + S) your edit?"
+            )
 
         return None
 
