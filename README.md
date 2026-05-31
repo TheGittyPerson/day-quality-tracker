@@ -140,9 +140,10 @@ anything you wish to remember for the future, or leave the entry empty if you
 do not wish to write one.
 
 Every time you want to write a new memory entry or edit an existing one, DQT 
-will open a temporary text file in which you can write your entry using your 
-device's default text editing application. Your memory entries are **NOT** 
-saved in this file; this is just a temporary editor for individual entries.
+will open a temporary text file (stored in `/data`) in which you can write your
+entry using your device's default text editing application. Your memory entries
+are **NOT** saved in this file; this is just a temporary editor for individual
+entries.
 
 *Always remember to save the text file* before closing the window and 
 returning to the terminal.
