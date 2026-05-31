@@ -1,4 +1,4 @@
-# Day Quality Tracker 5 <sub><sup>(v1.2.0)</sup></sub>
+# Day Quality Tracker 5 <sub><sup>(v1.3.0)</sup></sub>
 
 Day Quality Tracker (DQT) is a simple Python CLI that helps you record and track
 daily “day quality” ratings and visualize them over time using the 
@@ -135,10 +135,24 @@ rate your day at the moment. Ratings can be edited at any time.
 ### Memory entries
 
 You may optionally add a memory entry alongside your rating. Memory entries 
-function like short diary notes and can span a few lines.
+function like short diary notes and can span a few lines. You may enter 
+anything you wish to remember for the future, or leave the entry empty if you 
+do not wish to write one.
 
-You may enter anything you wish to remember for the future, or leave the entry 
-empty if you do not wish to write one.
+Every time you want to write a new memory entry or edit an existing one, DQT 
+will open a temporary text file in which you can write your entry using your 
+device's default text editing application. Your memory entries are **NOT** 
+saved in this file; this is just a temporary editor for individual entries.
+
+*Always remember to save the text file* before closing the window and 
+returning to the terminal.
+
+The text file is only cleared each time it needs to be used, meaning the latest
+memory entry is preserved until next use when the text file is cleared and 
+overwritten.
+
+If the memory editor fails or if your device is incompatible for this feature, 
+DQT allows you to directly write your entry via terminal input.
 
 ---
 
