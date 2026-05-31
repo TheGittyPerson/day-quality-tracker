@@ -19,7 +19,7 @@ class Tracker:
     """
     
     RELEASE_NUM: int = 5
-    SEMVER: str = 'v1.2.0'
+    SEMVER: str = 'v1.3.0'
     
     _CONFIG_KEYS: dict[str, type | tuple[type, ...]] = {
         'min_time': int,
