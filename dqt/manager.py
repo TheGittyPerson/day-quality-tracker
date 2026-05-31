@@ -370,7 +370,8 @@ class Manager:
     def _input_memory(self,
                       prompt: str,
                       original_mem: str | None = None,
-                      terminal_newline: bool = True,) -> tuple[str, bool]:
+                      terminal_newline: bool = True,
+                      write_initial_contents: bool = True) -> tuple[str, bool]:
         """Prompt user for today's memory entry via text editor.
 
         Fall back to input via Terminal if file fails to open or if an error
@@ -387,6 +388,11 @@ class Manager:
             terminal_newline (bool, optional):
                 Applies to terminal fallback only. Determines whether to
                 print the prompt between two blank lines.
+            write_initial_contents (bool):
+                Whether to overwrite the file and write initial contents.
+                This should be turned off when user content is to be
+                preserved after failure and the user must retry, to prevent
+                loss of any saved data.
 
         Returns:
             Return a tuple of the memory entry and whether the fallback was
@@ -437,7 +443,10 @@ class Manager:
         ):
             case '1':
                 return self._input_memory(
-                    prompt, original_mem, terminal_newline
+                    prompt,
+                    original_mem,
+                    terminal_newline,
+                    write_initial_contents
                 )
             case '2':
                 return (
@@ -503,7 +512,8 @@ class _MemoryEditor:
 
     def start_memory_editor(self,
                             prompt: str,
-                            original_entry: str | None = None) -> str:
+                            original_entry: str | None = None,
+                            write_initial_contents: bool = True) -> str:
         """Start memory editing process.
 
         Args:
@@ -514,11 +524,17 @@ class _MemoryEditor:
                 entry is being edited and the string will be inserted into
                 the initial contents of the file. Otherwise, it means a new
                 entry is being created.
+            write_initial_contents (bool):
+                Whether to overwrite the file and write initial contents.
+                This should be turned off when user content is to be
+                preserved after failure and the user must retry, to prevent
+                loss of any saved data.
 
         Return:
             str: new memory entry
         """
-        self._write_initial_contents(prompt, original_entry)
+        if write_initial_contents:
+            self._write_initial_contents(prompt, original_entry)
 
         while True:
             print("\nOpening memory editor...")
