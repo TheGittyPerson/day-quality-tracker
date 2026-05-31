@@ -26,23 +26,24 @@ _today: datetime = datetime.today()
 
 class JSONManager:
     """A class to manage Day Quality Tracker JSON contents handling."""
-    
+
+    FILEDIRNAME: str = 'data'
+    FILENAME: str = 'dq_logs.json'
+    _FILENAME_PRE_DQT5: str = 'dq_ratings.json'
+
+    RATING_KYNAME: str = 'rating'
+    MEMORY_KYNAME: str = 'memory'
+
+    JSON_INDENT: int = 4
+
     def __init__(self, dqt: Tracker):
         """Initialize attributes."""
         self.dqt: Tracker = dqt
-        
-        self.filedirname: str = 'data'
+
         rootdir: Path = Path(__file__).resolve().parent.parent
-        self.filedirpath: Path = rootdir / self.filedirname
-        self.filename: str = 'dq_logs.json'
-        self.filepath: Path = self.filedirpath / self.filename
-        self._filename_pre5: str = 'dq_ratings.json'
-        self._filepath_pre5: Path = rootdir / self._filename_pre5
-        
-        self.rating_kyname: str = 'rating'
-        self.memory_kyname: str = 'memory'
-        
-        self.json_indent: int = 4
+        self.filedirpath: Path = rootdir / self.FILEDIRNAME
+        self.filepath: Path = self.filedirpath / self.FILENAME
+        self._filepath_pre5: Path = rootdir / self._FILENAME_PRE_DQT5
         
         self._touch()
         
@@ -65,9 +66,9 @@ class JSONManager:
         if date not in self.logs:
             raise KeyError(f"Date '{date}' not found")
         if rating is not _UNSET:
-            self.logs[date][self.rating_kyname] = rating
+            self.logs[date][self.RATING_KYNAME] = rating
         if memory is not _UNSET:
-            self.logs[date][self.memory_kyname] = memory
+            self.logs[date][self.MEMORY_KYNAME] = memory
         
         self._dump()
     
@@ -87,19 +88,19 @@ class JSONManager:
             raise KeyError(f"Log with date '{date}' already exists.")
         
         self.logs[date] = {
-            self.rating_kyname: rating,
-            self.memory_kyname: memory
+            self.RATING_KYNAME: rating,
+            self.MEMORY_KYNAME: memory
         }
         
         self._dump()
     
     def get_rating(self, date: str) -> float | None:
         """Return rating for given date."""
-        return self.logs[date][self.rating_kyname]
+        return self.logs[date][self.RATING_KYNAME]
     
     def get_memory(self, date: str) -> str:
         """Return memory entry for given date."""
-        return self.logs[date][self.memory_kyname]
+        return self.logs[date][self.MEMORY_KYNAME]
     
     def today_rated(self) -> bool:
         """Check if a rating has been provided for today."""
@@ -161,8 +162,8 @@ class JSONManager:
                 print()
                 self.print_log(
                     date=date,
-                    rating=log[self.rating_kyname],
-                    memory=log[self.memory_kyname],
+                    rating=log[self.RATING_KYNAME],
+                    memory=log[self.MEMORY_KYNAME],
                     linewrap_memory=True,
                 )
             print("\n* —————————————————————————————— *")
@@ -528,18 +529,18 @@ class JSONManager:
     def _touch(self) -> None:
         """Check if JSON file exists, create if not."""
         if not self.filedirpath.exists():
-            print(f"\nCreating `{self.filedirname}` directory...")
+            print(f"\nCreating `{self.FILEDIRNAME}` directory...")
             self.filedirpath.mkdir()
             print("Success!")
         if not self.filepath.exists():
             if self._filepath_pre5.exists():
                 print(f"\nRenaming pre-DQT-5 JSON file...")
-                self._filepath_pre5.rename(self.filename)
+                self._filepath_pre5.rename(self.FILENAME)
                 print("Moving file...")
-                shutil.move(self.filename, self.filedirpath)
+                shutil.move(self.FILENAME, self.filedirpath)
                 print("Success!")
             else:
-                print(f"\nCreating `{self.filename}`...")
+                print(f"\nCreating `{self.FILENAME}`...")
                 self.filepath.touch()
                 print("Success!")
     
@@ -609,11 +610,11 @@ class JSONManager:
             # }
             if isinstance(value, dict):
                 try:
-                    raw_rating = value[self.rating_kyname]
+                    raw_rating = value[self.RATING_KYNAME]
                 except KeyError:
                     if not self.dqt.autofill_json:
                         raise KeyError(
-                            f"'{self.rating_kyname}' key not found for date "
+                            f"'{self.RATING_KYNAME}' key not found for date "
                             f"'{date}'")
                     raw_rating = None
                     updated = True
@@ -625,18 +626,18 @@ class JSONManager:
                     rating = float(raw_rating)
                     
                 try:
-                    memory = value[self.memory_kyname]
+                    memory = value[self.MEMORY_KYNAME]
                 except KeyError:
                     if not self.dqt.autofill_json:
                         raise KeyError(
-                            f"'{self.memory_kyname}' key not found for date "
+                            f"'{self.MEMORY_KYNAME}' key not found for date "
                             f"'{date}'")
                     memory = ''
                     updated = True
                 
                 validated[date] = {
-                    self.rating_kyname: rating,
-                    self.memory_kyname: memory
+                    self.RATING_KYNAME: rating,
+                    self.MEMORY_KYNAME: memory
                 }
                 
                 continue
@@ -682,7 +683,7 @@ class JSONManager:
             json.dump(
                 logs_to_dump,
                 file,
-                indent=self.json_indent
+                indent=self.JSON_INDENT
             )
     
     def no_logs(self, check_file: bool = True) -> bool:

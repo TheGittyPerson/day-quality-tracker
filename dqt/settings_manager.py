@@ -8,12 +8,13 @@ from dqt.ui_utils import err
 
 class SettingsManager:
     """A class to manage the settings file."""
-    
+
+    FILENAME: str = 'settings.py'
+
     def __init__(self):
         """Initialize the settings manager."""
-        self.filename: str = 'settings.py'
         rootdir: Path = Path(__file__).resolve().parent
-        self.settings_path: Path = rootdir / Path(self.filename)
+        self.settings_path: Path = rootdir / Path(self.FILENAME)
         
     def open_file(self):
         """Open the settings file."""

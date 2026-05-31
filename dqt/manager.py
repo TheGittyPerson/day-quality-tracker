@@ -25,15 +25,14 @@ _today: datetime = datetime.today()
 class Manager:
     """A class to handle user interactions and main menu options."""
 
+    # For editing within Terminal CLI only
+    MEMORY_EDIT_PLACEHOLDER: str = '{}'
+    MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD: int = 200
+    
     def __init__(self, dqt: Tracker):
         self.dqt: Tracker = dqt
         self.json: JSONManager = dqt.json
         self.mem_editor = _MemoryEditor(self)
-
-        # For editing within Terminal CLI only
-        self.memory_edit_placeholder: str = '{}'  # TODO: make attrs like
-        #                                                 this cls attrs
-        self.memory_edit_length_diff_alert_threshold: int = 200
 
     def handle_missing_logs(self) -> str | None:
         """Check if any previous days are missing ratings.
@@ -112,7 +111,7 @@ class Manager:
             case '3':
                 print_wrapped(
                     "\nYou will have to enter the missed logs later "
-                    f"manually in `{self.json.filename}`, unless you "
+                    f"manually in `{self.json.FILENAME}`, unless you "
                     "don't enter today's log yet."
                     "\nYou can open the file by selecting:"
                     "\nMain menu -> 5) View [A]ll logs "
@@ -175,11 +174,11 @@ class Manager:
 
     def change_todays_rating(self) -> None:
         """Prompt the user to change today's rating."""
-        self._change_data('today', self.json.rating_kyname)
+        self._change_data('today', self.json.RATING_KYNAME)
 
     def change_todays_memory(self) -> None:
         """Prompt the user to change today's memory entry."""
-        self._change_data('today', self.json.memory_kyname)
+        self._change_data('today', self.json.MEMORY_KYNAME)
 
     def prompt_prev_date(self) -> str:
         """Prompt the user to enter a previous date."""
@@ -223,11 +222,11 @@ class Manager:
 
     def change_previous_rating(self, selected_date: str) -> None:
         """Prompt the user to change a rating from a previous day."""
-        self._change_data(selected_date, self.json.rating_kyname)
+        self._change_data(selected_date, self.json.RATING_KYNAME)
 
     def change_previous_memory(self, selected_date: str) -> None:
         """Prompt the user to change a memory entry from a previous day."""
-        self._change_data(selected_date, self.json.memory_kyname)
+        self._change_data(selected_date, self.json.MEMORY_KYNAME)
 
     def _change_data(self, selected_date: str, changing: str) -> None:
         """Change data for the selected date and update JSON.
@@ -239,16 +238,16 @@ class Manager:
         Parameter `changing` must be either the rating or memory key name
         specified in JSONManager (raises a ValueError otherwise).
         """
-        if changing not in (self.json.rating_kyname, self.json.memory_kyname):
+        if changing not in (self.json.RATING_KYNAME, self.json.MEMORY_KYNAME):
             raise ValueError(
-                f"'changing' argument must be '{self.json.rating_kyname}' or "
-                f"'{self.json.memory_kyname}'"
+                f"'changing' argument must be '{self.json.RATING_KYNAME}' or "
+                f"'{self.json.MEMORY_KYNAME}'"
             )
 
         if selected_date == 'today':
             selected_date = _today.strftime(self.dqt.date_format)
 
-        if changing == self.json.rating_kyname:
+        if changing == self.json.RATING_KYNAME:
             self._change_rating_for_date(selected_date)
         else:
             self._change_memory_for_date(selected_date)
@@ -265,7 +264,7 @@ class Manager:
 
     def _change_memory_for_date(self, date: str) -> None:
         """Prompt the user to update a memory entry for a date and save it."""
-        original_mem = self.json.logs[date][self.json.memory_kyname]
+        original_mem = self.json.logs[date][self.json.MEMORY_KYNAME]
 
         raw, used_terminal = self._input_memory(
             f"Enter new memory entry for {date}.",
@@ -305,7 +304,7 @@ class Manager:
                     continue
 
             len_diff = len(original) - len(new_memory)
-            if len_diff > self.memory_edit_length_diff_alert_threshold:
+            if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
                 if not confirm(
                     "The new memory entry is significantly shorter than "
                     f"the original (by {len_diff} characters). Are you "
@@ -331,10 +330,10 @@ class Manager:
 
     def _resolve_memory_edit(self, mem_input: str, original_mem: str) -> str:
         """Replace the first instance of the placeholder with the original."""
-        if self.memory_edit_placeholder in mem_input:
+        if self.MEMORY_EDIT_PLACEHOLDER in mem_input:
             print("\n(Original memory entry has been inserted into your edit)")
             return mem_input.replace(
-                self.memory_edit_placeholder, original_mem, 1
+                self.MEMORY_EDIT_PLACEHOLDER, original_mem, 1
             )
         return mem_input
 
@@ -636,7 +635,7 @@ class _MemoryEditor:
             return None
 
         len_diff = len(''.join(original_contents)) - len(''.join(contents))
-        if len_diff > self.manager.memory_edit_length_diff_alert_threshold:
+        if len_diff > self.manager.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return (
                 f"Your new memory entry is {len_diff} characters shorter "
                 "than your original entry. Are you sure you've saved "

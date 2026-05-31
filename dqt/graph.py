@@ -212,7 +212,7 @@ class Graph:
             key = current.strftime(self.dqt.date_format)
             full_dates.append(current)
             full_ratings.append(
-                self.json.logs.get(key, {}).get(self.json.rating_kyname)
+                self.json.logs.get(key, {}).get(self.json.RATING_KYNAME)
             )
             current += timedelta(days=1)
             

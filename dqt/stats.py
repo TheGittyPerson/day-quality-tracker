@@ -32,7 +32,7 @@ class Stats:
         """
         print(Txt("\nDay Quality Ratings Stats:\n").bold().cyan().underline())
         
-        rating_key = self.json.rating_kyname
+        rating_key = self.json.RATING_KYNAME
         logs = self.json.logs
         chronologically_sorted_logs = sorted(
             (
@@ -198,10 +198,10 @@ class Stats:
         """Return the average rating over the last `days` calendar days."""
         cutoff = _today.date() - timedelta(days=days - 1)
         ratings = [
-            log[self.json.rating_kyname]
+            log[self.json.RATING_KYNAME]
             for log_date, _, log in chronologically_sorted_logs
             if cutoff <= log_date <= _today.date()
-            and log[self.json.rating_kyname] is not None
+               and log[self.json.RATING_KYNAME] is not None
         ]
         
         if not ratings:
@@ -287,9 +287,9 @@ class Stats:
         chronologically_sorted_logs: list[tuple[date, str, dict[str, str]]]
 
         memory_entries = [
-            (date_str, log[self.json.memory_kyname].strip())
+            (date_str, log[self.json.MEMORY_KYNAME].strip())
             for _, date_str, log in chronologically_sorted_logs
-            if log[self.json.memory_kyname].strip()
+            if log[self.json.MEMORY_KYNAME].strip()
         ]
 
         if not memory_entries:
