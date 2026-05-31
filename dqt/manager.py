@@ -524,8 +524,8 @@ class _MemoryEditor:
             print("\nOpening memory editor...")
             self._open_memory_edit_file()
             input(
-                "\n[Press ENTER once you are done editing and have saved the "
-                "text file]"
+                f"\n[{Txt("Press ENTER").bold()} once you are done editing and "
+                f"have {Txt("saved the text file").bold().red()}]"
             )
             contents: list[str] = self._read_text_file()
             comments_removed = self._remove_commented_lines(contents)
@@ -563,11 +563,9 @@ class _MemoryEditor:
             ).splitlines()
         )
 
-        print(initial_contents_formatted.__repr__())
         if not initial_contents_formatted.endswith('\n\n'):
             initial_contents_formatted =\
                 initial_contents_formatted.rstrip('\n') + '\n\n'
-        print(initial_contents_formatted.__repr__())
 
         self.memory_edit_filedirpath.mkdir(parents=True, exist_ok=True)
         with open(self.memory_edit_filepath, 'w', encoding='utf-8',
