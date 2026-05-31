@@ -297,7 +297,7 @@ class Manager:
                 if not confirm(
                     "The original memory entry was empty. Are you sure?"
                 ):
-                    raw, _ = self._input_memory(
+                    raw, used_terminal = self._input_memory(
                         f"Enter new memory entry for {date}.",
                         original
                     )
@@ -310,7 +310,7 @@ class Manager:
                     f"the original (by {len_diff} characters). Are you "
                     "sure?"
                 ):
-                    raw, _ = self._input_memory(
+                    raw, used_terminal = self._input_memory(
                         f"Enter new memory entry for {date}",
                         original
                     )
@@ -322,7 +322,7 @@ class Manager:
             if confirm("Confirm?"):
                 break
 
-            raw, _ = self._input_memory(
+            raw, used_terminal = self._input_memory(
                 f"Enter new memory entry for {date}",
                 original
             )
@@ -399,7 +399,11 @@ class Manager:
         """
         try:
             return (
-                self.mem_editor.start_memory_editor(prompt, original_mem),
+                self.mem_editor.start_memory_editor(
+                    prompt,
+                    original_mem,
+                    write_initial_contents
+                ),
                 False
             )
         except PermissionError as e:
@@ -445,7 +449,7 @@ class Manager:
                     prompt,
                     original_mem,
                     terminal_newline,
-                    write_initial_contents
+                    write_initial_contents=False
                 )
             case '2':
                 return (
