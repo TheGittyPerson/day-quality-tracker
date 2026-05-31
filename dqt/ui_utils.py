@@ -1,3 +1,4 @@
+import re
 import textwrap
 from time import sleep
 
@@ -33,15 +34,6 @@ def err(message: str, *desc: str, pause: bool = True) -> None:
         print(d)
     if pause:
         sleep(1)
-        
-
-def invalid_choice(opts: int,
-                   letters_given: bool = True,
-                   start: int = 1) -> None:
-    err(
-        f"Only enter a number {start}~{opts}"
-        f"{" or the given letters" if letters_given else ""}."
-    )
 
 
 def log_saved(text: str = "Log saved!") -> None:
@@ -50,16 +42,34 @@ def log_saved(text: str = "Log saved!") -> None:
     sleep(1)
 
 
-def menu(*options: str | StyleText,
-         title: str | StyleText | None = "Choose what to do: ") -> int:
-    """Display menu options with title prompt. Return number of options."""
-    if title is not None:
-        print(StyleText(f"\n{title}").bold())
-    for i, o in enumerate(options, 1):
-        if isinstance(o, StyleText):
-            o = str(o)
-        print(StyleText(f"{i})").bold(), o.removeprefix(f'{i}) '))
-    return len(options)
+def menu(*options: str,
+         prompt: str | StyleText | None = "Choose what to do: ") -> str:
+    """Display menu prompt and options and collect user input."""
+    if prompt is not None:
+        print(StyleText(f"\n{prompt}").bold())
+    for i, option in enumerate(options, start=1):
+        print(StyleText(f"{i})").bold(), option.removeprefix(f'{i}) '))
+
+    opts_count = len(options)
+
+    accepted: list[str] = [str(num) for num in range(1, len(options) + 1)]
+    accepted += [
+        re.findall(
+            r"\[([A-Za-z])]", opt
+        )[0].lower()
+        for opt in options
+        if re.findall(
+            r"\[([A-Za-z])]", opt
+        )  # ... != []
+    ]
+
+    letters_given = any(opt.isalpha() for opt in accepted)
+    while (user_input := input("> ").strip().lower()) not in accepted:
+        err(
+            f"Only enter a number 1~{opts_count}"
+            f"{" or the given letters" if letters_given else ""}.\n"
+        )
+    return user_input
 
 
 def print_wrapped(text: str, maxcol: int):
@@ -69,4 +79,3 @@ def print_wrapped(text: str, maxcol: int):
 
     wrapped = textwrap.fill(stripped, maxcol)
     print("\n" * leading_newlines + wrapped)
-    

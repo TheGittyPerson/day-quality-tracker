@@ -304,7 +304,9 @@ class JSONManager:
         while True:
             base = home_dir if from_home_dir else Path('/')
             if from_home_dir:
-                dirpath = base / input(f"\n{prompt}: \n{base}").lstrip('/')
+                dirpath = base / input(
+                    f"\n{prompt}: \n{base}"
+                ).lstrip('/').strip()
             else:
                 dirpath = Path(input(f"\n{prompt}: \n{base}"))
             if not dirpath.is_dir():
@@ -709,8 +711,8 @@ class JSONManager:
         
         # JSON has data but logs are not loaded
         if confirm(
-                "There seems to be unloaded data from the JSON file. "
-                "Load now?"
+            "There seems to be unloaded data from the JSON file. "
+            "Load now?"
         ):
             self.logs = self._load_json()
             return False
