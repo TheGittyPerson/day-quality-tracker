@@ -495,13 +495,13 @@ class _MemoryEditor:
     FILENAME: str = 'MEMORY_ENTRY_EDIT.txt'
     COMMENT_CHAR: str = '//'
     INITIAL_CONTENTS_TEMPLATE: str = (
-        " Lines beginning with '{comment_char}' will be ignored.\n"
-        " Memory entries are NOT saved in this file; this is just a "
+        "Lines beginning with '{comment_char}' will be ignored.\n"
+        "Memory entries are NOT saved in this file; this is just a "
         "temporary editor that is cleared every time you edit or write a "
         "new memory entry.\n"
-        " Remember to *SAVE THIS FILE* (Ctrl + S / ⌘ + S) before closing!\n"
-        " Write/edit your memory entry below this line.\n \n"
-        " —————————————————————————————————————————————————————————————"
+        "Remember to *SAVE THIS FILE* (Ctrl + S / ⌘ + S) before closing!\n"
+        "Write/edit your memory entry below this line.\n \n"
+        "—————————————————————————————————————————————————————————————"
     )
 
     def __init__(self, manager: Manager):
@@ -572,9 +572,7 @@ class _MemoryEditor:
         If editing existing entry (meaning `entry_to_load` is given),
         that will also be inserted at the end of the file.
         """
-        initial_contents = (
-            f" {prompt}\n \n"
-        ) + self.INITIAL_CONTENTS_TEMPLATE
+        initial_contents = f"{prompt}\n\n" + self.INITIAL_CONTENTS_TEMPLATE
 
         initial_contents_formatted: str = self._insert_comment_char(
             initial_contents.format(
@@ -604,10 +602,12 @@ class _MemoryEditor:
         else:  # Linux / Unix
             subprocess.run(['xdg-open', self.memory_edit_filepath], check=True)
 
-    def _insert_comment_char(self, contents: list[str]) -> str:
+    def _insert_comment_char(self,
+                             contents: list[str],
+                             space_after_char: bool = True) -> str:
         """Insert the comment character at the start of each line."""
         return '\n'.join(
-            self.COMMENT_CHAR + line
+            self.COMMENT_CHAR + (' ' if space_after_char else '') + line
             for line in contents
         )
 
