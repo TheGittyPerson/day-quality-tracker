@@ -77,5 +77,13 @@ def print_wrapped(text: str, maxcol: int):
     leading_newlines = len(text) - len(text.lstrip("\n"))
     stripped = text.lstrip("\n")
 
-    wrapped = textwrap.fill(stripped, maxcol)
+    wrapped = "\n".join(
+        textwrap.fill(
+            line,
+            maxcol,
+            replace_whitespace=False,
+            drop_whitespace=False,
+        )
+        for line in stripped.split("\n")
+    )
     print("\n" * leading_newlines + wrapped)
