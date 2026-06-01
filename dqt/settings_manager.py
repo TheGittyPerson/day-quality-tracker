@@ -9,7 +9,7 @@ from dqt.ui_utils import err
 class SettingsManager:
     """A class to manage the settings file."""
 
-    FILENAME: str = 'settings.py'
+    FILENAME: str = "settings.py"
 
     def __init__(self):
         """Initialize the settings manager."""
@@ -23,16 +23,16 @@ class SettingsManager:
             return
         
         try:
-            if sys.platform == 'win32':
+            if sys.platform == "win32":
                 os.startfile(self.settings_path)  # Windows
-            elif sys.platform == 'darwin':
-                result = subprocess.call(['open', self.settings_path])
+            elif sys.platform == "darwin":
+                result = subprocess.call(["open", self.settings_path])
                 if result != 0:
                     raise RuntimeError(
                         f"`open` exited with status code {result}"
                     )
-            elif sys.platform.startswith('linux'):
-                result = subprocess.call(['xdg-open', self.settings_path])
+            elif sys.platform.startswith("linux"):
+                result = subprocess.call(["xdg-open", self.settings_path])
                 if result != 0:
                     raise RuntimeError(
                         f"`xdg-open` exited with status code {result}"

@@ -10,8 +10,8 @@ try:
 
     try:
 
-        dqt.configure(**CONFIGS['tracker'])
-        dqt.graph.configure(**CONFIGS['graph'])
+        dqt.configure(**CONFIGS["tracker"])
+        dqt.graph.configure(**CONFIGS["graph"])
 
     except ValueError as e:
         print("\n*!* —————————————————————————————— *!*")

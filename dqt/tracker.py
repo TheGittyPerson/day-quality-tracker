@@ -19,19 +19,19 @@ class Tracker:
     """
     
     RELEASE_NUM: int = 5
-    SEMVER: str = 'v1.3.0'
+    SEMVER: str = "v1.3.0"
     
     _CONFIG_KEYS: dict[str, type | tuple[type, ...]] = {
-        'min_time': int,
-        'min_rating': int,
-        'max_rating': int,
-        'rating_inp_dp': int,
-        'linewrap_maxcol': int,
-        'date_format': str,
-        'date_format_print': str,
-        'clock_format_12': bool,
-        'enable_ansi': (bool, NoneType),
-        'autofill_json': bool,
+        "min_time": int,
+        "min_rating": int,
+        "max_rating": int,
+        "rating_inp_dp": int,
+        "linewrap_maxcol": int,
+        "date_format": str,
+        "date_format_print": str,
+        "clock_format_12": bool,
+        "enable_ansi": (bool, NoneType),
+        "autofill_json": bool,
     }
     
     def __init__(self):
@@ -43,7 +43,7 @@ class Tracker:
         self.rating_inp_dp: int = 2
         self.linewrap_maxcol: int = 70
         
-        self.date_format: str = '%Y-%m-%d'
+        self.date_format: str = "%Y-%m-%d"
         self.date_format_print: str = "YYYY-MM-DD"
         self.clock_format_12: bool = True
         self.enable_ansi: bool | None = False
@@ -89,7 +89,7 @@ class Tracker:
         
         choice = self.manager.handle_missing_logs()
         
-        if choice in ['1', '3', None]:
+        if choice in ["1", "3", None]:
             if not self.json.today_rated():
                 self.manager.input_todays_log()
         
@@ -112,7 +112,7 @@ class Tracker:
                 "9) E[x]it",
                 prompt=None
             ):
-                case '1' | 'g':
+                case "1" | "g":
                     if self.json.no_logs():
                         err("You haven't entered any logs yet!")
                         continue
@@ -123,7 +123,7 @@ class Tracker:
                     else:
                         print("\nGraph closed.")
                 
-                case '2' | 't':
+                case "2" | "t":
                     if not self.json.today_rated():
                         err("You haven't entered today's log yet!")
                         continue
@@ -142,17 +142,17 @@ class Tracker:
                         "3) Edit [B]oth",
                         "4) [C]ancel -> Main menu",
                     ):
-                        case '1' | 'r':
+                        case "1" | "r":
                             self.manager.change_todays_rating()
-                        case '2' | 'm':
+                        case "2" | "m":
                             self.manager.change_todays_memory()
-                        case '3' | 'b':
+                        case "3" | "b":
                             self.manager.change_todays_rating()
                             self.manager.change_todays_memory()
-                        case '4' | 'c':
+                        case "4" | "c":
                             continue
 
-                case '3' | 'p':
+                case "3" | "p":
                     if self.json.no_logs():
                         err("You haven't entered any logs yet!")
                         continue
@@ -176,61 +176,61 @@ class Tracker:
                             "4) Reselect [D]ate",
                             "5) [C]ancel -> Main menu",
                         ):
-                            case '1' | 'r':
+                            case "1" | "r":
                                 self.manager.change_previous_rating(
                                     selected_d
                                 )
-                            case '2' | 'm':
+                            case "2" | "m":
                                 self.manager.change_previous_memory(
                                     selected_d
                                 )
-                            case '3' | 'b':
+                            case "3" | "b":
                                 self.manager.change_previous_rating(
                                     selected_d
                                 )
                                 self.manager.change_previous_memory(
                                     selected_d
                                 )
-                            case '4' | 'd':
+                            case "4" | "d":
                                 continue
-                            case '5' | 'c':
+                            case "5" | "c":
                                 break
                         break
                 
-                case '4' | 's':
+                case "4" | "s":
                     self.stats.show_stats()
                     cont_on_enter()
                 
-                case '5' | 'a':
+                case "5" | "a":
                     match menu(
                         "1) [P]rint logs to standard output",
                         "2) [O]pen JSON file in default viewer/editor",
                         "3) [C]ancel -> Main menu",
                     ):
-                        case '1' | 'p':
+                        case "1" | "p":
                             self.json.print_logs_to_stdout()
-                        case '2' | 'o':
+                        case "2" | "o":
                             self.json.open_json_file()
                             cont_on_enter()
-                        case '3' | 'c':
+                        case "3" | "c":
                             continue
 
-                case '6' | 'o':
+                case "6" | "o":
                     self.settings.open_file()
                     cont_on_enter()
 
-                case '7' | 'b':
+                case "7" | "b":
                     if self.json.no_logs():
                         err("You haven't entered any logs yet!")
                         continue
                     self.json.backup_json_file()
                     cont_on_enter()
                     
-                case '8' | 'i':
+                case "8" | "i":
                     self.json.import_logs()
                     cont_on_enter()
 
-                case '9' | 'x':
+                case "9" | "x":
                     print("\n*⎋* —————————————————————————————— *⎋*")
                     print("\nBye!")
                     raise SystemExit()
