@@ -492,7 +492,7 @@ class _MemoryEditor:
     """A class to handle memory editing in the text file."""
 
     FILEDIRNAME: str = "data"
-    FILENAME: str = "MEMORY_ENTRY_EDIT.txt"
+    FILENAME_PREFIX: str = "MEM_ENTRY_EDIT"
     COMMENT_CHAR: str = "//"
     INITIAL_CONTENTS_TEMPLATE: str = (
         "Lines beginning with '{comment_char}' will be ignored.\n"
@@ -503,6 +503,7 @@ class _MemoryEditor:
         "Write/edit your memory entry below this line.\n \n"
         "—————————————————————————————————————————————————————————————"
     )
+    FILE_TIMESTAMP_FORMAT: str = "%Y%m%d_%H%M%S_%f"
 
     def __init__(self, manager: Manager):
         self.manager = manager
@@ -510,13 +511,13 @@ class _MemoryEditor:
         rootdir: Path = Path(__file__).resolve().parent.parent
         self.memory_edit_filedirpath: Path =\
             rootdir / self.FILEDIRNAME
-        self.memory_edit_filepath: Path =\
-            self.memory_edit_filedirpath / self.FILENAME
+        # Regenerated when a new temp file is needed; start with blank Path
+        self.memory_edit_filepath: Path = Path()
 
     def start_memory_editor(self,
                             prompt: str,
                             original_entry: str | None = None,
-                            write_initial_contents: bool = True) -> str:
+                            new_file: bool = True) -> str:
         """Start memory editing process.
 
         Args:
@@ -527,16 +528,20 @@ class _MemoryEditor:
                 entry is being edited and the string will be inserted into
                 the initial contents of the file. Otherwise, it means a new
                 entry is being created.
-            write_initial_contents (bool):
-                Whether to overwrite the file and write initial contents.
+            new_file (bool):
+                Whether to generate a new file path.
                 This should be turned off when user content is to be
                 preserved after failure and the user must retry, to prevent
-                loss of any saved data.
+                loss of any saved data. Initial contents writing will also be
+                subsequently turned off.
 
         Return:
             str: new memory entry
         """
-        if write_initial_contents:
+        if new_file:
+            self._delete_files(older_than=3)
+            self.memory_edit_filepath = self._new_memory_edit_filepath()
+
             self._write_initial_contents(prompt, original_entry)
 
         while True:
@@ -559,6 +564,38 @@ class _MemoryEditor:
 
             if confirm(return_msg):
                 return "".join(comments_removed).strip()
+
+    def _delete_files(self, older_than: int | None = 3) -> None:
+        """Delete memory edit text files older than `older_than` days.
+
+        If `older_than` is `None`, don't delete.
+        """
+        if older_than is None or not self.memory_edit_filedirpath.exists():
+            return
+
+        for filepath in self.memory_edit_filedirpath.glob(
+            f"{self.FILENAME_PREFIX}_*.txt"
+        ):
+            if not filepath.is_file() or filepath == self.memory_edit_filepath:
+                continue
+
+            timestamp: str = filepath.stem.removeprefix(
+                f"{self.FILENAME_PREFIX}_"
+            )
+            try:
+                created_at: datetime = datetime.strptime(
+                    timestamp,
+                    self.FILE_TIMESTAMP_FORMAT
+                )
+            except ValueError:
+                continue
+
+            time_diff = datetime.now() - created_at
+            if time_diff > timedelta(days=older_than):
+                try:
+                    filepath.unlink(missing_ok=True)
+                except OSError:
+                    continue
 
     def _write_initial_contents(self,
                                 prompt: str,
@@ -615,6 +652,12 @@ class _MemoryEditor:
         """Read the file and return contents as a list of each line."""
         with open(self.memory_edit_filepath, "r", encoding="utf-8") as f:
             return f.readlines()
+
+    def _new_memory_edit_filepath(self) -> Path:
+        """Generate a new temporary file path (name) with a timestamp."""
+        timestamp = datetime.now().strftime(self.FILE_TIMESTAMP_FORMAT)
+        return (self.memory_edit_filedirpath
+                / f"{self.FILENAME_PREFIX}_{timestamp}.txt")
 
     def _check_edit(
             self,
