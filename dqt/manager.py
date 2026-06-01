@@ -370,8 +370,8 @@ class Manager:
                       prompt: str,
                       original_mem: str | None = None,
                       terminal_newline: bool = True,
-                      write_initial_contents: bool = True) -> tuple[str, bool]:
-        """Prompt user for today's memory entry via text editor.
+                      new_file: bool = True) -> tuple[str, bool]:
+        """Prompt user for a memory entry via the text editor.
 
         Fall back to input via Terminal if file fails to open or if an error
         occurs.
@@ -387,11 +387,10 @@ class Manager:
             terminal_newline (bool, optional):
                 Applies to terminal fallback only. Determines whether to
                 print the prompt between two blank lines.
-            write_initial_contents (bool):
-                Whether to overwrite the file and write initial contents.
-                This should be turned off when user content is to be
-                preserved after failure and the user must retry, to prevent
-                loss of any saved data.
+            new_file (bool):
+                Whether to create and seed a new temp editor file. Set this to
+                `False` only when retrying after a failure, so the previous
+                temp file path and any saved user draft are preserved.
 
         Returns:
             Return a tuple of the memory entry and whether the fallback was
@@ -402,7 +401,7 @@ class Manager:
                 self.mem_editor.start_memory_editor(
                     prompt,
                     original_mem,
-                    write_initial_contents
+                    new_file
                 ),
                 False
             )
@@ -449,7 +448,7 @@ class Manager:
                     prompt,
                     original_mem,
                     terminal_newline,
-                    write_initial_contents=False
+                    new_file=False
                 )
             case "2":
                 return (
@@ -464,7 +463,7 @@ class Manager:
 
     @staticmethod
     def _input_memory_terminal(prompt: str, newline: bool = True) -> str:
-        """Prompt user for today's memory entry via CLI (terminal).
+        """Prompt user for a memory entry via CLI (terminal).
 
         Fall back to input via terminal if file fails to open or if an error
         occurs.
@@ -489,7 +488,7 @@ class Manager:
 
 
 class _MemoryEditor:
-    """A class to handle memory editing in the text file."""
+    """A class to handle memory editing through temporary text files."""
 
     FILEDIRNAME: str = "data"
     FILENAME_PREFIX: str = "MEM_ENTRY_EDIT"
@@ -497,8 +496,7 @@ class _MemoryEditor:
     INITIAL_CONTENTS_TEMPLATE: str = (
         "Lines beginning with '{comment_char}' will be ignored.\n"
         "Memory entries are NOT saved in this file; this is just a "
-        "temporary editor that is cleared every time you edit or write a "
-        "new memory entry.\n"
+        "temporary file for this entry.\n"
         "Remember to *SAVE THIS FILE* (Ctrl + S / ⌘ + S) before closing!\n"
         "Write/edit your memory entry below this line.\n \n"
         "—————————————————————————————————————————————————————————————"
@@ -511,7 +509,7 @@ class _MemoryEditor:
         rootdir: Path = Path(__file__).resolve().parent.parent
         self.memory_edit_filedirpath: Path =\
             rootdir / self.FILEDIRNAME
-        # Regenerated when a new temp file is needed; start with blank Path
+        # Set when a temp edit file is created; reused during retry flows.
         self.memory_edit_filepath: Path = Path()
 
     def start_memory_editor(self,
@@ -529,11 +527,10 @@ class _MemoryEditor:
                 the initial contents of the file. Otherwise, it means a new
                 entry is being created.
             new_file (bool):
-                Whether to generate a new file path.
-                This should be turned off when user content is to be
-                preserved after failure and the user must retry, to prevent
-                loss of any saved data. Initial contents writing will also be
-                subsequently turned off.
+                Whether to create a fresh timestamped temp file and write its
+                initial contents. Set this to `False` only when retrying after
+                a failure, so the existing temp file path and any saved user
+                draft are preserved.
 
         Return:
             str: new memory entry
@@ -566,9 +563,10 @@ class _MemoryEditor:
                 return "".join(comments_removed).strip()
 
     def _delete_files(self, older_than: int | None = 3) -> None:
-        """Delete memory edit text files older than `older_than` days.
+        """Delete stale timestamped memory edit files.
 
-        If `older_than` is `None`, don't delete.
+        Delete only files matching this editor's generated filename pattern and
+        older than `older_than` days. If `older_than` is `None`, don't delete.
         """
         if older_than is None or not self.memory_edit_filedirpath.exists():
             return
@@ -600,11 +598,11 @@ class _MemoryEditor:
     def _write_initial_contents(self,
                                 prompt: str,
                                 entry_to_load: str | None = None) -> None:
-        """Write initial contents (comments) to file.
+        """Write prompt comments and optional existing entry to the temp file.
 
         Args:
-            prompt (str): Write at the start of file as comment
-            entry_to_load (str, optional): Write to end of file
+            prompt (str): Written at the start of the file as comments.
+            entry_to_load (str, optional): Written to the end of the file.
 
         If editing existing entry (meaning `entry_to_load` is given),
         that will also be inserted at the end of the file.
@@ -629,7 +627,7 @@ class _MemoryEditor:
                 f.write(entry_to_load)
 
     def _open_memory_edit_file(self) -> None:
-        """Open memory edit file."""
+        """Open the active temp memory edit file."""
         system_name = platform.system()
 
         if system_name == "Windows":
@@ -649,12 +647,12 @@ class _MemoryEditor:
         )
 
     def _read_text_file(self) -> list[str]:
-        """Read the file and return contents as a list of each line."""
+        """Read the active temp file and return its lines."""
         with open(self.memory_edit_filepath, "r", encoding="utf-8") as f:
             return f.readlines()
 
     def _new_memory_edit_filepath(self) -> Path:
-        """Generate a new temporary file path (name) with a timestamp."""
+        """Build a unique timestamped path for a new temp editor file."""
         timestamp = datetime.now().strftime(self.FILE_TIMESTAMP_FORMAT)
         return (self.memory_edit_filedirpath
                 / f"{self.FILENAME_PREFIX}_{timestamp}.txt")

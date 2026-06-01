@@ -139,18 +139,22 @@ function like short diary notes and can span a few lines. You may enter
 anything you wish to remember for the future, or leave the entry empty if you 
 do not wish to write one.
 
-Every time you want to write a new memory entry or edit an existing one, DQT 
-will open a temporary text file (stored in `/data`) in which you can write your
-entry using your device's default text editing application. Your memory entries
-are **NOT** saved in this file; this is just a temporary editor for individual
-entries.
+Every time you want to write a new memory entry or edit an existing one, DQT
+creates a new temporary text file in `data/` and opens it with your device's
+default text editing application. Your memory entries are **NOT** permanently
+saved in this file; it is just a temporary text file for an individual entry.
 
 *Always remember to save the text file* before closing the window and 
 returning to the terminal.
 
-The text file is only cleared each time it needs to be used, meaning the latest
-memory entry is preserved until next use when the text file is cleared and 
-overwritten.
+These temporary editor files use names like `MEM_ENTRY_EDIT_*.txt`. DQT creates
+a fresh file for each edit so an older open editor window cannot overwrite a new
+entry. Old temporary editor files are cleaned up automatically after a few days,
+but your actual saved logs are stored in `data/dq_logs.json`.
+
+Do **NOT** use the temporary text files as your primary source of backup, as 
+they are **deleted after 3 days** by default and can be unreliable. Always use 
+the "Backup Logs" feature provided in the main menu.
 
 If the memory editor fails or if your device is incompatible for this feature, 
 DQT allows you to directly write your entry via terminal input.
