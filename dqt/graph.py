@@ -15,38 +15,38 @@ class Graph:
     """A class to manage graph plotting for day_quality_tracker."""
     
     _CONFIG_KEYS: dict[str, type | tuple[type, ...]] = {
-        'graph_style': (str, NoneType),
-        'graph_show_block': bool,
-        'title': str,
-        'title_fontsize': (float, int, str),
-        'title_padding': (float, int),
-        'xlabel_fontsize': (float, int, str),
-        'ylabel_fontsize': (float, int, str),
-        'tick_labels_fontsize': (float, int, str),
-        'graph_date_format': str,
-        'autofmt_xdates': bool,
-        'year_labels_fontsize': (float, int, str),
-        'year_labels_fontweight': (int, str),
-        'line_width': (float, int),
-        'line_color': (str, tuple, NoneType),
-        'line_style': str,
-        'marker': str,
-        'marker_size': (float, int),
-        'marker_face_color': (str, tuple, NoneType),
-        'marker_edge_width': (float, int),
-        'neutralline_width': (float, int),
-        'neutralline_color': (str, tuple, NoneType),
-        'neutralline_style': str,
-        'averageline_width': (float, int),
-        'averageline_color': (str, tuple, NoneType),
-        'averageline_style': str,
-        'highest_rating_point_size': (float, int),
-        'highest_rating_point_color': (str, tuple, NoneType),
-        'lowest_rating_point_size': (float, int),
-        'lowest_rating_point_color': (str, tuple, NoneType),
-        'legend_fontsize': (float, int),
-        'legend_loc': (str, tuple),
-        'legend_frameon': bool,
+        "graph_style": (str, NoneType),
+        "graph_show_block": bool,
+        "title": str,
+        "title_fontsize": (float, int, str),
+        "title_padding": (float, int),
+        "xlabel_fontsize": (float, int, str),
+        "ylabel_fontsize": (float, int, str),
+        "tick_labels_fontsize": (float, int, str),
+        "graph_date_format": str,
+        "autofmt_xdates": bool,
+        "year_labels_fontsize": (float, int, str),
+        "year_labels_fontweight": (int, str),
+        "line_width": (float, int),
+        "line_color": (str, tuple, NoneType),
+        "line_style": str,
+        "marker": str,
+        "marker_size": (float, int),
+        "marker_face_color": (str, tuple, NoneType),
+        "marker_edge_width": (float, int),
+        "neutralline_width": (float, int),
+        "neutralline_color": (str, tuple, NoneType),
+        "neutralline_style": str,
+        "averageline_width": (float, int),
+        "averageline_color": (str, tuple, NoneType),
+        "averageline_style": str,
+        "highest_rating_point_size": (float, int),
+        "highest_rating_point_color": (str, tuple, NoneType),
+        "lowest_rating_point_size": (float, int),
+        "lowest_rating_point_color": (str, tuple, NoneType),
+        "legend_fontsize": (float, int),
+        "legend_loc": (str, tuple),
+        "legend_frameon": bool,
     }
     
     def __init__(self, dqt: Tracker):
@@ -58,7 +58,7 @@ class Graph:
         # Graph settings
         self.graph_show_block: bool = True
         
-        self.graph_style: str | None = 'ggplot'
+        self.graph_style: str | None = "ggplot"
         
         self.title: str = "Day Quality Ratings"
         self.title_fontsize: float | int | str = 20
@@ -72,44 +72,44 @@ class Graph:
         self.tick_labels_fontsize: float | int | str = 7
         self.max_xticks: int = 15  # None = no limit
         
-        self.graph_date_format: str = '%a %b %d'
+        self.graph_date_format: str = "%a %b %d"
         self.autofmt_xdates: bool = True
         
         self.year_labels_fontsize: float | int | str = 9
-        self.year_labels_fontweight: int | str = 'bold'
+        self.year_labels_fontweight: int | str = "bold"
         
         self.line_label: str = "Ratings"
         self.line_width: float | int = 2
         self.line_color: str | tuple | None = None
-        self.line_style: str = '-'
+        self.line_style: str = "-"
         
-        self.marker: str = 'o'
+        self.marker: str = "o"
         self.marker_size: float | int = 4
         self.marker_face_color: str | tuple | None = None
         self.marker_edge_width: float | int = 0
         
-        self.neutralline_label: str = 'Neutral rating (baseline)'
+        self.neutralline_label: str = "Neutral rating (baseline)"
         self.neutralline_width: float | int = 1
-        self.neutralline_color: str | tuple | None = 'black'
-        self.neutralline_style: str = '--'
+        self.neutralline_color: str | tuple | None = "black"
+        self.neutralline_style: str = "--"
         
-        self.averageline_label: str = 'Average rating'
+        self.averageline_label: str = "Average rating"
         self.averageline_width: float | int = 1
-        self.averageline_color: str | tuple | None = 'red'
-        self.averageline_style: str = '-.'
+        self.averageline_color: str | tuple | None = "red"
+        self.averageline_style: str = "-."
         
-        self.highest_rating_label: str = 'Highest rating'
+        self.highest_rating_label: str = "Highest rating"
         self.highest_rating_point_size: float | int = 20
-        self.highest_rating_point_color: str | tuple | None = 'green'
+        self.highest_rating_point_color: str | tuple | None = "green"
         self.highest_rating_point_zorder: int = 5
         
-        self.lowest_rating_label: str = 'Lowest rating'
+        self.lowest_rating_label: str = "Lowest rating"
         self.lowest_rating_point_size: float | int = 20
-        self.lowest_rating_point_color: str | tuple | None = 'orange'
+        self.lowest_rating_point_color: str | tuple | None = "orange"
         self.lowest_rating_point_zorder: int = 5
         
         self.legend_fontsize: float | int = 8
-        self.legend_loc: str | tuple = 'upper right'
+        self.legend_loc: str | tuple = "upper right"
         self.legend_frameon: bool = True
     
     def view_ratings_graph(self) -> None:
@@ -135,13 +135,13 @@ class Graph:
         )
         
         # Close existing windows to prevent overlapping
-        plt.close('all')
+        plt.close("all")
         
         if not logs:
             raise ValueError("No logs saved")
         
         if self.graph_style is None:
-            plt.style.use('default')
+            plt.style.use("default")
         else:
             plt.style.use(self.graph_style)
         
@@ -170,7 +170,7 @@ class Graph:
     @staticmethod
     def close() -> None:
         """Close the graph."""
-        plt.close('all')
+        plt.close("all")
         
     def configure(self, **configs: str | float | int | bool | tuple) -> None:
         """Update configuration options via keyword arguments.
@@ -212,7 +212,7 @@ class Graph:
             key = current.strftime(self.dqt.date_format)
             full_dates.append(current)
             full_ratings.append(
-                self.json.logs.get(key, {}).get(self.json.rating_kyname)
+                self.json.logs.get(key, {}).get(self.json.RATING_KYNAME)
             )
             current += timedelta(days=1)
             
@@ -291,8 +291,8 @@ class Graph:
                     1,
                     str(year),
                     transform=ax.transAxes,
-                    ha='center',
-                    va='bottom',
+                    ha="center",
+                    va="bottom",
                     fontsize=self.year_labels_fontsize,
                     fontweight=self.year_labels_fontweight
                 )

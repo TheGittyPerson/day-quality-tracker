@@ -13,12 +13,12 @@ _today: datetime = datetime.today()
 
 class Stats:
     """A class to manage stats display."""
-    
+
     def __init__(self, dqt: Tracker):
         """Initialize attributes."""
         self.dqt: Tracker = dqt
         self.json: JSONManager = dqt.json
-        
+
     def show_stats(self) -> None:
         """Show day quality rating stats.
 
@@ -31,8 +31,8 @@ class Stats:
             - Days of the week ranked from best to worst
         """
         print(Txt("\nDay Quality Ratings Stats:\n").bold().cyan().underline())
-        
-        rating_key = self.json.rating_kyname
+
+        rating_key = self.json.RATING_KYNAME
         logs = self.json.logs
         chronologically_sorted_logs = sorted(
             (
@@ -42,13 +42,13 @@ class Stats:
             )
             for date_str, log in logs.items()
         )
-        
+
         dates_to_ratings: list[tuple[str, float]] = [
             (date_str, log[rating_key])
             for _, date_str, log in chronologically_sorted_logs
             if log[rating_key] is not None
         ]
-        
+
         self._print_logging_streaks(chronologically_sorted_logs)
         print()
 
@@ -69,7 +69,7 @@ class Stats:
             return
 
         ratings_only = [r for _, r in dates_to_ratings]
-        
+
         self._print_avg_rating(ratings_only)
         self._print_highest_and_lowest_ratings(ratings_only, dates_to_ratings)
         self._print_rating_distribution(dates_to_ratings)
@@ -96,11 +96,11 @@ class Stats:
         longest_unit = "day" if longest_streak == 1 else "days"
 
         print(
-            f"{Txt('Current logging streak:').bold()} "
+            f"{Txt("Current logging streak:").bold()} "
             f"{current_streak} {current_unit}"
         )
         print(
-            f"{Txt('Longest logging streak:').bold()} "
+            f"{Txt("Longest logging streak:").bold()} "
             f"{longest_streak} {longest_unit}"
         )
 
@@ -154,7 +154,7 @@ class Stats:
                 current = 1
 
         return max(longest, current)
-    
+
     @staticmethod
     def _print_days_rated(logs: dict[str, dict[str, float | None | str]],
                           dates_to_ratings: list[tuple[str, float]]) -> None:
@@ -167,9 +167,9 @@ class Stats:
             output += f"since {Txt(first_rated_date).bold()} "
         if not days_rated == days_total:
             output += f"({days_total} including null ratings)"
-        
+
         print(output)
-    
+
     def _print_recent_average_ratings(
             self,
             chronologically_sorted_logs: list[
@@ -184,10 +184,10 @@ class Stats:
                 print(f"Last {label} average: -")
                 continue
             print(
-                f"{Txt(f'Last {label} average:').bold()} "
-                f"{Txt(f'{avg:g}').bold()}/{self.dqt.max_rating}"
+                f"{Txt(f"Last {label} average:").bold()} "
+                f"{Txt(f"{avg:g}").bold()}/{self.dqt.max_rating}"
             )
-    
+
     def _recent_average_rating(
             self,
             chronologically_sorted_logs: list[
@@ -198,12 +198,12 @@ class Stats:
         """Return the average rating over the last `days` calendar days."""
         cutoff = _today.date() - timedelta(days=days - 1)
         ratings = [
-            log[self.json.rating_kyname]
+            log[self.json.RATING_KYNAME]
             for log_date, _, log in chronologically_sorted_logs
-            if cutoff <= log_date <= _today.date()
-            and log[self.json.rating_kyname] is not None
+            if (cutoff <= log_date <= _today.date()
+                and log[self.json.RATING_KYNAME] is not None)
         ]
-        
+
         if not ratings:
             return None
 
@@ -250,7 +250,7 @@ class Stats:
             f"{Txt(f"{lowest:g}").bold()}/{self.dqt.max_rating} "
             f"on {self._format_dates(lowest_dates)}"
         )
-        
+
     def _print_rating_distribution(
             self,
             dates_to_ratings: list[tuple[str, float]]
@@ -260,9 +260,9 @@ class Stats:
         Show number of ratings over, at, and under the neutral rating.
         """
         neutral_rat = self.dqt.neutral_rating
-        
+
         over = at = under = 0
-        
+
         for _, rating in dates_to_ratings:
             if rating > neutral_rat:
                 over += 1
@@ -270,7 +270,7 @@ class Stats:
                 under += 1
             else:
                 at += 1
-        
+
         print(Txt(f"Days rated over {neutral_rat}: {over}").bold())
         print(Txt(f"Days rated at {neutral_rat}: {at}").bold())
         print(Txt(f"Days rated under {neutral_rat}: {under}").bold())
@@ -287,9 +287,9 @@ class Stats:
         chronologically_sorted_logs: list[tuple[date, str, dict[str, str]]]
 
         memory_entries = [
-            (date_str, log[self.json.memory_kyname].strip())
+            (date_str, log[self.json.MEMORY_KYNAME].strip())
             for _, date_str, log in chronologically_sorted_logs
-            if log[self.json.memory_kyname].strip()
+            if log[self.json.MEMORY_KYNAME].strip()
         ]
 
         if not memory_entries:
@@ -311,30 +311,30 @@ class Stats:
             f"{Txt(label).bold()} {self._format_dates(longest_dates)} "
             f"({max_length} characters)"
         )
-    
+
     def _print_weekdays_ranked(
             self,
             dates_to_ratings: list[tuple[str, float]]
     ) -> None:
         """Print the days of the week in rank order of highest avg rating"""
         weekday_scores: dict[str, list[float]] = defaultdict(list)
-        
+
         for date_str, rating in dates_to_ratings:
             _date = datetime.strptime(date_str, self.dqt.date_format)
             weekday = _date.strftime("%A")
             weekday_scores[weekday].append(rating)
-        
+
         weekday_averages = {
             day: sum(vals) / len(vals)
             for day, vals in weekday_scores.items()
         }
-        
+
         ranked_days = sorted(
             weekday_averages.items(),
             key=lambda item: item[1],
             reverse=True
         )
-        
+
         print(f"{Txt("Best days of the week").bold()} "
               "(highest to lowest average rating):")
         counter = 0
@@ -344,7 +344,7 @@ class Stats:
             print(f"  #{counter} {Txt(day).bold()}: "
                   f"{Txt(cleaned_avg).bold()}"
                   f"/{self.dqt.max_rating}")
-    
+
     @staticmethod
     def _format_dates(dates: list[str]) -> str:
         """Format dates as a string, separated by commas."""

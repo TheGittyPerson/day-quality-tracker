@@ -5,7 +5,7 @@ from time import sleep
 from dqt.styletext import StyleText
 
 
-def confirm(message: str, confirm_char: str = 'y',
+def confirm(message: str, confirm_char: str = "y",
             err_msg: str = "Only enter 'y' or 'n'.") -> bool:
     """Prompt the user for confirmation and validate input.
     
@@ -14,7 +14,7 @@ def confirm(message: str, confirm_char: str = 'y',
     """
     while (
             inp := input(f"\n{message} [y/n]: ").strip().lower()
-    ) not in ['y', 'n']:
+    ) not in ["y", "n"]:
         err(err_msg)
     return inp == confirm_char.lower()
 
@@ -48,7 +48,7 @@ def menu(*options: str,
     if prompt is not None:
         print(StyleText(f"\n{prompt}").bold())
     for i, option in enumerate(options, start=1):
-        print(StyleText(f"{i})").bold(), option.removeprefix(f'{i}) '))
+        print(StyleText(f"{i})").bold(), option.removeprefix(f"{i}) "))
 
     opts_count = len(options)
 
@@ -74,8 +74,16 @@ def menu(*options: str,
 
 def print_wrapped(text: str, maxcol: int):
     """Print line-wrapped text with a maximum of `maxcol` chars per line."""
-    leading_newlines = len(text) - len(text.lstrip('\n'))
-    stripped = text.lstrip('\n')
+    leading_newlines = len(text) - len(text.lstrip("\n"))
+    stripped = text.lstrip("\n")
 
-    wrapped = textwrap.fill(stripped, maxcol)
+    wrapped = "\n".join(
+        textwrap.fill(
+            line,
+            maxcol,
+            replace_whitespace=False,
+            drop_whitespace=False,
+        )
+        for line in stripped.split("\n")
+    )
     print("\n" * leading_newlines + wrapped)

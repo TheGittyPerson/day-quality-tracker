@@ -26,23 +26,24 @@ _today: datetime = datetime.today()
 
 class JSONManager:
     """A class to manage Day Quality Tracker JSON contents handling."""
-    
+
+    FILEDIRNAME: str = "data"
+    FILENAME: str = "dq_logs.json"
+    _FILENAME_PRE_DQT5: str = "dq_ratings.json"
+
+    RATING_KYNAME: str = "rating"
+    MEMORY_KYNAME: str = "memory"
+
+    JSON_INDENT: int = 4
+
     def __init__(self, dqt: Tracker):
         """Initialize attributes."""
         self.dqt: Tracker = dqt
-        
-        self.filedirname: str = 'data'
+
         rootdir: Path = Path(__file__).resolve().parent.parent
-        self.filedirpath: Path = rootdir / self.filedirname
-        self.filename: str = 'dq_logs.json'
-        self.filepath: Path = self.filedirpath / self.filename
-        self._filename_pre5: str = 'dq_ratings.json'
-        self._filepath_pre5: Path = rootdir / self._filename_pre5
-        
-        self.rating_kyname: str = 'rating'
-        self.memory_kyname: str = 'memory'
-        
-        self.json_indent: int = 4
+        self.filedirpath: Path = rootdir / self.FILEDIRNAME
+        self.filepath: Path = self.filedirpath / self.FILENAME
+        self._filepath_pre5: Path = rootdir / self._FILENAME_PRE_DQT5
         
         self._touch()
         
@@ -65,16 +66,16 @@ class JSONManager:
         if date not in self.logs:
             raise KeyError(f"Date '{date}' not found")
         if rating is not _UNSET:
-            self.logs[date][self.rating_kyname] = rating
+            self.logs[date][self.RATING_KYNAME] = rating
         if memory is not _UNSET:
-            self.logs[date][self.memory_kyname] = memory
+            self.logs[date][self.MEMORY_KYNAME] = memory
         
         self._dump()
     
     def add(self,
             date: str,
             rating: float | None = None,
-            memory: str = '') -> None:
+            memory: str = "") -> None:
         """Update logs with new log and dump to JSON file.
 
         Attempted rewrite of previous items will raise a KeyError.
@@ -87,19 +88,19 @@ class JSONManager:
             raise KeyError(f"Log with date '{date}' already exists.")
         
         self.logs[date] = {
-            self.rating_kyname: rating,
-            self.memory_kyname: memory
+            self.RATING_KYNAME: rating,
+            self.MEMORY_KYNAME: memory
         }
         
         self._dump()
     
     def get_rating(self, date: str) -> float | None:
         """Return rating for given date."""
-        return self.logs[date][self.rating_kyname]
+        return self.logs[date][self.RATING_KYNAME]
     
     def get_memory(self, date: str) -> str:
         """Return memory entry for given date."""
-        return self.logs[date][self.memory_kyname]
+        return self.logs[date][self.MEMORY_KYNAME]
     
     def today_rated(self) -> bool:
         """Check if a rating has been provided for today."""
@@ -111,19 +112,19 @@ class JSONManager:
                   rating: float | None | UnsetType = _UNSET,
                   memory: str | UnsetType = _UNSET,
                   linewrap_memory: bool = False) -> None:
-        """Print a formatted log, and represent 'empty' values with text.
+        """Print a formatted log, and represent "empty" values with text.
 
         Null (None) ratings are printed as "[No rating]".
         Empty memory entries (empty str) are printed as "[Empty entry]".
 
         If date is unfilled, it will not be printed.
-        If date == 'today', "Today's log:" will be printed at the start.
+        If date == "today", "Today's log:" will be printed at the start.
         Else, f"Date: {date}" will be printed.
         """
         
         # ----- Date -----
         if not isinstance(date, UnsetType):
-            if date == 'today':
+            if date == "today":
                 print(Txt("\nToday's log:").bold().yellow())
             else:
                 print(Txt(f"Date: ").bold() + date)
@@ -161,8 +162,8 @@ class JSONManager:
                 print()
                 self.print_log(
                     date=date,
-                    rating=log[self.rating_kyname],
-                    memory=log[self.memory_kyname],
+                    rating=log[self.RATING_KYNAME],
+                    memory=log[self.MEMORY_KYNAME],
                     linewrap_memory=True,
                 )
             print("\n* —————————————————————————————— *")
@@ -194,12 +195,12 @@ class JSONManager:
         """Open the JSON file in the default system application."""
         print("\nOpening JSON file...")
         
-        if sys.platform == 'win32':
+        if sys.platform == "win32":
             os.startfile(self.filepath)  # Windows
-        elif sys.platform == 'darwin':
-            subprocess.call(['open', self.filepath])  # macOS
-        elif sys.platform.startswith('linux'):
-            subprocess.call(['xdg-open', self.filepath])  # Linux
+        elif sys.platform == "darwin":
+            subprocess.call(["open", self.filepath])  # macOS
+        elif sys.platform.startswith("linux"):
+            subprocess.call(["xdg-open", self.filepath])  # Linux
         else:
             print("\nYou will have to open the file manually. "
                   f"\nPath: {self.filepath}")
@@ -302,11 +303,11 @@ class JSONManager:
         """
         home_dir = Path.home() if from_home_dir else Path()
         while True:
-            base = home_dir if from_home_dir else Path('/')
+            base = home_dir if from_home_dir else Path("/")
             if from_home_dir:
                 dirpath = base / input(
                     f"\n{prompt}: \n{base}"
-                ).lstrip('/').strip()
+                ).lstrip("/").strip()
             else:
                 dirpath = Path(input(f"\n{prompt}: \n{base}"))
             if not dirpath.is_dir():
@@ -325,8 +326,8 @@ class JSONManager:
             if not filename:
                 err("File name must not be empty.", "Try again.")
                 continue
-            if not filename.endswith('.json'):
-                filename += '.json'
+            if not filename.endswith(".json"):
+                filename += ".json"
             
             for ch in self._invalid_filename_chars():
                 if ch in filename:
@@ -342,12 +343,12 @@ class JSONManager:
     @staticmethod
     def _invalid_filename_chars() -> str:
         """Return a list of invalid filename characters based on OS."""
-        if os.name == 'nt':  # Windows invalid characters
+        if os.name == "nt":  # Windows invalid characters
             invalid = '<>:"/\\|?*'
             # Control characters (0-31)
-            invalid += ''.join([chr(i) for i in range(32)])
+            invalid += "".join([chr(i) for i in range(32)])
         else:  # POSIX (Linux, macOS) invalid characters
-            invalid = '/\0'
+            invalid = "/\0"
         return invalid
     
     def _memory_matches_file(self, order_matters: bool = True) -> bool:
@@ -367,11 +368,11 @@ class JSONManager:
         """
         src_path = self._prompt_filepath(
             "Enter the path of the JSON file to import from",
-            auto_append='.json'
+            auto_append=".json"
         )
         try:
             print("\nReading JSON file...")
-            with open(src_path, 'r') as file:
+            with open(src_path, "r") as file:
                 src_contents: dict = json.load(file)
         except json.decoder.JSONDecodeError as e:
             err(
@@ -508,12 +509,12 @@ class JSONManager:
         while True:
             if from_home_dir:
                 base = home_dir
-                raw = input(f"\n{prompt}: \n{base}").lstrip('/').strip()
+                raw = input(f"\n{prompt}: \n{base}").lstrip("/").strip()
             else:
                 base = Path()
                 raw = input(f"\n{prompt}: ").strip()
             if auto_append is not None:
-                raw += auto_append if not raw.endswith(auto_append) else ''
+                raw += auto_append if not raw.endswith(auto_append) else ""
             filepath = base / Path(raw)
             
             if not filepath.is_file():
@@ -528,18 +529,18 @@ class JSONManager:
     def _touch(self) -> None:
         """Check if JSON file exists, create if not."""
         if not self.filedirpath.exists():
-            print(f"\nCreating `{self.filedirname}` directory...")
+            print(f"\nCreating `{self.FILEDIRNAME}` directory...")
             self.filedirpath.mkdir()
             print("Success!")
         if not self.filepath.exists():
             if self._filepath_pre5.exists():
                 print(f"\nRenaming pre-DQT-5 JSON file...")
-                self._filepath_pre5.rename(self.filename)
+                self._filepath_pre5.rename(self.FILENAME)
                 print("Moving file...")
-                shutil.move(self.filename, self.filedirpath)
+                shutil.move(self.FILENAME, self.filedirpath)
                 print("Success!")
             else:
-                print(f"\nCreating `{self.filename}`...")
+                print(f"\nCreating `{self.FILENAME}`...")
                 self.filepath.touch()
                 print("Success!")
     
@@ -562,7 +563,7 @@ class JSONManager:
         if not text:
             return {}
         
-        with open(self.filepath, 'r') as file:
+        with open(self.filepath, "r") as file:
             return json.load(file)
     
     def _validate_and_normalize_logs(
@@ -609,11 +610,11 @@ class JSONManager:
             # }
             if isinstance(value, dict):
                 try:
-                    raw_rating = value[self.rating_kyname]
+                    raw_rating = value[self.RATING_KYNAME]
                 except KeyError:
                     if not self.dqt.autofill_json:
                         raise KeyError(
-                            f"'{self.rating_kyname}' key not found for date "
+                            f"'{self.RATING_KYNAME}' key not found for date "
                             f"'{date}'")
                     raw_rating = None
                     updated = True
@@ -625,18 +626,18 @@ class JSONManager:
                     rating = float(raw_rating)
                     
                 try:
-                    memory = value[self.memory_kyname]
+                    memory = value[self.MEMORY_KYNAME]
                 except KeyError:
                     if not self.dqt.autofill_json:
                         raise KeyError(
-                            f"'{self.memory_kyname}' key not found for date "
+                            f"'{self.MEMORY_KYNAME}' key not found for date "
                             f"'{date}'")
-                    memory = ''
+                    memory = ""
                     updated = True
                 
                 validated[date] = {
-                    self.rating_kyname: rating,
-                    self.memory_kyname: memory
+                    self.RATING_KYNAME: rating,
+                    self.MEMORY_KYNAME: memory
                 }
                 
                 continue
@@ -682,7 +683,7 @@ class JSONManager:
             json.dump(
                 logs_to_dump,
                 file,
-                indent=self.json_indent
+                indent=self.JSON_INDENT
             )
     
     def no_logs(self, check_file: bool = True) -> bool:

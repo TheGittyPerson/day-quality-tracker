@@ -25,15 +25,14 @@ _today: datetime = datetime.today()
 class Manager:
     """A class to handle user interactions and main menu options."""
 
+    # For editing within Terminal CLI only
+    MEMORY_EDIT_PLACEHOLDER: str = "{}"
+    MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD: int = 200
+    
     def __init__(self, dqt: Tracker):
         self.dqt: Tracker = dqt
         self.json: JSONManager = dqt.json
         self.mem_editor = _MemoryEditor(self)
-
-        # For editing within Terminal CLI only
-        self.memory_edit_placeholder: str = '{}'  # TODO: make attrs like
-        #                                                 this cls attrs
-        self.memory_edit_length_diff_alert_threshold: int = 200
 
     def handle_missing_logs(self) -> str | None:
         """Check if any previous days are missing ratings.
@@ -74,7 +73,7 @@ class Manager:
             "2) Enter missing logs later -> Main menu",
             "3) Skip missing logs -> Enter today's log",
         ):
-            case '1':
+            case "1":
                 # Get list of missed dates
                 missed_dates = []
                 curr_loop_date = last_date + timedelta(days=1)
@@ -100,7 +99,7 @@ class Manager:
 
                 log_saved("Logs saved!")
 
-            case '2':
+            case "2":
                 print_wrapped(
                     "\nRestart the program later to enter your missing "
                     "logs! (You can only enter today's log after "
@@ -109,10 +108,10 @@ class Manager:
                     self.dqt.linewrap_maxcol
                 )
 
-            case '3':
+            case "3":
                 print_wrapped(
                     "\nYou will have to enter the missed logs later "
-                    f"manually in `{self.json.filename}`, unless you "
+                    f"manually in `{self.json.FILENAME}`, unless you "
                     "don't enter today's log yet."
                     "\nYou can open the file by selecting:"
                     "\nMain menu -> 5) View [A]ll logs "
@@ -165,7 +164,7 @@ class Manager:
                 hour = self.dqt.min_time % 12 \
                     if self.dqt.min_time % 12 != 0 \
                     else 12
-                suffix = 'AM' if self.dqt.min_time < 12 else 'PM'
+                suffix = "AM" if self.dqt.min_time < 12 else "PM"
                 formatted_time = f"{hour} {suffix}"
             else:
                 formatted_time = str(self.dqt.min_time)
@@ -175,15 +174,15 @@ class Manager:
 
     def change_todays_rating(self) -> None:
         """Prompt the user to change today's rating."""
-        self._change_data('today', self.json.rating_kyname)
+        self._change_data("today", self.json.RATING_KYNAME)
 
     def change_todays_memory(self) -> None:
         """Prompt the user to change today's memory entry."""
-        self._change_data('today', self.json.memory_kyname)
+        self._change_data("today", self.json.MEMORY_KYNAME)
 
     def prompt_prev_date(self) -> str:
         """Prompt the user to enter a previous date."""
-        selected_date = ''
+        selected_date = ""
         while True:
             inp = input("\nEnter the number of days ago or exact date "
                         f"('{self.dqt.date_format_print}'): ").strip()
@@ -223,11 +222,11 @@ class Manager:
 
     def change_previous_rating(self, selected_date: str) -> None:
         """Prompt the user to change a rating from a previous day."""
-        self._change_data(selected_date, self.json.rating_kyname)
+        self._change_data(selected_date, self.json.RATING_KYNAME)
 
     def change_previous_memory(self, selected_date: str) -> None:
         """Prompt the user to change a memory entry from a previous day."""
-        self._change_data(selected_date, self.json.memory_kyname)
+        self._change_data(selected_date, self.json.MEMORY_KYNAME)
 
     def _change_data(self, selected_date: str, changing: str) -> None:
         """Change data for the selected date and update JSON.
@@ -239,16 +238,16 @@ class Manager:
         Parameter `changing` must be either the rating or memory key name
         specified in JSONManager (raises a ValueError otherwise).
         """
-        if changing not in (self.json.rating_kyname, self.json.memory_kyname):
+        if changing not in (self.json.RATING_KYNAME, self.json.MEMORY_KYNAME):
             raise ValueError(
-                f"'changing' argument must be '{self.json.rating_kyname}' or "
-                f"'{self.json.memory_kyname}'"
+                f"'changing' argument must be '{self.json.RATING_KYNAME}' or "
+                f"'{self.json.MEMORY_KYNAME}'"
             )
 
-        if selected_date == 'today':
+        if selected_date == "today":
             selected_date = _today.strftime(self.dqt.date_format)
 
-        if changing == self.json.rating_kyname:
+        if changing == self.json.RATING_KYNAME:
             self._change_rating_for_date(selected_date)
         else:
             self._change_memory_for_date(selected_date)
@@ -265,7 +264,7 @@ class Manager:
 
     def _change_memory_for_date(self, date: str) -> None:
         """Prompt the user to update a memory entry for a date and save it."""
-        original_mem = self.json.logs[date][self.json.memory_kyname]
+        original_mem = self.json.logs[date][self.json.MEMORY_KYNAME]
 
         raw, used_terminal = self._input_memory(
             f"Enter new memory entry for {date}.",
@@ -298,32 +297,32 @@ class Manager:
                 if not confirm(
                     "The original memory entry was empty. Are you sure?"
                 ):
-                    raw, _ = self._input_memory(
+                    raw, used_terminal = self._input_memory(
                         f"Enter new memory entry for {date}.",
                         original
                     )
                     continue
 
             len_diff = len(original) - len(new_memory)
-            if len_diff > self.memory_edit_length_diff_alert_threshold:
+            if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
                 if not confirm(
                     "The new memory entry is significantly shorter than "
                     f"the original (by {len_diff} characters). Are you "
                     "sure?"
                 ):
-                    raw, _ = self._input_memory(
+                    raw, used_terminal = self._input_memory(
                         f"Enter new memory entry for {date}",
                         original
                     )
                     continue
 
-            print("\nNew memory entry:")
+            print(Txt("\nNew memory entry:\n").bold())
             print_wrapped(new_memory, self.dqt.linewrap_maxcol)
 
             if confirm("Confirm?"):
                 break
 
-            raw, _ = self._input_memory(
+            raw, used_terminal = self._input_memory(
                 f"Enter new memory entry for {date}",
                 original
             )
@@ -331,10 +330,10 @@ class Manager:
 
     def _resolve_memory_edit(self, mem_input: str, original_mem: str) -> str:
         """Replace the first instance of the placeholder with the original."""
-        if self.memory_edit_placeholder in mem_input:
+        if self.MEMORY_EDIT_PLACEHOLDER in mem_input:
             print("\n(Original memory entry has been inserted into your edit)")
             return mem_input.replace(
-                self.memory_edit_placeholder, original_mem, 1
+                self.MEMORY_EDIT_PLACEHOLDER, original_mem, 1
             )
         return mem_input
 
@@ -348,7 +347,7 @@ class Manager:
         while True:
             raw = input(f"{"\n" if newline else ""}{prompt}").lower().strip()
 
-            if raw == '-':
+            if raw == "-":
                 if confirm(
                     "Are you sure you want to save an empty (null) rating?"
                 ):
@@ -370,8 +369,9 @@ class Manager:
     def _input_memory(self,
                       prompt: str,
                       original_mem: str | None = None,
-                      terminal_newline: bool = True,) -> tuple[str, bool]:
-        """Prompt user for today's memory entry via text editor.
+                      terminal_newline: bool = True,
+                      new_file: bool = True) -> tuple[str, bool]:
+        """Prompt user for a memory entry via the text editor.
 
         Fall back to input via Terminal if file fails to open or if an error
         occurs.
@@ -387,6 +387,10 @@ class Manager:
             terminal_newline (bool, optional):
                 Applies to terminal fallback only. Determines whether to
                 print the prompt between two blank lines.
+            new_file (bool):
+                Whether to create and seed a new temp editor file. Set this to
+                `False` only when retrying after a failure, so the previous
+                temp file path and any saved user draft are preserved.
 
         Returns:
             Return a tuple of the memory entry and whether the fallback was
@@ -394,7 +398,11 @@ class Manager:
         """
         try:
             return (
-                self.mem_editor.start_memory_editor(prompt, original_mem),
+                self.mem_editor.start_memory_editor(
+                    prompt,
+                    original_mem,
+                    new_file
+                ),
                 False
             )
         except PermissionError as e:
@@ -435,11 +443,14 @@ class Manager:
             "2) Enter your memory entry here in the CLI instead",
             prompt="Choose what to do next: "
         ):
-            case '1':
+            case "1":
                 return self._input_memory(
-                    prompt, original_mem, terminal_newline
+                    prompt,
+                    original_mem,
+                    terminal_newline,
+                    new_file=False
                 )
-            case '2':
+            case "2":
                 return (
                     self._input_memory_terminal(prompt, terminal_newline),
                     True
@@ -452,7 +463,7 @@ class Manager:
 
     @staticmethod
     def _input_memory_terminal(prompt: str, newline: bool = True) -> str:
-        """Prompt user for today's memory entry via CLI (terminal).
+        """Prompt user for a memory entry via CLI (terminal).
 
         Fall back to input via terminal if file fails to open or if an error
         occurs.
@@ -477,20 +488,20 @@ class Manager:
 
 
 class _MemoryEditor:
-    """A class to handle memory editing in the text file."""
+    """A class to handle memory editing through temporary text files."""
 
-    FILEDIRNAME: str = 'data'
-    FILENAME: str = 'MEMORY_ENTRY_EDIT.txt'
-    COMMENT_CHAR: str = '#'
+    FILEDIRNAME: str = "data"
+    FILENAME_PREFIX: str = "MEM_ENTRY_EDIT"
+    COMMENT_CHAR: str = "//"
     INITIAL_CONTENTS_TEMPLATE: str = (
-        " Lines beginning with '{comment_char}' will be ignored.\n"
-        " Memory entries are NOT saved in this file; this is just a "
-        "temporary editor that is cleared every time you edit or write a "
-        "new memory entry.\n"
-        " Remember to *SAVE THIS FILE* (Ctrl + S / ⌘ + S) before closing!\n"
-        " Write/edit your memory entry below this line.\n \n"
-        " —————————————————————————————————————————————————————————————"
+        "Lines beginning with '{comment_char}' will be ignored.\n"
+        "Memory entries are NOT saved in this file; this is just a "
+        "temporary file for this entry.\n"
+        "Remember to *SAVE THIS FILE* (Ctrl + S / ⌘ + S) before closing!\n"
+        "Write/edit your memory entry below this line.\n \n"
+        "—————————————————————————————————————————————————————————————"
     )
+    FILE_TIMESTAMP_FORMAT: str = "%Y%m%d_%H%M%S_%f"
 
     def __init__(self, manager: Manager):
         self.manager = manager
@@ -498,12 +509,13 @@ class _MemoryEditor:
         rootdir: Path = Path(__file__).resolve().parent.parent
         self.memory_edit_filedirpath: Path =\
             rootdir / self.FILEDIRNAME
-        self.memory_edit_filepath: Path =\
-            self.memory_edit_filedirpath / self.FILENAME
+        # Set when a temp edit file is created; reused during retry flows.
+        self.memory_edit_filepath: Path = Path()
 
     def start_memory_editor(self,
                             prompt: str,
-                            original_entry: str | None = None) -> str:
+                            original_entry: str | None = None,
+                            new_file: bool = True) -> str:
         """Start memory editing process.
 
         Args:
@@ -514,11 +526,20 @@ class _MemoryEditor:
                 entry is being edited and the string will be inserted into
                 the initial contents of the file. Otherwise, it means a new
                 entry is being created.
+            new_file (bool):
+                Whether to create a fresh timestamped temp file and write its
+                initial contents. Set this to `False` only when retrying after
+                a failure, so the existing temp file path and any saved user
+                draft are preserved.
 
         Return:
             str: new memory entry
         """
-        self._write_initial_contents(prompt, original_entry)
+        if new_file:
+            self._delete_files(older_than=3)
+            self.memory_edit_filepath = self._new_memory_edit_filepath()
+
+            self._write_initial_contents(prompt, original_entry)
 
         while True:
             print("\nOpening memory editor...")
@@ -536,26 +557,57 @@ class _MemoryEditor:
                 if original_entry is not None else None,
             )
             if return_msg is None:
-                return ''.join(comments_removed).strip()
+                return "".join(comments_removed).strip()
 
             if confirm(return_msg):
-                return ''.join(comments_removed).strip()
+                return "".join(comments_removed).strip()
+
+    def _delete_files(self, older_than: int | None = 3) -> None:
+        """Delete stale timestamped memory edit files.
+
+        Delete only files matching this editor's generated filename pattern and
+        older than `older_than` days. If `older_than` is `None`, don't delete.
+        """
+        if older_than is None or not self.memory_edit_filedirpath.exists():
+            return
+
+        for filepath in self.memory_edit_filedirpath.glob(
+            f"{self.FILENAME_PREFIX}_*.txt"
+        ):
+            if not filepath.is_file() or filepath == self.memory_edit_filepath:
+                continue
+
+            timestamp: str = filepath.stem.removeprefix(
+                f"{self.FILENAME_PREFIX}_"
+            )
+            try:
+                created_at: datetime = datetime.strptime(
+                    timestamp,
+                    self.FILE_TIMESTAMP_FORMAT
+                )
+            except ValueError:
+                continue
+
+            time_diff = datetime.now() - created_at
+            if time_diff > timedelta(days=older_than):
+                try:
+                    filepath.unlink(missing_ok=True)
+                except OSError:
+                    continue
 
     def _write_initial_contents(self,
                                 prompt: str,
                                 entry_to_load: str | None = None) -> None:
-        """Write initial contents (comments) to file.
+        """Write prompt comments and optional existing entry to the temp file.
 
         Args:
-            prompt (str): Write at the start of file as comment
-            entry_to_load (str, optional): Write to end of file
+            prompt (str): Written at the start of the file as comments.
+            entry_to_load (str, optional): Written to the end of the file.
 
         If editing existing entry (meaning `entry_to_load` is given),
         that will also be inserted at the end of the file.
         """
-        initial_contents = (
-            f" {prompt}\n \n"
-        ) + self.INITIAL_CONTENTS_TEMPLATE
+        initial_contents = f"{prompt}\n\n" + self.INITIAL_CONTENTS_TEMPLATE
 
         initial_contents_formatted: str = self._insert_comment_char(
             initial_contents.format(
@@ -563,39 +615,47 @@ class _MemoryEditor:
             ).splitlines()
         )
 
-        if not initial_contents_formatted.endswith('\n\n'):
+        if not initial_contents_formatted.endswith("\n\n"):
             initial_contents_formatted =\
-                initial_contents_formatted.rstrip('\n') + '\n\n'
+                initial_contents_formatted.rstrip("\n") + "\n\n"
 
         self.memory_edit_filedirpath.mkdir(parents=True, exist_ok=True)
-        with open(self.memory_edit_filepath, 'w', encoding='utf-8',
-                  newline='\n') as f:
+        with open(self.memory_edit_filepath, "w", encoding="utf-8",
+                  newline="\n") as f:
             f.write(initial_contents_formatted)
             if entry_to_load is not None:
                 f.write(entry_to_load)
 
     def _open_memory_edit_file(self) -> None:
-        """Open memory edit file."""
+        """Open the active temp memory edit file."""
         system_name = platform.system()
 
-        if system_name == 'Windows':
+        if system_name == "Windows":
             os.startfile(self.memory_edit_filepath)
-        elif system_name == 'Darwin':  # macOS
-            subprocess.run(['open', self.memory_edit_filepath], check=True)
+        elif system_name == "Darwin":  # macOS
+            subprocess.run(["open", self.memory_edit_filepath], check=True)
         else:  # Linux / Unix
-            subprocess.run(['xdg-open', self.memory_edit_filepath], check=True)
+            subprocess.run(["xdg-open", self.memory_edit_filepath], check=True)
 
-    def _insert_comment_char(self, contents: list[str]) -> str:
+    def _insert_comment_char(self,
+                             contents: list[str],
+                             space_after_char: bool = True) -> str:
         """Insert the comment character at the start of each line."""
-        return '\n'.join(
-            self.COMMENT_CHAR + line
+        return "\n".join(
+            self.COMMENT_CHAR + (" " if space_after_char else "") + line
             for line in contents
         )
 
     def _read_text_file(self) -> list[str]:
-        """Read the file and return contents as a list of each line."""
-        with open(self.memory_edit_filepath, 'r', encoding='utf-8') as f:
+        """Read the active temp file and return its lines."""
+        with open(self.memory_edit_filepath, "r", encoding="utf-8") as f:
             return f.readlines()
+
+    def _new_memory_edit_filepath(self) -> Path:
+        """Build a unique timestamped path for a new temp editor file."""
+        timestamp = datetime.now().strftime(self.FILE_TIMESTAMP_FORMAT)
+        return (self.memory_edit_filedirpath
+                / f"{self.FILENAME_PREFIX}_{timestamp}.txt")
 
     def _check_edit(
             self,
@@ -619,15 +679,15 @@ class _MemoryEditor:
         if original_contents is None:
             return None
 
-        len_diff = len(''.join(original_contents)) - len(''.join(contents))
-        if len_diff > self.manager.memory_edit_length_diff_alert_threshold:
+        len_diff = len("".join(original_contents)) - len("".join(contents))
+        if len_diff > self.manager.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return (
                 f"Your new memory entry is {len_diff} characters shorter "
                 "than your original entry. Are you sure you've saved "
                 "(Ctrl + S / ⌘ + S) your edit?"
             )
 
-        if '\n'.join(original_contents).strip() == '\n'.join(contents).strip():
+        if "\n".join(original_contents).strip() == "\n".join(contents).strip():
             return (
                 f"It looks like your edit matches your original entry. "
                 "Are you sure you've saved (Ctrl + S / ⌘ + S) your edit?"
