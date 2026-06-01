@@ -316,7 +316,7 @@ class Manager:
                     )
                     continue
 
-            print("\nNew memory entry:")
+            print(Txt("\nNew memory entry:\n").bold())
             print_wrapped(new_memory, self.dqt.linewrap_maxcol)
 
             if confirm("Confirm?"):
