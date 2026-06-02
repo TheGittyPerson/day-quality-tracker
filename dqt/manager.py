@@ -12,7 +12,9 @@ from dqt.ui_utils import (
     err,
     log_saved,
     menu,
-    print_wrapped
+    print_wrapped,
+    warn,
+    warning,
 )
 from dqt.styletext import StyleText as Txt
 
@@ -295,24 +297,28 @@ class Manager:
 
             if not original.strip() and raw.strip():
                 if not confirm(
-                    "The original memory entry was empty. Are you sure?"
+                    warning(
+                        "The original memory entry was empty. Are you sure?"
+                    )
                 ):
                     raw, used_terminal = self._input_memory(
                         f"Enter new memory entry for {date}.",
-                        original
+                        original, new_file=False
                     )
                     continue
 
             len_diff = len(original) - len(new_memory)
             if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
                 if not confirm(
-                    "The new memory entry is significantly shorter than "
-                    f"the original (by {len_diff} characters). Are you "
-                    "sure?"
+                    warning(
+                        "The new memory entry is significantly shorter than "
+                        f"the original (by {len_diff} characters).",
+                        "Are you sure?"
+                    )
                 ):
                     raw, used_terminal = self._input_memory(
                         f"Enter new memory entry for {date}",
-                        original
+                        original, new_file=False
                     )
                     continue
 
@@ -324,7 +330,7 @@ class Manager:
 
             raw, used_terminal = self._input_memory(
                 f"Enter new memory entry for {date}",
-                original
+                original, new_file=False
             )
         return new_memory
 
@@ -369,8 +375,8 @@ class Manager:
     def _input_memory(self,
                       prompt: str,
                       original_mem: str | None = None,
-                      terminal_newline: bool = True,
-                      new_file: bool = True) -> tuple[str, bool]:
+                      new_file: bool = True,
+                      terminal_newline: bool = True) -> tuple[str, bool]:
         """Prompt user for a memory entry via the text editor.
 
         Fall back to input via Terminal if file fails to open or if an error
@@ -434,9 +440,11 @@ class Manager:
                 f"\n{e.__repr__()} (line {lineno})"
             )
 
-        print(f"\nIf you've made changes to the file, {Txt("DO NOT").bold()} "
-              f"close your text editor yet. Copy and paste any text you want "
-              f"to save to a safe place.")
+        warn(
+            f"\nIf you've made changes to the file, {Txt("DO NOT").bold()} "
+            "close your text editor yet. Copy and paste any text you want "
+            "to save to a safe place."
+        )
 
         match menu(
             "1) Try starting the editor again",
@@ -447,8 +455,8 @@ class Manager:
                 return self._input_memory(
                     prompt,
                     original_mem,
-                    terminal_newline,
-                    new_file=False
+                    new_file=False,
+                    terminal_newline=terminal_newline,
                 )
             case "2":
                 return (
