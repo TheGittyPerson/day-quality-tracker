@@ -224,11 +224,9 @@ class Tracker:
                         err("You haven't entered any logs yet!")
                         continue
                     self.json.backup_json_file()
-                    cont_on_enter()
-                    
+
                 case "8" | "i":
                     self.json.import_logs()
-                    cont_on_enter()
 
                 case "9" | "x":
                     print("\n*⎋* —————————————————————————————— *⎋*")
