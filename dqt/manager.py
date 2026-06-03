@@ -506,7 +506,7 @@ class _MemoryEditor:
         "Memory entries are NOT permanently saved in this file; this is just "
         "a temporary file for this entry.\n"
         "Remember to *SAVE THIS FILE* (Ctrl + S / ⌘ + S) before closing!\n"
-        "Write/edit your memory entry below this line.\n \n"
+        "Write/edit your memory entry below this line.\n\n"
         "—————————————————————————————————————————————————————————————"
     )
     FILE_TIMESTAMP_FORMAT: str = "%Y%m%d_%H%M%S_%f"
