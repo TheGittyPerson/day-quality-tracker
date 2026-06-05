@@ -544,7 +544,7 @@ class _MemoryEditor:
             str: new memory entry
         """
         if new_file:
-            self._delete_files(older_than=3)
+            self._delete_files()
             self.memory_edit_filepath = self._new_memory_edit_filepath()
 
             self._write_initial_contents(prompt, original_entry)
@@ -570,12 +570,9 @@ class _MemoryEditor:
             if confirm(return_msg):
                 return "".join(comments_removed).strip()
 
-    def _delete_files(self, older_than: int | None = 3) -> None:
-        """Delete stale timestamped memory edit files.
-
-        Delete only files matching this editor's generated filename pattern and
-        older than `older_than` days. If `older_than` is `None`, don't delete.
-        """
+    def _delete_files(self) -> None:
+        """Delete stale timestamped memory edit files."""
+        older_than: int | None = self.manager.dqt.delete_mem_edit_files_after
         if older_than is None or not self.memory_edit_filedirpath.exists():
             return
 
