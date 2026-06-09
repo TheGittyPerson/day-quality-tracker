@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
 from dqt.ui_utils import (
-    confirm, cont_on_enter, err, log_saved, print_wrapped, warn
+    confirm, cont_on_enter, err, log_saved, print_wrapped, warn, warning
 )
 from dqt.styletext import StyleText as Txt
 
@@ -450,12 +450,12 @@ class JSONManager:
                     f"provided JSON file compared to your current JSON file."
                 )
         
-        if not confirm(
+        if not confirm(warning(
             "The logs in your current JSON file will be overwritten. This "
             "may be difficult or impossible to undo (consider backing up "
             "your current JSON file first, unless you are sure that it is "
             "empty). Are you sure?",
-        ):
+        )):
             return
         
         print("\nBeginning import process...")
