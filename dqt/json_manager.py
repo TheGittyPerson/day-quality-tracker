@@ -219,7 +219,8 @@ class JSONManager:
             "\nSometimes an error can occur while the program is running, "
             "which can corrupt or accidentally erase the JSON file where your "
             "logs are stored."
-            "\nIt is good practice to back up your logs every once in a while.",
+            "\n\nIt is good practice to back up your logs every once in a "
+            "while.",
             self.dqt.linewrap_maxcol
         )
         
@@ -250,16 +251,34 @@ class JSONManager:
         Return success and file path as a string.
         """
         dst = None
+        dirpath = Path(self.dqt.backup_dir_path).expanduser().resolve() \
+            if self.dqt.backup_dir_path else None
+
+        manually_enter_dir = False
         while True:
-            dirpath = self._prompt_dirpath(
-                "Enter the directory path where you would like to create the "
-                "backup file"
-            )
+            if dirpath is not None:
+                if not dirpath.is_dir():
+                    err(
+                        "The backups directory path specified in "
+                        "`settings.py` does not exist.",
+                        "Try entering the path here manually."
+                    )
+                    manually_enter_dir = True
+            else:
+                manually_enter_dir = True
+
+            if manually_enter_dir:
+                dirpath: Path = self._prompt_dirpath(
+                    "Enter the directory path where you would like to create "
+                    "the backup file"
+                )
+
             print(f"\nBackup will be saved to:\n{dirpath}")
+
             filename = self._prompt_filename(
-                "Name the backup file "
-                "\n(Tip: include a date or number for future reference)"
+                "Name the backup file (use '~' to prepend a default prefix)"
             )
+            dirpath: Path
             chosen_filepath = dirpath / filename
             if chosen_filepath.exists():
                 warn(
@@ -294,7 +313,7 @@ class JSONManager:
         if not exist_ok and target_path.exists():
             raise FileExistsError
         return str(shutil.copy2(self.filepath, target_path))
-    
+
     @staticmethod
     def _prompt_dirpath(prompt: str, from_home_dir: bool = True) -> Path:
         """Prompt and validate directory path input.
@@ -321,8 +340,14 @@ class JSONManager:
             break
         return dirpath
     
-    def _prompt_filename(self, prompt: str) -> str:
-        """Prompt and validate file name based on OS."""
+    def _prompt_filename(self,
+                         prompt: str,
+                         default_name_prefix: str = "dqt_backup") -> str:
+        """Prompt and validate file name based on OS.
+
+        If user input starts with "~", the character will be replaced by
+        `default_name_prefix`.
+        """
         while True:
             filename = input(f"\n{prompt}: ").strip()
             if not filename:
@@ -330,7 +355,9 @@ class JSONManager:
                 continue
             if not filename.endswith(".json"):
                 filename += ".json"
-            
+            if filename.startswith("~"):
+                filename = filename.replace("~", default_name_prefix, 1)
+
             for ch in self._invalid_filename_chars():
                 if ch in filename:
                     err(

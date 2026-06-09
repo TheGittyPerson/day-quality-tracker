@@ -32,6 +32,7 @@ class Tracker:
         "clock_format_12": bool,
         "enable_ansi": (bool, NoneType),
         "delete_mem_edit_files_after": (int, NoneType),
+        "backup_dir_path": (str, NoneType),
         "autofill_json": bool,
     }
     
@@ -49,6 +50,7 @@ class Tracker:
         self.clock_format_12: bool = True
         self.enable_ansi: bool | None = False
         self.delete_mem_edit_files_after: int | None = 7
+        self.backup_dir_path: str | None = None
         self.autofill_json: bool = True
         
         try:
