@@ -42,8 +42,6 @@ CONFIGS: dict[str, dict[str, Any]] = {
     
     "graph": {
         "graph_style": "ggplot",  #                * Graph style (None = default style)
-        "graph_show_block": True,  #               Whether the program should pause while the graph is open (`True`
-        #                                              recommended for macOS, based on what I have tested)
         "title": "Day Quality Ratings",  #         Graph title text
         "title_fontsize": 20,  #                   Title font size (pt, 1 point = 1/72 inches)
         "title_padding": 18,  #                    Title padding (pt)

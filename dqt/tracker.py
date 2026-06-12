@@ -121,12 +121,8 @@ class Tracker:
                         err("You haven't entered any logs yet!")
                         continue
                     self.graph.view_ratings_graph()
-                    if not self.graph.graph_show_block:
-                        cont_on_enter()
-                        self.graph.close()
-                    else:
-                        print("\nGraph closed.")
-                
+                    cont_on_enter()
+
                 case "2" | "t":
                     if not self.json.today_rated():
                         err("You haven't entered today's log yet!")

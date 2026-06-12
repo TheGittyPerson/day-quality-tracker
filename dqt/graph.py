@@ -16,7 +16,6 @@ class Graph:
     
     _CONFIG_KEYS: dict[str, type | tuple[type, ...]] = {
         "graph_style": (str, NoneType),
-        "graph_show_block": bool,
         "title": str,
         "title_fontsize": (float, int, str),
         "title_padding": (float, int),
@@ -54,10 +53,7 @@ class Graph:
         # DayQualityTracker attributes
         self.dqt: Tracker = dqt
         self.json: JSONManager = dqt.json
-        
-        # Graph settings
-        self.graph_show_block: bool = True
-        
+
         self.graph_style: str | None = "ggplot"
         
         self.title: str = "Day Quality Ratings"
@@ -114,11 +110,10 @@ class Graph:
     
     def view_ratings_graph(self) -> None:
         """Display current ratings graph."""
+        plt.close("all")
         print("\nBuilding graph...")
         self._build()
         print("\nDisplaying graph...")
-        if self.graph_show_block:
-            print("\n[Close the graph window to continue]")
         self._show()
         
     def _build(self) -> None:
@@ -161,17 +156,13 @@ class Graph:
         self._set_ylimits(ax)
         
         self._draw_legend(ax)
-        
-    def _show(self) -> None:
-        """Show the graph."""
-        plt.show(block=self.graph_show_block)
-        plt.pause(0.1)
-    
+
     @staticmethod
-    def close() -> None:
-        """Close the graph."""
-        plt.close("all")
-        
+    def _show() -> None:
+        """Show the graph."""
+        plt.show(block=False)
+        plt.pause(0.1)
+
     def configure(self, **configs: str | float | int | bool | tuple) -> None:
         """Update configuration options via keyword arguments.
         
