@@ -91,9 +91,13 @@ class Manager:
                         f"or '-' to skip): ",
                     )
 
-                    memory, _ = self._input_memory(
-                        "Enter a memory entry (leave blank to skip): "
-                    )
+                    while True:
+                        memory, _ = self._input_memory(
+                            "Enter a memory entry (leave blank to skip): "
+                        )
+
+                        if self._confirm_memory_final(memory):
+                            break
 
                     date_str = datetime.strftime(date, self.dqt.date_format)
 
@@ -143,17 +147,22 @@ class Manager:
                 f"average day "
                 f"\n(enter '-' to skip): "
             )
-
-            tdys_memory, _ = self._input_memory(
-                f"Enter a memory entry; write a few sentences about your "
-                f"day. \nLeave this blank to skip."
-            )
-
-            if not tdys_memory:
-                print(
-                    "\nTo enter your memory entry later: "
-                    "\nMain menu -> Edit today's/previous log -> Edit memory"
+            while True:
+                tdys_memory, _ = self._input_memory(
+                    f"Enter a memory entry; write a few sentences about your "
+                    f"day. \nLeave this blank to skip."
                 )
+
+                if not tdys_memory:
+                    print(
+                        "\nTo enter your memory entry later: "
+                        "\nMain menu -> Edit today's/previous log "
+                        "-> Edit memory"
+                    )
+                    break
+
+                if self._confirm_memory_final(tdys_memory):
+                    break
 
             # Save data
             today = _today.strftime(self.dqt.date_format)
@@ -268,71 +277,68 @@ class Manager:
         """Prompt the user to update a memory entry for a date and save it."""
         original_mem = self.json.logs[date][self.json.MEMORY_KYNAME]
 
-        raw, used_terminal = self._input_memory(
-            f"Enter new memory entry for {date}.",
-            original_mem,
-            terminal_newline=False
-        )
+        while True:
+            raw, used_terminal = self._input_memory(
+                f"Enter new memory entry for {date}.",
+                original_mem,
+                terminal_newline=False
+            )
 
-        new_memory = self._confirm_memory_edit(
-            raw, original_mem, date, used_terminal
-        )
-        self.json.update(date=date, memory=new_memory)
+            if used_terminal:
+                new_entry = self._resolve_memory_edit(raw, original_mem)
+            else:
+                new_entry = raw
+
+            if not self._check_memory_edit_length(new_entry, original_mem):
+                continue
+
+            if not self._confirm_memory_final(new_entry):
+                continue
+
+        self.json.update(date=date, memory=new_entry)
         log_saved("Memory entry updated and saved!")
 
-    def _confirm_memory_edit(self, raw: str, original: str, date: str,
-                             used_terminal: bool = False) -> str:
-        """Validate, preview, and confirm an edited memory entry.
+    def _check_memory_edit_length(self, entry: str, original: str) -> bool:
+        """Check for length differences between the new and original entry.
 
-        Handles placeholder resolution, length-difference warnings, and
-        final user confirmation. Re-prompts until the user confirms
-        the edited entry.
+        This prevents any potential data loss when editing an existing memory
+        entry.
+
+        Return whether the user confirms their entry. Return `False` if the
+        user wishes to re-enter their entry.
         """
-
-        while True:
-            if used_terminal:
-                new_memory = self._resolve_memory_edit(raw, original)
-            else:
-                new_memory = raw
-
-            if not original.strip() and raw.strip():
-                if not confirm(
-                    warning(
-                        "The original memory entry was empty. Are you sure?"
-                    )
-                ):
-                    raw, used_terminal = self._input_memory(
-                        f"Enter new memory entry for {date}.",
-                        original, new_file=False
-                    )
-                    continue
-
-            len_diff = len(original) - len(new_memory)
-            if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
-                if not confirm(
-                    warning(
-                        "The new memory entry is significantly shorter than "
-                        f"the original (by {len_diff} characters).",
-                        "Are you sure?"
-                    )
-                ):
-                    raw, used_terminal = self._input_memory(
-                        f"Enter new memory entry for {date}",
-                        original, new_file=False
-                    )
-                    continue
-
-            print(Txt("\nNew memory entry:\n").bold())
-            print_wrapped(new_memory, self.dqt.linewrap_maxcol)
-
-            if confirm("Confirm?"):
-                break
-
-            raw, used_terminal = self._input_memory(
-                f"Enter new memory entry for {date}",
-                original, new_file=False
+        if not original.strip() and entry.strip():
+            return confirm(
+                warning(
+                    "The original memory entry was empty. Are you sure?"
+                )
             )
-        return new_memory
+
+        len_diff = len(original) - len(entry)
+        if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
+            return confirm(
+                warning(
+                    "The new memory entry is significantly shorter than "
+                    f"the original (by {len_diff} characters). Are you "
+                    "sure?"
+                )
+            )
+
+        return True
+
+    def _confirm_memory_final(self, entry: str):
+        """Show the user their new entry for confirmation.
+
+        Use as confirmation right before saving (at the end of memory entry
+        pipelines)
+        """
+        print(Txt("\nNew memory entry:\n").bold())
+        print_wrapped(entry, self.dqt.linewrap_maxcol)
+
+        if not (confirmed := confirm("Confirm?")):
+            print("\nTrying again.")
+
+        return confirmed
 
     def _resolve_memory_edit(self, mem_input: str, original_mem: str) -> str:
         """Replace the first instance of the placeholder with the original."""
