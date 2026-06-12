@@ -43,7 +43,7 @@ class Manager:
         loop through each missing date and prompt rating.
         Return the option the user chose if missed prior dates.
         """
-        if self.json.no_logs():  # Ignore for first-time runs (empty dict)
+        if self.json.no_logs():  # Ignore for first-time runs
             return None
 
         last_date_str: str = max(self.dqt.json.logs.keys())
@@ -298,9 +298,9 @@ class Manager:
             else:
                 new_entry = raw
 
-            # The following 2 conditions must check for `not ...` and
-            # continue instead of excluding `not` and using `break` to ensure
-            # both conditions are checked.
+            # The following 2 conditions MUST check for `not ...` and
+            # continue instead of excluding `not` and using breaks.
+
             if not self._check_memory_edit_length(new_entry, original_mem):
                 new_file = False
                 continue
@@ -714,7 +714,7 @@ class _MemoryEditor:
                 "(Ctrl + S / ⌘ + S) your edit?"
             )
 
-        if "\n".join(original_contents).strip() == "\n".join(contents).strip():
+        if "".join(original_contents).strip() == "".join(contents).strip():
             return (
                 f"It looks like your edit matches your original entry. "
                 "Are you sure you've saved (Ctrl + S / ⌘ + S) your edit?"
