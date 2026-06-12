@@ -24,7 +24,7 @@ def cont_on_enter(msg: str = "[Press ENTER ↩ to return to main menu]") -> None
     input(f"\n{msg}")
 
 
-def err(*message: str, pause: bool = True) -> None:
+def err(*message: str, pause: bool = False) -> None:
     """Print formatted error message."""
     prefix = StyleText("\n❌ Error: ").bold().red()
     print(prefix + message[0], *message[1:], sep="\n")
