@@ -43,7 +43,7 @@ class Manager:
         loop through each missing date and prompt rating.
         Return the option the user chose if missed prior dates.
         """
-        if self.json.no_logs():  # Ignore for first-time runs (empty dict)
+        if self.json.no_logs():  # Ignore for first-time runs
             return None
 
         last_date_str: str = max(self.dqt.json.logs.keys())
@@ -91,13 +91,16 @@ class Manager:
                         f"or '-' to skip): ",
                     )
 
+                    new_file = True
                     while True:
                         memory, _ = self._input_memory(
-                            "Enter a memory entry (leave blank to skip): "
+                            "Enter a memory entry (leave blank to skip): ",
+                            new_file=new_file,
                         )
 
                         if self._confirm_memory_final(memory):
                             break
+                        new_file = False
 
                     date_str = datetime.strftime(date, self.dqt.date_format)
 
@@ -147,10 +150,13 @@ class Manager:
                 f"average day "
                 f"\n(enter '-' to skip): "
             )
+
+            new_file = True
             while True:
                 tdys_memory, _ = self._input_memory(
                     f"Enter a memory entry; write a few sentences about your "
-                    f"day. \nLeave this blank to skip."
+                    f"day. \nLeave this blank to skip.",
+                    new_file
                 )
 
                 if not tdys_memory:
@@ -163,6 +169,7 @@ class Manager:
 
                 if self._confirm_memory_final(tdys_memory):
                     break
+                new_file = False
 
             # Save data
             today = _today.strftime(self.dqt.date_format)
@@ -277,9 +284,11 @@ class Manager:
         """Prompt the user to update a memory entry for a date and save it."""
         original_mem = self.json.logs[date][self.json.MEMORY_KYNAME]
 
+        new_file = True
         while True:
             raw, used_terminal = self._input_memory(
                 f"Enter new memory entry for {date}.",
+                new_file,
                 original_mem,
                 terminal_newline=False
             )
@@ -289,11 +298,18 @@ class Manager:
             else:
                 new_entry = raw
 
+            # The following 2 conditions MUST check for `not ...` and
+            # continue instead of excluding `not` and using breaks.
+
             if not self._check_memory_edit_length(new_entry, original_mem):
+                new_file = False
                 continue
 
             if not self._confirm_memory_final(new_entry):
+                new_file = False
                 continue
+
+            break
 
         self.json.update(date=date, memory=new_entry)
         log_saved("Memory entry updated and saved!")
@@ -380,8 +396,8 @@ class Manager:
 
     def _input_memory(self,
                       prompt: str,
+                      new_file: bool,
                       original_mem: str | None = None,
-                      new_file: bool = True,
                       terminal_newline: bool = True) -> tuple[str, bool]:
         """Prompt user for a memory entry via the text editor.
 
@@ -392,6 +408,10 @@ class Manager:
             prompt (str):
                 Prompt shown at start of temp editor text file.
                 If using Terminal fallback, shown as printed prompt.
+            new_file (bool):
+                Whether to create and seed a new temp editor file. Set this to
+                `False` only when retrying after a failure, so the previous
+                temp file path and any saved user draft are preserved.
             original_mem (str. optional):
                 If the user is to write a new memory entry, this should be
                 `None`. Otherwise, if a `str` is given, it means the user is
@@ -399,10 +419,6 @@ class Manager:
             terminal_newline (bool, optional):
                 Applies to terminal fallback only. Determines whether to
                 print the prompt between two blank lines.
-            new_file (bool):
-                Whether to create and seed a new temp editor file. Set this to
-                `False` only when retrying after a failure, so the previous
-                temp file path and any saved user draft are preserved.
 
         Returns:
             Return a tuple of the memory entry and whether the fallback was
@@ -460,8 +476,8 @@ class Manager:
             case "1":
                 return self._input_memory(
                     prompt,
-                    original_mem,
                     new_file=False,
+                    original_mem=original_mem,
                     terminal_newline=terminal_newline,
                 )
             case "2":
@@ -698,7 +714,7 @@ class _MemoryEditor:
                 "(Ctrl + S / ⌘ + S) your edit?"
             )
 
-        if "\n".join(original_contents).strip() == "\n".join(contents).strip():
+        if "".join(original_contents).strip() == "".join(contents).strip():
             return (
                 f"It looks like your edit matches your original entry. "
                 "Are you sure you've saved (Ctrl + S / ⌘ + S) your edit?"
