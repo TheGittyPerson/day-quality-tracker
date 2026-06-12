@@ -24,16 +24,28 @@ def cont_on_enter(msg: str = "[Press ENTER ↩ to return to main menu]") -> None
     input(f"\n{msg}")
 
 
-def err(message: str, *desc: str, pause: bool = True) -> None:
+def err(*message: str, pause: bool = True) -> None:
     """Print formatted error message."""
-    print(
-        StyleText("\n❌ Error: ").bold().red()
-        + message
-    )
-    for d in desc:
-        print(d)
+    prefix = StyleText("\n❌ Error: ").bold().red()
+    print(prefix + message[0], *message[1:], sep="\n")
     if pause:
         sleep(1)
+
+
+def warn(*message: str, pause: bool = False) -> None:
+    """Print formatted warning message."""
+    prefix = StyleText("\n⚠️ WARNING: ").bold().yellow()
+    print(prefix + message[0], *message[1:], sep="\n")
+    if pause:
+        sleep(1)
+
+
+def warning(*message: str) -> str:
+    """Return a formatted warning message."""
+    return str(
+        StyleText("\n⚠️ WARNING: ").bold().yellow() + message[0]
+        + "".join(f"\n{msg}" for msg in message[1:])
+    )
 
 
 def log_saved(text: str = "Log saved!") -> None:

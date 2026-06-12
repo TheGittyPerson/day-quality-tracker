@@ -26,6 +26,12 @@ CONFIGS: dict[str, dict[str, Any]] = {
         "clock_format_12": True,  #            Whether time will be printed in 12-hour clock format (24-hour otherwise)
         "enable_ansi": None,  #                Whether to enable ANSI escape codes for text coloring and styling (`None`
         #                                          = automatically detect terminal compatibility, not so reliable)
+        "delete_mem_edit_files_after": 7,  #   Number of days after creation that temp memory entry edit files will be
+        #                                          deleted. Deletion can only happen when the program is running.
+        #                                          (`None` = don't delete)
+        "backup_dir_path": None,  #            Directory at which to store JSON backup files. When set to `None`, the
+        #                                      directory path will be prompted during runtime every time a backup files
+        #                                      is to be created.
         "autofill_json": True,  #              Whether the program should silently fill in missing values in the JSON
         #                                          file where possible. If `True`, ratings will be set to `None` if
         #                                          not found, and memory entries will be set to an empty string. If

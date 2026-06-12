@@ -153,7 +153,7 @@ entry. Old temporary editor files are cleaned up automatically after a few days,
 but your actual saved logs are stored in `data/dq_logs.json`.
 
 Do **NOT** use the temporary text files as your primary source of backup, as 
-they are **deleted after 3 days** by default and can be unreliable. Always use 
+they are **deleted after 7 days** by default and can be unreliable. Always use 
 the "Backup Logs" feature provided in the main menu.
 
 If the memory editor fails or if your device is incompatible for this feature, 

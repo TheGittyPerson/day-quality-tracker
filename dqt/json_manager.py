@@ -7,7 +7,9 @@ from pathlib import Path
 from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
-from dqt.ui_utils import confirm, cont_on_enter, err, log_saved, print_wrapped
+from dqt.ui_utils import (
+    confirm, cont_on_enter, err, log_saved, print_wrapped, warn, warning
+)
 from dqt.styletext import StyleText as Txt
 
 if TYPE_CHECKING:
@@ -217,14 +219,16 @@ class JSONManager:
             "\nSometimes an error can occur while the program is running, "
             "which can corrupt or accidentally erase the JSON file where your "
             "logs are stored."
-            "\nIt is good practice to back up your logs every once in a while.",
+            "\n\nIt is good practice to back up your logs every once in a "
+            "while.",
             self.dqt.linewrap_maxcol
         )
         
         if not self._memory_matches_file():
-            err(
+            warn(
                 "Your logs saved in runtime memory do not match those in the "
-                "JSON file.")
+                "JSON file."
+            )
             if not confirm("Are you sure you want to continue?"):
                 print_wrapped(
                     "Ensure all changes are saved to the JSON file before "
@@ -247,21 +251,38 @@ class JSONManager:
         Return success and file path as a string.
         """
         dst = None
+        dirpath = Path(self.dqt.backup_dir_path).expanduser().resolve() \
+            if self.dqt.backup_dir_path else None
+
+        manually_enter_dir = False
         while True:
-            dirpath = self._prompt_dirpath(
-                "Enter the directory path where you would like to create the "
-                "backup file"
-            )
+            if dirpath is not None:
+                if not dirpath.is_dir():
+                    err(
+                        "The backups directory path specified in "
+                        "`settings.py` does not exist.",
+                        "Try entering the path here manually."
+                    )
+                    manually_enter_dir = True
+            else:
+                manually_enter_dir = True
+
+            if manually_enter_dir:
+                dirpath: Path = self._prompt_dirpath(
+                    "Enter the directory path where you would like to create "
+                    "the backup file"
+                )
+
             print(f"\nBackup will be saved to:\n{dirpath}")
+
             filename = self._prompt_filename(
-                "Name the backup file "
-                "\n(Tip: include a date or number for future reference)"
+                "Name the backup file (use '~' to prepend a default prefix)"
             )
+            dirpath: Path
             chosen_filepath = dirpath / filename
             if chosen_filepath.exists():
-                print(
-                    f"\n{Txt("WARNING:").bold().yellow()} The file path "
-                    f"'{chosen_filepath}' already exists. "
+                warn(
+                    f"The file path '{chosen_filepath}' already exists.",
                     f"Continuing will overwrite data in {filename}."
                 )
             else:
@@ -292,7 +313,7 @@ class JSONManager:
         if not exist_ok and target_path.exists():
             raise FileExistsError
         return str(shutil.copy2(self.filepath, target_path))
-    
+
     @staticmethod
     def _prompt_dirpath(prompt: str, from_home_dir: bool = True) -> Path:
         """Prompt and validate directory path input.
@@ -319,8 +340,14 @@ class JSONManager:
             break
         return dirpath
     
-    def _prompt_filename(self, prompt: str) -> str:
-        """Prompt and validate file name based on OS."""
+    def _prompt_filename(self,
+                         prompt: str,
+                         default_name_prefix: str = "dqt_backup") -> str:
+        """Prompt and validate file name based on OS.
+
+        If user input starts with "~", the character will be replaced by
+        `default_name_prefix`.
+        """
         while True:
             filename = input(f"\n{prompt}: ").strip()
             if not filename:
@@ -328,7 +355,9 @@ class JSONManager:
                 continue
             if not filename.endswith(".json"):
                 filename += ".json"
-            
+            if filename.startswith("~"):
+                filename = filename.replace("~", default_name_prefix, 1)
+
             for ch in self._invalid_filename_chars():
                 if ch in filename:
                     err(
@@ -409,26 +438,24 @@ class JSONManager:
             return
         
         if not src_contents_cleaned:
-            print(
-                f"{Txt("WARNING:").bold().yellow()} The provided JSON "
-                f"contains an empty object."
+            warn(
+                "The provided JSON contains an empty object."
             )
         else:  # If not Falsey, check if there are fewer logs in src than dst
             len_diff = (len(self.logs.items())
                         - len(src_contents_cleaned.items()))
             if len_diff > 0:
-                print(
-                    f"{Txt("WARNING:").bold().yellow()} There are {len_diff} "
-                    f"fewer log entries in the provided JSON file compared to "
-                    f"your current JSON file."
+                warn(
+                    f"There are {len_diff} fewer log entries in the "
+                    f"provided JSON file compared to your current JSON file."
                 )
         
-        if not confirm(
+        if not confirm(warning(
             "The logs in your current JSON file will be overwritten. This "
             "may be difficult or impossible to undo (consider backing up "
             "your current JSON file first, unless you are sure that it is "
             "empty). Are you sure?",
-        ):
+        )):
             return
         
         print("\nBeginning import process...")
@@ -670,12 +697,11 @@ class JSONManager:
             
             # Prevent overwriting existing data with an empty logs dict
             if raw_json and not logs_to_dump:
-                print(
-                    Txt(
-                        "\n(The program tried to save an empty logs dict. Logs "
-                        "were not saved to prevent data loss. Consider "
-                        "creating a copy of your JSON file now, just in case.)"
-                    ).dim()
+                warn(
+                    "The program tried to save an empty logs dict. Logs "
+                    "were not saved to prevent data loss.",
+                    "Consider creating a copy of your JSON file now, just in "
+                    "case."
                 )
                 return
         

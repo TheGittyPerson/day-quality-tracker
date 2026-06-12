@@ -31,6 +31,8 @@ class Tracker:
         "date_format_print": str,
         "clock_format_12": bool,
         "enable_ansi": (bool, NoneType),
+        "delete_mem_edit_files_after": (int, NoneType),
+        "backup_dir_path": (str, NoneType),
         "autofill_json": bool,
     }
     
@@ -47,6 +49,8 @@ class Tracker:
         self.date_format_print: str = "YYYY-MM-DD"
         self.clock_format_12: bool = True
         self.enable_ansi: bool | None = False
+        self.delete_mem_edit_files_after: int | None = 7
+        self.backup_dir_path: str | None = None
         self.autofill_json: bool = True
         
         try:
@@ -224,11 +228,9 @@ class Tracker:
                         err("You haven't entered any logs yet!")
                         continue
                     self.json.backup_json_file()
-                    cont_on_enter()
-                    
+
                 case "8" | "i":
                     self.json.import_logs()
-                    cont_on_enter()
 
                 case "9" | "x":
                     print("\n*⎋* —————————————————————————————— *⎋*")

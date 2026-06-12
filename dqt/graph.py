@@ -156,7 +156,7 @@ class Graph:
         self._draw_average_rating_line(ax, ratings)
         self._plot_highest_lowest_ratings(ax, dates, ratings)
         
-        self._draw_year_labels(ax, dates)
+        self._draw_year_label(ax, dates)
         
         self._set_ylimits(ax)
         
@@ -278,26 +278,25 @@ class Graph:
             label=self.line_label,
         )
     
-    def _draw_year_labels(self, ax: plt.Axes, dates: list[datetime]) -> None:
-        """Draw year labels."""
-        shown_years = set()
-        for i, date in enumerate(dates):
-            year = date.year
-            
-            if year not in shown_years:
-                x = i / (len(dates) - 1) if len(dates) > 1 else 0.5
-                ax.text(
-                    x,
-                    1,
-                    str(year),
-                    transform=ax.transAxes,
-                    ha="center",
-                    va="bottom",
-                    fontsize=self.year_labels_fontsize,
-                    fontweight=self.year_labels_fontweight
-                )
-                shown_years.add(year)
-    
+    def _draw_year_label(self, ax: plt.Axes, dates: list[datetime]) -> None:
+        """Draw a year label of the latest year.
+
+        Label is drawn above the first day of the year.
+        """
+        years_only: list[int] = [date.year for date in dates]
+        index = years_only.index(years_only[-1])
+        x = index / (len(dates) - 1) if len(dates) > 1 else 0.5
+        ax.text(
+            x,
+            1,
+            str(years_only[index]),
+            transform=ax.transAxes,
+            ha="center",
+            va="bottom",
+            fontsize=self.year_labels_fontsize,
+            fontweight=self.year_labels_fontweight
+        )
+
     def _draw_neutral_rating_line(self, ax: plt.Axes) -> None:
         """Draw horizontal neutral rating line."""
         ax.axhline(
@@ -353,7 +352,7 @@ class Graph:
             color=self.highest_rating_point_color,
             zorder=self.highest_rating_point_zorder,
         )
-        
+
         ax.scatter(
             [dates[i] for i in min_indices],
             [min_val] * len(min_indices),
