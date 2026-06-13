@@ -81,7 +81,7 @@ class JSONManager:
         """Update logs with new log and dump to JSON file.
 
         Attempted rewrite of previous items will raise a KeyError.
-        Use `update()` instead to add a new log.
+        Use `update()` instead to update a log.
 
         It is recommended to explicitly provide both rating and memory
         arguments, even if it is equal to the default value.
