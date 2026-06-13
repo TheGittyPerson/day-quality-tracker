@@ -147,12 +147,11 @@ rate your day at the moment. Ratings can be edited at any time.
 
 ### Memory entries
 
-You may optionally add a memory entry alongside your rating. Memory entries 
-function like short diary notes and can span a few lines. You may enter 
-anything you wish to remember for the future, or leave the entry empty if you 
-do not wish to write one.
+You may optionally add a memory entry alongside your rating. Memory entries can
+be diary/journal entries, notes, or anything you wish to remember for the 
+future. You can leave the entry empty if you do not want to write one.
 
-Every time you want to write a new memory entry or edit an existing one, DQT
+When you want to write a new memory entry or edit an existing one, DQT
 creates a new temporary text file in `data/` and opens it with your device's
 default text editing application. Your memory entries are **NOT** permanently
 saved in this file; it is just a temporary text file for an individual entry.
