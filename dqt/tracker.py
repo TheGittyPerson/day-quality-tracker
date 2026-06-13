@@ -6,7 +6,7 @@ from dqt.manager import Manager
 from dqt.graph import Graph
 from dqt.stats import Stats
 from dqt.settings_manager import SettingsManager
-from dqt.ui_utils import cont_on_enter, err, menu
+from dqt.ui_utils import confirm, cont_on_enter, err, menu, warning
 from dqt.styletext import StyleText as Txt
 
 _today: datetime = datetime.today()
@@ -81,21 +81,10 @@ class Tracker:
     def run(self) -> None:
         """Run Day Quality Tracker."""
         Txt.set_ansi(self.enable_ansi)
-        
-        title = f"*--- 📆 Day Quality Tracker {self.RELEASE_NUM}! 📈 ---*"
-        print(
-            Txt(
-                f"\n{title}"
-            ).bold().yellow()
-        )
-        semver_str = "~~~ " + self.SEMVER + " ~~~"
-        print(Txt(f"{semver_str:^{len(title) + 2}}").dim())
-        
-        choice = self.manager.handle_missing_logs()
-        
-        if choice in ["1", "3", None]:
-            if not self.json.today_rated():
-                self.manager.input_todays_log()
+
+        self._print_header()
+
+        self.manager.handle_logs_entry()
         
         while True:
             print("\n*❖* —————————————————————————————— *❖*")
@@ -125,7 +114,20 @@ class Tracker:
 
                 case "2" | "t":
                     if not self.json.today_rated():
-                        err("You haven't entered today's log yet!")
+                        print("\nYou haven't entered today's log yet.")
+
+                        if self.manager.logs_missed():
+                            msg = warning(
+                                "\nWriting today's log means you will have "
+                                "to enter your missed logs manually in the "
+                                "JSON file later. Confirm?"
+                            )
+                            if not confirm(msg):
+                                continue
+                        else:
+                            print("\nThis will be your new log for today.")
+
+                        self.manager.input_todays_log()
                         continue
                     
                     print(Txt("\nToday's log:").bold())
@@ -243,6 +245,16 @@ class Tracker:
                     print("\n*⎋* —————————————————————————————— *⎋*")
                     print("\nBye!")
                     raise SystemExit()
+
+    def _print_header(self) -> None:
+        title = f"*--- 📆 Day Quality Tracker {self.RELEASE_NUM}! 📈 ---*"
+        print(
+            Txt(
+                f"\n{title}"
+            ).bold().yellow()
+        )
+        semver_str = "~~~ " + self.SEMVER + " ~~~"
+        print(Txt(f"{semver_str:^{len(title) + 2}}").dim())
     
     def configure(self, **configs: int | str | bool | None) -> None:
         """Update configuration options via keyword arguments.
