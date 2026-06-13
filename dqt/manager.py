@@ -87,8 +87,14 @@ class Manager:
                         "the file.",
                         self.dqt.linewrap_maxcol
                     )
+                    if not confirm(
+                        "Confirm? Enter 'n' to return to main menu instead"
+                    ):
+                        return
                     print("\n*❖* —————————————————————————————— *❖*")
                     self.input_todays_log()
+        else:
+            self.input_todays_log()
 
     def _report_missing_logs(self) -> date | None:
         """Check and report if any previous days are missing logs.

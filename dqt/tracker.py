@@ -113,7 +113,7 @@ class Tracker:
                     cont_on_enter()
 
                 case "2" | "t":
-                    if not self.json.today_rated():
+                    if not self.json.today_logged():
                         print("\nYou haven't entered today's log yet.")
 
                         if self.manager.logs_missed():

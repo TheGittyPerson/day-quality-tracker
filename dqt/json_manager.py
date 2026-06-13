@@ -104,8 +104,8 @@ class JSONManager:
         """Return memory entry for given date."""
         return self.logs[date][self.MEMORY_KYNAME]
     
-    def today_rated(self) -> bool:
-        """Check if a rating has been provided for today."""
+    def today_logged(self) -> bool:
+        """Check if a log has been provided for today."""
         today = _today.strftime(self.dqt.date_format)
         return today in self.logs
     
