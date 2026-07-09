@@ -185,7 +185,8 @@ When the graph window opens, close it to return to the program.
 
 #### Edit today's log
 
-Choose to edit the rating or memory (or both) you entered today.
+Choose to edit the rating or memory (or both) you entered today. If you 
+haven't entered a log for today yet, this option creates a new log.
 
 #### Edit previous log
 
