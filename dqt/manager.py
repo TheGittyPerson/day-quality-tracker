@@ -57,16 +57,6 @@ class Manager:
             ):
                 case "1":
                     self._input_missing_logs(last_log_date)
-                    print("\n*❖* —————————————————————————————— *❖*")
-                    if datetime.now().time().hour >= self.dqt.min_time:
-                        if not confirm(
-                            "Would you like to enter today's log now?"
-                        ):
-                            print(
-                                "\nRerun the program later to enter your log!"
-                            )
-                    else:
-                        self._print_input_log_later()
                 case "2":
                     print_wrapped(
                         "\nRestart the program later to enter your missing "
@@ -75,6 +65,7 @@ class Manager:
                         "them.)",
                         self.dqt.linewrap_maxcol
                     )
+                    return
                 case "3":
                     print_wrapped(
                         "\nYou will have to enter the missed logs later "
@@ -90,10 +81,17 @@ class Manager:
                     if not confirm(
                         "Confirm? Enter 'n' to return to main menu instead"
                     ):
+                        print(
+                            "\nRerun the program to see this dialogue again "
+                            "and enter the missing logs later!"
+                        )
                         return
-                    print("\n*❖* —————————————————————————————— *❖*")
-                    self.input_todays_log()
-        elif not self.json.today_logged():
+
+        print("\n*❖* —————————————————————————————— *❖*")
+        if datetime.now().time().hour < self.dqt.min_time:
+            self._print_input_log_later()
+            return
+        if not self.json.today_logged():
             if not confirm("Would you like to enter today's log now?"):
                 print(
                     "\nIn the main menu, select 2) Edit Today's log..., or "
