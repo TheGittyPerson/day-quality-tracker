@@ -66,6 +66,19 @@ Alternatively:
 If the command `python` does not work on your system, try `python3` (common on 
 macOS/Linux) or `py` (common on Windows).
 
+---
+
+## Creating a Shortcut Executable File
+
+Instead of having to open Terminal or navigate into the project directory 
+every time you want to start DQT, you can create an executable file that you 
+can double-click and run DQT with instantly.
+
+You can run `scripts/package_installer.py` to create this file for you. You 
+will need to enter the name and directory for the executable file.
+
+---
+
 ## Installing Dependencies
 
 Then, from the project directory, install the required dependencies:
