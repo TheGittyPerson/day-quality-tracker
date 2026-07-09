@@ -355,7 +355,9 @@ class Manager:
             # The following 2 conditions MUST check for `not ...` and
             # continue instead of excluding `not` and using breaks.
 
-            if not self._check_memory_edit_length(new_entry, original_mem):
+            if used_terminal and not self._check_memory_edit(
+                    new_entry, original_mem
+            ):
                 new_file = False
                 continue
 
@@ -368,29 +370,37 @@ class Manager:
         self.json.update(date=_date, memory=new_entry)
         log_saved("Memory entry updated and saved!")
 
-    def _check_memory_edit_length(self, entry: str, original: str) -> bool:
+    def _check_memory_edit(self, entry: str, original: str) -> bool:
         """Check for length differences between the new and original entry.
 
-        This prevents any potential data loss when editing an existing memory
-        entry.
+        Note: USE IF THE ENTRY IS ENTERED FROM TERMINAL ONLY. The memory editor
+        has its own check (see `_MemoryEditor` class).
+
+        Checks:
+            - whether length difference is higher than the specified threshold
+            (see attribute).
+            - whether entry is the same as the original
+
+        Prompt the user for confirmation. Return `True` if there are no
+        issues, or if the user chooses to ignore the warning.
 
         Return whether the user confirms their entry. Return `False` if the
         user wishes to re-enter their entry.
         """
-        if not original.strip() and entry.strip():
-            return confirm(
-                warning(
-                    "The original memory entry was empty. Are you sure?"
-                )
-            )
-
         len_diff = len(original) - len(entry)
         if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return confirm(
                 warning(
-                    "The new memory entry is significantly shorter than "
-                    f"the original (by {len_diff} characters). Are you "
-                    "sure?"
+                    f"The new memory entry is {len_diff} characters shorter "
+                    "than the original. Are you sure?"
+                )
+            )
+
+        if entry.strip() == original.strip():
+            return confirm(
+                warning(
+                    "It looks like your edit matches your original entry. "
+                    "Are you sure?"
                 )
             )
 
