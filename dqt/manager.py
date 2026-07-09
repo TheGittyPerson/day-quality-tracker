@@ -93,7 +93,13 @@ class Manager:
                         return
                     print("\n*❖* —————————————————————————————— *❖*")
                     self.input_todays_log()
-        else:
+        elif not self.json.today_logged():
+            if not confirm("Would you like to enter today's log now?"):
+                print(
+                    "\nIn the main menu, select 2) Edit Today's log..., or "
+                    "rerun the program later to enter your log for today!"
+                )
+                return
             self.input_todays_log()
 
     def _report_missing_logs(self) -> date | None:
@@ -177,13 +183,6 @@ class Manager:
 
     def input_todays_log(self) -> None:
         """Prompt for today's rating and memory entry if not entered yet."""
-        if not confirm("Would you like to enter today's log now?"):
-            print(
-                "\nIn the main menu, select 2) Edit Today's log..., or rerun "
-                "the program later to enter your log for today!"
-            )
-            return
-
         tdys_rating = self._input_rating(
             f"Rate your day from {self.dqt.min_rating} to "
             f"{self.dqt.max_rating}, {self.dqt.neutral_rating} being an "
