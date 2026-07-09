@@ -113,10 +113,11 @@ class Manager:
         if self.json.no_logs():  # Ignore for first-time runs
             return None
 
-        last_date_str: str = max(self.dqt.json.logs.keys())
-        last_date = datetime.strptime(
-            last_date_str, self.dqt.date_format
-        ).date()
+        log_dates = [
+            datetime.strptime(d, self.dqt.date_format).date()
+            for d in self.dqt.json.logs.keys()
+        ]
+        last_date = max(log_dates)
         days_since_last = (_today.date() - last_date).days
 
         if days_since_last <= 1:
@@ -240,10 +241,11 @@ class Manager:
         if self.json.no_logs():  # Ignore for first-time runs
             return False
 
-        last_date_str: str = max(self.dqt.json.logs.keys())
-        last_date = datetime.strptime(
-            last_date_str, self.dqt.date_format
-        ).date()
+        log_dates = [
+            datetime.strptime(d, self.dqt.date_format).date()
+            for d in self.dqt.json.logs.keys()
+        ]
+        last_date = max(log_dates)
         days_since_last = (_today.date() - last_date).days
 
         return not days_since_last <= 1
