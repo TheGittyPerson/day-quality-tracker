@@ -165,7 +165,7 @@ class Tracker:
                             "than today's!")
                         continue
                     while True:
-                        selected_d = self.manager.prompt_prev_date()
+                        selected_d = self.manager.prompt_date()
                         print(Txt("\nSelected log:").bold())
                         self.json.print_log(
                             date=selected_d,
@@ -213,7 +213,7 @@ class Tracker:
                         "4) [C]ancel -> Main menu",
                     ):
                         case "1" | "d":
-                            selected_d = self.manager.prompt_prev_date()
+                            selected_d = self.manager.prompt_date()
                             print(f"\nLog for {Txt(selected_d).bold()}:")
                             self.json.print_log(
                                 date=selected_d,

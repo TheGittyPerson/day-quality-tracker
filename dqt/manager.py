@@ -277,8 +277,11 @@ class Manager:
         """Prompt the user to change today's memory entry."""
         self._change_data("today", self.json.MEMORY_KYNAME)
 
-    def prompt_prev_date(self) -> str:
-        """Prompt the user to enter a previous date."""
+    def prompt_date(self) -> str:
+        """Prompt the user to enter a date for a log.
+
+        Reject dates for logs that do not exist.
+        """
         selected_date = ""
         while True:
             inp = input("\nEnter the number of days ago or exact date "
@@ -297,7 +300,7 @@ class Manager:
                     datetime.strptime(inp, self.dqt.date_format)
                 except ValueError:
                     err("Enter either a valid date in the format "
-                        f"{self.dqt.date_format_print} or a positive "
+                        f"{self.dqt.date_format_print} or a non-negative "
                         "integer.")
                     continue
                 selected_date = inp
