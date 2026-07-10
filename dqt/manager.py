@@ -21,6 +21,8 @@ from dqt.styletext import StyleText as Txt
 if TYPE_CHECKING:
     from tracker import Tracker
 
+# Today's date is initialised at the start and used statically to prevent
+# confusion if the program is run across midnight
 _today: datetime = datetime.today()
 
 
@@ -246,7 +248,8 @@ class Manager:
 
         print(f"\nYou can only input today's log after {formatted_time}.")
         print("\nCome back later to enter today's log!")
-        print("(Or, select \"2) Edit [T]oday's log\" in the main menu)")
+        print("(Or, select \"2) Edit [T]oday's log\" in the main menu to "
+              "override this)")
 
     def logs_missed(self) -> bool:
         """Return whether the user missed any logs.

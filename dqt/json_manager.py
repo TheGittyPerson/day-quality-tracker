@@ -23,6 +23,8 @@ class UnsetType:
 
 _UNSET = UnsetType()
 
+# Today's date is used statically to prevent confusion
+# if the program is run through midnight
 _today: datetime = datetime.today()
 
 

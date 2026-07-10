@@ -9,6 +9,8 @@ from dqt.settings_manager import SettingsManager
 from dqt.ui_utils import confirm, cont_on_enter, err, menu, warning
 from dqt.styletext import StyleText as Txt
 
+# Today's date is used statically to prevent confusion
+# if the program is run through midnight
 _today: datetime = datetime.today()
 
 
