@@ -487,8 +487,8 @@ class Manager:
         """
         error_msg = (
             f"Please enter a valid number from {self.dqt.min_rating} "
-            f"to {self.dqt.max_rating} or '{skip_char}'."
-        )
+            f"to {self.dqt.max_rating}"
+        ) + f" or '{skip_char}'." if skip_char is not None else ""
 
         while True:
             raw = input(f"{"\n" if newline else ""}{prompt}").lower().strip()
