@@ -117,7 +117,7 @@ class Manager:
 
         log_dates = [
             datetime.strptime(d, self.dqt.date_format).date()
-            for d in self.dqt.json.logs.keys()
+            for d in self.json.logs.keys()
         ]
         last_date = max(log_dates)
         days_since_last = (_today.date() - last_date).days
@@ -262,7 +262,7 @@ class Manager:
 
         log_dates = [
             datetime.strptime(d, self.dqt.date_format).date()
-            for d in self.dqt.json.logs.keys()
+            for d in self.json.logs.keys()
         ]
         last_date = max(log_dates)
         days_since_last = (_today.date() - last_date).days
