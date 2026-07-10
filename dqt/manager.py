@@ -4,7 +4,7 @@ import subprocess
 import traceback
 from datetime import datetime, timedelta, date
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, overload
 
 from dqt.json_manager import JSONManager
 from dqt.ui_utils import (
@@ -159,9 +159,17 @@ class Manager:
         for d in missed_dates:
             rating = self._input_rating(
                 f"Enter your rating for {d} "
-                f"({self.dqt.min_rating}~{self.dqt.max_rating}, "
-                f"or '-' to skip): ",
+                f"({self.dqt.min_rating}~{self.dqt.max_rating}, or '-' for a "
+                "null rating. 's' to permanently skip this day): ",
             )
+
+            if rating == "SKIP":
+                print(
+                    f"\nSkipped log for {d}. You can enter this log manually "
+                    "in the JSON file later (avoid doing this while the "
+                    "program is running)."
+                )
+                continue
 
             new_file = True
             while True:
@@ -186,8 +194,16 @@ class Manager:
             f"Rate your day from {self.dqt.min_rating} to "
             f"{self.dqt.max_rating}, {self.dqt.neutral_rating} being an "
             f"average day "
-            f"\n(enter '-' to skip): "
+            f"\n(enter '-' to skip, 'c' to cancel today's log entry): ",
+            skip_char='c'
         )
+
+        if tdys_rating == "SKIP":
+            print(
+                f"\nLogging canceled. Enter today's log later from the main "
+                f"menu or rerun the program!"
+            )
+            return
 
         new_file = True
         while True:
@@ -435,11 +451,40 @@ class Manager:
             )
         return mem_input
 
-    def _input_rating(self, prompt: str, newline: bool = True) -> float | None:
-        """Get and validate user float input."""
+    @overload
+    def _input_rating(self, prompt: str, newline: bool = True,
+                      skip_char: None = None) -> float | None: ...
+
+    @overload
+    def _input_rating(
+            self, prompt: str, skip_char: str, newline: bool = True,
+    ) -> float | None | Literal["SKIP"]: ...
+
+    def _input_rating(
+            self,
+            prompt: str,
+            newline: bool = True,
+            skip_char: str | None = None
+    ) -> float | None | Literal["SKIP"]:
+        """Get and validate user float input.
+
+        If `skip_char` is not `None`, the user can choose to enter
+        `skip_char` to indicate that they want to skip an entire log entry for
+        the day, including memory entry. Return "SKIP" in that case.
+
+        Args:
+            prompt (str): Input prompt
+            newline (bool, optional): Add a newline before the prompt if True
+            skip_char (str, optional):
+                The string a user can enter to indicate that they want to skip
+                an entire log entry for the day, including memory entry.
+                "SKIP" if returned is they choose. If `None`, this is not
+                allowed and will prompt the user to try again if they don't
+                enter a number.
+        """
         error_msg = (
-            f"Please enter a valid number from "
-            f"{self.dqt.min_rating} to {self.dqt.max_rating}."
+            f"Please enter a valid number from {self.dqt.min_rating} "
+            f"to {self.dqt.max_rating} or '{skip_char}'."
         )
 
         while True:
@@ -451,6 +496,9 @@ class Manager:
                 ):
                     return None
                 continue
+
+            if skip_char is not None and raw == skip_char:
+                return "SKIP"
 
             try:
                 value = float(raw)
