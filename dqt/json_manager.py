@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
 from dqt.ui_utils import (
-    confirm, cont_on_enter, err, log_saved, print_wrapped, warn, warning
+    confirm, err, log_saved, print_wrapped, warn, warning
 )
 from dqt.styletext import StyleText as Txt
 
@@ -190,9 +190,7 @@ class JSONManager:
             items_until_last_30th = items_list[:-30]
             
             _loop_print(items_until_last_30th)
-        
-        cont_on_enter()
-    
+
     def open_json_file(self) -> None:
         """Open the JSON file in the default system application."""
         print("\nOpening JSON file...")

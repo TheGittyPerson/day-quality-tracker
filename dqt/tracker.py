@@ -109,7 +109,7 @@ class Tracker:
                 "2) 📝 Edit [T]oday's log...",
                 "3) 🕗 Edit [P]revious log...",
                 "4) 📊 See [S]tats",
-                "5) 📂 View [A]ll logs...",
+                "5) 📂 View [L]ogs...",
                 "6) 🔧 [O]pen settings",
                 "7) 💾 [B]ack up logs...",
                 "8) 📥 [I]mport logs...",
@@ -201,18 +201,29 @@ class Tracker:
                     self.stats.show_stats()
                     cont_on_enter()
                 
-                case "5" | "a":
+                case "5" | "l":
                     match menu(
-                        "1) [P]rint logs to standard output",
-                        "2) [O]pen JSON file in default viewer/editor",
-                        "3) [C]ancel -> Main menu",
+                        "1) Search by [D]ate",
+                        "2) [P]rint all logs",
+                        "3) [O]pen JSON file in default viewer/editor",
+                        "4) [C]ancel -> Main menu",
                     ):
-                        case "1" | "p":
+                        case "1" | "d":
+                            selected_d = self.manager.prompt_prev_date()
+                            print(f"\nLog for {Txt(selected_d).bold()}:")
+                            self.json.print_log(
+                                date=selected_d,
+                                rating=self.json.get_rating(selected_d),
+                                memory=self.json.get_memory(selected_d),
+                            )
+                            cont_on_enter()
+                        case "2" | "p":
                             self.json.print_logs_to_stdout()
-                        case "2" | "o":
+                            cont_on_enter()
+                        case "3" | "o":
                             self.json.open_json_file()
                             cont_on_enter()
-                        case "3" | "c":
+                        case "4" | "c":
                             continue
 
                 case "6" | "o":
