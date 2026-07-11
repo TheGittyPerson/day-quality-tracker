@@ -96,9 +96,9 @@ class Tracker:
             )
 
             match menu(
-                "1) 📈 View ratings [G]raph",
-                "2) 📝 Edit [T]oday's log...",
-                "3) 🕗 Edit [P]revious log...",
+                "1) 📝 Edit [T]oday's log...",
+                "2) 🕗 Edit [P]revious log...",
+                "3) 📈 View ratings [G]raph",
                 "4) 📊 See [S]tats",
                 "5) 📂 View [L]ogs...",
                 "6) 🔧 [O]pen settings",
@@ -107,14 +107,8 @@ class Tracker:
                 "9) E[x]it",
                 prompt=None
             ):
-                case "1" | "g":
-                    if self.json.no_logs():
-                        err("You haven't entered any logs yet!")
-                        continue
-                    self.graph.view_ratings_graph()
-                    cont_on_enter()
 
-                case "2" | "t":
+                case "1" | "t":
                     if not self.json.today_logged():
                         print("\nYou haven't entered today's log yet.")
 
@@ -156,7 +150,7 @@ class Tracker:
                         case "4" | "c":
                             continue
 
-                case "3" | "p":
+                case "2" | "p":
                     if self.json.no_logs():
                         err("You haven't entered any logs yet!")
                         continue
@@ -200,6 +194,13 @@ class Tracker:
                             case "5" | "c":
                                 break
                         break
+
+                case "3" | "g":
+                    if self.json.no_logs():
+                        err("You haven't entered any logs yet!")
+                        continue
+                    self.graph.view_ratings_graph()
+                    cont_on_enter()
                 
                 case "4" | "s":
                     self.stats.show_stats()
