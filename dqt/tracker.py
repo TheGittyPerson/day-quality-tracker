@@ -95,8 +95,10 @@ class Tracker:
                 f"{Txt("— choose what to do:").bold()}"
             )
 
+            t = (f"1) 📝 {"Edit" if self.json.today_logged() else "Enter"} "
+                 f"[T]oday's log{"..." if self.json.today_logged() else ""}:")
             match menu(
-                "1) 📝 Edit [T]oday's log...",
+                t,  # 1) Enter/Edit [T]oday's log...
                 "2) 🕗 Edit [P]revious log...",
                 "3) 📈 View ratings [G]raph",
                 "4) 📊 See [S]tats",
