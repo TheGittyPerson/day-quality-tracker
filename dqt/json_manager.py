@@ -590,7 +590,7 @@ class JSONManager:
             success (bool)
         """
         print("Saving to runtime memory...")
-        backup = self.logs.copy()
+        backup = copy.deepcopy(self.logs)
         self.logs = src_contents_cleaned
         
         print(f"Writing contents from runtime memory to '{self.filepath}'...")
