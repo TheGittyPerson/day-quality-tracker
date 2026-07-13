@@ -2,6 +2,7 @@ import webbrowser
 from datetime import datetime
 from types import NoneType
 
+from dqt import RELEASE_NUM, SEMVER
 from dqt.manager import Manager
 from dqt.json_manager import JSONManager
 from dqt.graph import Graph
@@ -14,8 +15,7 @@ from dqt import shortcut_creator
 # Today's date is used statically to prevent confusion
 # if the program is run through midnight
 _today: datetime = datetime.today()
-
-REPO_URL = "https://github.com/TheGittyPerson/day-quality-tracker"
+_REPO_URL = "https://github.com/TheGittyPerson/day-quality-tracker"
 
 
 class Tracker:
@@ -23,9 +23,6 @@ class Tracker:
     
     This class controls the main menu algorithm/logic.
     """
-    
-    RELEASE_NUM: int = 5
-    SEMVER: str = "v1.3.0"
     
     _CONFIG_KEYS: dict[str, type | tuple[type, ...]] = {
         "min_rating": int,
@@ -261,11 +258,11 @@ class Tracker:
                         case "2" | "i":
                             self.json.import_logs()
                         case "3" | "v":
-                            success = webbrowser.open(REPO_URL)
+                            success = webbrowser.open(_REPO_URL)
                             if not success:
                                 err("Couldn't open webpage.",
                                     "Try pasting this URL in your browser "
-                                    f"manually: \n\t{REPO_URL}")
+                                    f"manually: \n\t{_REPO_URL}")
                                 cont_on_enter()
                         case "4" | "c":
                             continue
@@ -275,10 +272,11 @@ class Tracker:
                     print("\nBye!")
                     raise SystemExit()
 
-    def _print_header(self) -> None:
-        title = f"*--- 📆 Day Quality Tracker {self.RELEASE_NUM}! 📈 ---*"
+    @staticmethod
+    def _print_header() -> None:
+        title = f"*--- 📆 Day Quality Tracker {RELEASE_NUM}! 📈 ---*"
         print(Txt(f"\n{title}").bold().yellow())
-        semver_str = "~~~ " + self.SEMVER + " ~~~"
+        semver_str = "~~~ " + SEMVER + " ~~~"
         print(Txt(f"{semver_str:^{len(title) + 2}}").dim())
     
     def configure(self, **configs: int | str | bool | None) -> None:
