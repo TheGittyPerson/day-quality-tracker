@@ -48,7 +48,8 @@ def add_os_extension(name: str) -> str:
         return str(path.with_suffix(".sh"))
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Create an executable shell script as a shortcut to start DQT."""
     raw_name = input("\nShortcut file name (e.g., launch_dqt): ").strip()
     filename = add_os_extension(raw_name)
 
@@ -78,3 +79,7 @@ if __name__ == "__main__":
         "\nYou can now start DQT by simply double-clicking this shortcut file "
         "instead of running it manually from your terminal."
     )
+
+
+if __name__ == "__main__":
+    main()
