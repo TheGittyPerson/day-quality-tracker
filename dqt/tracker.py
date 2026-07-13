@@ -1,17 +1,21 @@
+import webbrowser
 from datetime import datetime
 from types import NoneType
 
-from dqt.json_manager import JSONManager
 from dqt.manager import Manager
+from dqt.json_manager import JSONManager
 from dqt.graph import Graph
 from dqt.stats import Stats
 from dqt.settings_manager import SettingsManager
 from dqt.ui_utils import confirm, cont_on_enter, err, menu, warning
 from dqt.styletext import StyleText as Txt
+from dqt import shortcut_creator
 
 # Today's date is used statically to prevent confusion
 # if the program is run through midnight
 _today: datetime = datetime.today()
+
+REPO_URL = "https://github.com/TheGittyPerson/day-quality-tracker"
 
 
 class Tracker:
@@ -105,8 +109,8 @@ class Tracker:
                 "5) 📂 View [L]ogs...",
                 "6) 🔧 [O]pen settings",
                 "7) 💾 [B]ack up logs...",
-                "8) 📥 [I]mport logs...",
-                "9) E[x]it",
+                "8) [M]ore...",
+                "9) ⎋ E[x]it",
                 prompt=None
             ):
 
@@ -243,8 +247,28 @@ class Tracker:
                         continue
                     self.json.backup_json_file()
 
-                case "8" | "i":
-                    self.json.import_logs()
+                case "8" | "m":
+                    match menu(
+                        "1) 🔗 Create Desktop [S]hortcut",
+                        "2) 📥 [I]mport logs...",
+                        "3) 😻 [V]isit project on GitHub",
+                        "4) [C]ancel -> Main menu",
+                        prompt="More..."
+                    ):
+                        case "1" | "s":
+                            shortcut_creator.main()
+                            cont_on_enter()
+                        case "2" | "i":
+                            self.json.import_logs()
+                        case "3" | "v":
+                            success = webbrowser.open(REPO_URL)
+                            if not success:
+                                err("Couldn't open webpage.",
+                                    "Try pasting this URL in your browser "
+                                    f"manually: \n\t{REPO_URL}")
+                                cont_on_enter()
+                        case "4" | "c":
+                            continue
 
                 case "9" | "x":
                     print("\n*⎋* —————————————————————————————— *⎋*")
@@ -253,11 +277,7 @@ class Tracker:
 
     def _print_header(self) -> None:
         title = f"*--- 📆 Day Quality Tracker {self.RELEASE_NUM}! 📈 ---*"
-        print(
-            Txt(
-                f"\n{title}"
-            ).bold().yellow()
-        )
+        print(Txt(f"\n{title}").bold().yellow())
         semver_str = "~~~ " + self.SEMVER + " ~~~"
         print(Txt(f"{semver_str:^{len(title) + 2}}").dim())
     

@@ -15,14 +15,25 @@ daily “day quality” ratings and visualize them over time using the
 
 ---
 
-## Quick Start
+## TL;DR
 
-If you want the shortest path to running DQT:
+For a quick start:
 
 1. Download and unzip the project from the latest release
-2. Open a terminal in the project folder
-3. Install dependencies with `python -m pip install -r requirements.txt`
-4. Start the program with `python -m dqt`
+2. Open a terminal window
+3. Run:
+```shell
+cd <PATH-TO-FOLDER>  # Replace this with the path to the folder you installed
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m dqt
+```
+
+In the main menu:
+- Select `10) More...`
+- Select `1) Create Desktop Shortcut`
+- Enter the name of the Desktop Shortcut script so that you don't have to 
+  open your terminal every time you want to run DQT.
 
 ---
 
@@ -37,9 +48,9 @@ On the [GitHub page][repo]:
 
 ---
 
-## Notes
+## Switching to the correct directory
 
-Before running any commands from this guide in your terminal, ensure your
+**Before running any commands** from this guide in your terminal, ensure your
 terminal is running from the correct directory. You can open a terminal window
 from the new dqt folder:
 
@@ -48,8 +59,8 @@ from the new dqt folder:
   2. Right-click the folder and select **"New Terminal at folder"**
 - Windows (10/11):
   1. Click on the address bar in File Explorer (or press Alt + D), type `cmd` 
-     or `powershell`, and **press Enter**. To use the Windows Terminal app, 
-     **type `wt` instead**.
+     or `powershell`, and **press Enter**. To use the Windows Terminal app 
+     instead, **type `wt`**.
   2. **Hold the Shift key and right-click** on an empty space inside the folder
      or on the folder icon itself. Select "Open PowerShell window here" or 
      "Open Command Prompt here".
@@ -66,48 +77,34 @@ Alternatively:
 If the command `python` does not work on your system, try `python3` (common on 
 macOS/Linux) or `py` (common on Windows).
 
----
-
-## Creating a Shortcut Executable File
-
-Instead of having to open Terminal or navigate into the project directory 
-every time you want to start DQT, you can create an executable file that you 
-can double-click and run DQT with instantly.
-
-You can run `scripts/package_installer.py` to create this file for you. You 
-will need to enter the name and directory for the executable file.
+You only have to do this once per Terminal session.
 
 ---
 
 ## Installing Dependencies
 
-Then, from the project directory, install the required dependencies:
+Run from the project directory:
 
 ```bash
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Alternatively, run `scripts/package_installer.py` to install everything listed
-in `requirements.txt` for you:
-
-```bash
-python scripts/package_installer.py
-```
-
-After the dependencies are installed, you can [start DQT](#how-to-use).
+After the dependencies are installed, you can [start using DQT](#how-to-use).
 
 ---
 
 ## How to use
 
-To start the program from the project directory, run:
+To start the program, run from the project directory:
 
 ```bash
 python -m dqt
 ```
 
-You can also initialize and run the tracker manually by opening and running 
-`dqt/__main__.py` with an editor.
+Directly opening and running `dqt/__main__.py` may not work.
+
+Alternatively, create your own script:
 
 ```python
 from dqt.tracker import Tracker
@@ -124,9 +121,7 @@ already exist.
 - If the `data/` directory does not exist yet, DQT will create it.
 - Your logs are stored in `data/dq_logs.json`
 
-You usually do not need to create this file manually.
-
-### Useful files
+### Key files
 
 - `dqt/settings.py`: user-editable configuration file
 - `data/dq_logs.json`: where your ratings and memory entries are stored
@@ -136,9 +131,9 @@ You usually do not need to create this file manually.
 
 ### Ratings
 
-Each day, if you have not yet entered a rating, the program will prompt you to 
-do so. By default, the earliest time you can enter a rating is **8:00 PM** 
-(configurable).
+You can enter a rating every day by selecting `1) Enter Today's log` from the 
+Main menu. Ratings are from 1 to 20 by default. After entering a rating, you 
+can choose to edit it by selecting the same option.
 
 You may also enter a null rating, indicating that you are unable or unwilling to
 rate your day at the moment. Ratings can be edited at any time.
@@ -148,7 +143,7 @@ rate your day at the moment. Ratings can be edited at any time.
 ### Memory entries
 
 You may optionally add a memory entry alongside your rating. Memory entries can
-be diary/journal entries, notes, or anything you wish to remember for the 
+be diary/journal entries, notes, or anything you want to remember for the 
 future. You can leave the entry empty if you do not want to write one.
 
 When you want to write a new memory entry or edit an existing one, DQT
@@ -203,11 +198,12 @@ Choose to edit the rating or memory (or both) you entered for that day.
 View detailed statistics about your ratings, including averages, highs, lows, 
 and more.
 
-#### View all logs
+#### View logs
 
 Choose either to:
-* Print logs as standard output
-* Open the file with your system's default application
+- Search a log by date
+- Print last 30 or all logs as standard output
+- Open the file with your system's default application
 
 #### Open settings
 
@@ -223,6 +219,12 @@ periodically.
 This option creates a copy of your log JSON file in a directory of your 
 choosing.
 
+#### Create Desktop Shortcut
+
+You can create a shell script that acts as a shortcut to run DQT on your 
+Desktop folder. Instead of running DQT manually from your Terminal every time, 
+you can start DQT by simply double-clicking this shortcut file.
+
 #### Import logs
 
 You can easily migrate your logs between versions of DQT or between different 
@@ -235,7 +237,7 @@ current JSON file used by the program.
 
 ### Missed logs
 
-After running the program, it first checks if you've missed any prior logs.
+After running the program, DQT first checks if you've missed any prior logs.
 
 You may choose to enter the missed logs immediately or skip them for later.
 
@@ -248,8 +250,7 @@ entry.
 
 ### Custom Configurations
 
-To configure and customize DQT, open `dqt/settings.py` (the main menu provides
-an option to do this).
+To configure and customize DQT, select `6) Open Settings` from the main menu.
 
 Each configuration comes with a description, and to change a setting, simply 
 change the value after the colon.
@@ -260,7 +261,7 @@ For example, to set the earliest hour of day a log entry is accepted to
 # (Simplified)
 CONFIGS: dict[str, dict[str, ...]] = {
     'tracker': {
-        'min_time': 22,  # Earliest hour of day a log entry is accepted...
+        "min_rating": 1,  # Minimum day quality rating (1 recommended)
 ```
 
 **Remember to save any changes made** and rerun the program for changes to take
@@ -276,7 +277,7 @@ This project is licensed under the MIT License.
 
 ---
 
-Like my project? [Drop me a star][repo]!
+Be an amazing person and [drop me a star][repo]!
 
 
 [profile]: https://github.com/TheGittyPerson
