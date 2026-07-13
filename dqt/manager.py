@@ -117,7 +117,7 @@ class Manager:
         # Get list of missed dates
         days_since_last = (_today.date() - last_log_date).days
 
-        missed_dates = []
+        missed_dates: list[date] = []
         curr_loop_date = last_log_date + timedelta(days=1)
         #                               Exclude today
         while len(missed_dates) < days_since_last - 1:
@@ -150,7 +150,7 @@ class Manager:
                     break
                 new_file = False
 
-            date_str = datetime.strftime(d, self.dqt.date_format)
+            date_str = d.strftime(self.dqt.date_format)
 
             self.json.add(date_str, rating, memory)
 
