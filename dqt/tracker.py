@@ -28,7 +28,6 @@ class Tracker:
     SEMVER: str = "v1.3.0"
     
     _CONFIG_KEYS: dict[str, type | tuple[type, ...]] = {
-        "min_time": int,
         "min_rating": int,
         "max_rating": int,
         "rating_inp_dp": int,
