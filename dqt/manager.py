@@ -2,9 +2,9 @@ import os
 import platform
 import subprocess
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, overload
 
 from dqt.json_manager import JSONManager
 from dqt.ui_utils import (
@@ -21,6 +21,8 @@ from dqt.styletext import StyleText as Txt
 if TYPE_CHECKING:
     from tracker import Tracker
 
+# Today's date is initialised at the start and used statically to prevent
+# confusion if the program is run across midnight
 _today: datetime = datetime.today()
 
 
@@ -36,20 +38,88 @@ class Manager:
         self.json: JSONManager = dqt.json
         self.mem_editor = _MemoryEditor(self)
 
-    def handle_missing_logs(self) -> str | None:
-        """Check if any previous days are missing ratings.
+    def handle_logs_entry(self) -> None:
+        """Handle today's log entry + missing logs.
 
-        User chooses to enter missing ratings or not. If they do,
-        loop through each missing date and prompt rating.
+        This should be called before entering the main menu loop.
+
+        User chooses to enter missing logs or not. If they do,
+        loop through each missing date and prompt a log.
         Return the option the user chose if missed prior dates.
+
+        - "1" = Enter missing logs now
+        - "2" = Enter missing logs later -> Main menu
+        - "3" = Skip missing logs -> Enter today's log
+        """
+        if (last_log_date := self._report_missing_logs()) is not None:
+            match menu(
+                "1) Enter missing logs now",
+                "2) Enter missing logs later -> Main menu",
+                "3) Skip missing logs -> Enter today's log",
+            ):
+                case "1":
+                    self._input_missing_logs(last_log_date)
+                case "2":
+                    print_wrapped(
+                        "\nRestart the program later to enter your missing "
+                        "logs! (You can only enter today's log after "
+                        "entering the missed logs, unless you choose to skip "
+                        "them.)",
+                        self.dqt.linewrap_maxcol
+                    )
+                    return
+                case "3":
+                    print_wrapped(
+                        "\nYou will have to enter the missed logs later "
+                        f"manually in `{self.json.FILENAME}`, unless you "
+                        "don't enter today's log yet."
+                        "\nYou can open the file by selecting:"
+                        "\nMain menu -> 5) View [A]ll logs "
+                        "-> 2) [O]pen JSON file in default viewer/editor"
+                        "\nMake sure you save any changed before closing "
+                        "the file.",
+                        self.dqt.linewrap_maxcol
+                    )
+                    if not confirm(
+                        "Confirm? Enter 'n' to return to main menu instead"
+                    ):
+                        print(
+                            "\nRerun the program to see this dialogue again "
+                            "and enter the missing logs later!"
+                        )
+                        return
+
+        print("\n*❖* —————————————————————————————— *❖*")
+        if datetime.now().time().hour < self.dqt.min_time:
+            self._print_input_log_later()
+            return
+        if not self.json.today_logged():
+            if not confirm("Would you like to enter today's log now?"):
+                print(
+                    "\nIn the main menu, select 2) Edit Today's log..., or "
+                    "rerun the program later to enter your log for today!"
+                )
+                return
+            self.input_todays_log()
+
+    def _report_missing_logs(self) -> date | None:
+        """Check and report if any previous days are missing logs.
+
+        **IGNORES intentionally skipped logs**, AKA dates without a log
+        but the following dates of which do.
+
+        Returns:
+            `None` if no missed logs. Otherwise, return `date` object of the
+             last log. Plug this value into `enter_missing_logs()`.
         """
         if self.json.no_logs():  # Ignore for first-time runs
             return None
 
-        last_date_str: str = max(self.dqt.json.logs.keys())
-        last_date = datetime.strptime(
-            last_date_str, self.dqt.date_format
-        ).date()
+        log_dates = [
+            datetime.strptime(d, self.dqt.date_format).date()
+            for d in self.json.logs.keys()
+        ]
+        last_date = max(log_dates)
         days_since_last = (_today.date() - last_date).days
 
         if days_since_last <= 1:
@@ -64,131 +134,140 @@ class Manager:
 
         if missing_logs_count == 1:
             print(f"\nYou have 1 missing log for {first_missed_date_str}.")
+            return last_date
         else:
             print(
                 f"\nYou have {missing_logs_count} missing logs: "
                 f"{first_missed_date_str} to {last_missed_date_str}."
             )
+            return last_date
 
-        match choice := menu(
-            "1) Enter missing logs now",
-            "2) Enter missing logs later -> Main menu",
-            "3) Skip missing logs -> Enter today's log",
-        ):
-            case "1":
-                # Get list of missed dates
-                missed_dates = []
-                curr_loop_date = last_date + timedelta(days=1)
-                #                               Exclude today
-                while len(missed_dates) < days_since_last - 1:
-                    missed_dates.append(curr_loop_date)
-                    curr_loop_date += timedelta(days=1)
-
-                for date in missed_dates:
-                    rating = self._input_rating(
-                        f"Enter your rating for {date} "
-                        f"({self.dqt.min_rating}~{self.dqt.max_rating}, "
-                        f"or '-' to skip): ",
-                    )
-
-                    new_file = True
-                    while True:
-                        memory, _ = self._input_memory(
-                            "Enter a memory entry (leave blank to skip): ",
-                            new_file=new_file,
-                        )
-
-                        if self._confirm_memory_final(memory):
-                            break
-                        new_file = False
-
-                    date_str = datetime.strftime(date, self.dqt.date_format)
-
-                    self.json.add(date_str, rating, memory)
-
-                log_saved("Logs saved!")
-
-            case "2":
-                print_wrapped(
-                    "\nRestart the program later to enter your missing "
-                    "logs! (You can only enter today's log after "
-                    "entering the missed logs, unless you choose to skip "
-                    "them.)",
-                    self.dqt.linewrap_maxcol
-                )
-
-            case "3":
-                print_wrapped(
-                    "\nYou will have to enter the missed logs later "
-                    f"manually in `{self.json.FILENAME}`, unless you "
-                    "don't enter today's log yet."
-                    "\nYou can open the file by selecting:"
-                    "\nMain menu -> 5) View [A]ll logs "
-                    "-> 2) [O]pen JSON file in default viewer/editor"
-                    "\nMake sure you save any changed before closing "
-                    "the file.",
-                    self.dqt.linewrap_maxcol
-                )
-
-        return choice
-
-    def input_todays_log(self) -> None:
-        """Get today's rating and memory entry if not entered yet.
-
-        Reject if the specified earliest time to collect data has not
-        passed yet.
+    def _input_missing_logs(self, last_log_date: date) -> None:
+        """Enter all missing logs in a loop.
+        
+        Args:
+            last_log_date (date): Date of most recent log
         """
-        print("\n*❖* —————————————————————————————— *❖*")
-        if datetime.now().time().hour >= self.dqt.min_time:
-            if not confirm("Would you like to enter today's log now?"):
-                print("\nRerun the program later to enter your log!")
-                return
+        # Get list of missed dates
+        days_since_last = (_today.date() - last_log_date).days
 
-            tdys_rating = self._input_rating(
-                f"Rate your day from {self.dqt.min_rating} to "
-                f"{self.dqt.max_rating}, {self.dqt.neutral_rating} being an "
-                f"average day "
-                f"\n(enter '-' to skip): "
+        missed_dates = []
+        curr_loop_date = last_log_date + timedelta(days=1)
+        #                               Exclude today
+        while len(missed_dates) < days_since_last - 1:
+            missed_dates.append(curr_loop_date)
+            curr_loop_date += timedelta(days=1)
+
+        for d in missed_dates:
+            rating = self._input_rating(
+                f"Enter your rating for {d} "
+                f"({self.dqt.min_rating}~{self.dqt.max_rating}, or '-' for a "
+                "null rating. 's' to permanently skip this day): ",
             )
+
+            if rating == "SKIP":
+                print(
+                    f"\nSkipped log for {d}. You can enter this log manually "
+                    "in the JSON file later (avoid doing this while the "
+                    "program is running)."
+                )
+                continue
 
             new_file = True
             while True:
-                tdys_memory, _ = self._input_memory(
-                    f"Enter a memory entry; write a few sentences about your "
-                    f"day. \nLeave this blank to skip.",
-                    new_file
+                memory, _ = self._input_memory(
+                    "Enter a memory entry (leave blank to skip): ",
+                    new_file=new_file,
                 )
 
-                if not tdys_memory:
-                    print(
-                        "\nTo enter your memory entry later: "
-                        "\nMain menu -> Edit today's/previous log "
-                        "-> Edit memory"
-                    )
-                    break
-
-                if self._confirm_memory_final(tdys_memory):
+                if self._confirm_memory_final(memory):
                     break
                 new_file = False
 
-            # Save data
-            today = _today.strftime(self.dqt.date_format)
-            self.json.add(today, tdys_rating, tdys_memory)
-            log_saved()
+            date_str = datetime.strftime(d, self.dqt.date_format)
 
+            self.json.add(date_str, rating, memory)
+
+        log_saved("Logs saved!")
+
+    def input_todays_log(self) -> None:
+        """Prompt for today's rating and memory entry if not entered yet."""
+        tdys_rating = self._input_rating(
+            f"Rate your day from {self.dqt.min_rating} to "
+            f"{self.dqt.max_rating}, {self.dqt.neutral_rating} being an "
+            f"average day "
+            f"\n(enter '-' to skip, 'c' to cancel today's log entry): ",
+            skip_char='c'
+        )
+
+        if tdys_rating == "SKIP":
+            print(
+                f"\nLogging canceled. Enter today's log later from the main "
+                f"menu or rerun the program!"
+            )
+            return
+
+        new_file = True
+        while True:
+            tdys_memory, _ = self._input_memory(
+                f"Enter a memory entry; write a few sentences about your "
+                f"day. \nLeave this blank to skip.",
+                new_file
+            )
+
+            if not tdys_memory:
+                print(
+                    "\nTo enter your memory entry later: "
+                    "\nMain menu -> Edit today's/previous log "
+                    "-> Edit memory"
+                )
+                break
+
+            if self._confirm_memory_final(tdys_memory):
+                break
+            new_file = False
+
+        # Save data
+        today = _today.strftime(self.dqt.date_format)
+        self.json.add(today, tdys_rating, tdys_memory)
+        log_saved()
+
+    def _print_input_log_later(self) -> None:
+        """Tell the user to input their log later after the time limit.
+
+        Format time in 12-hour or 24-hour clock in message.
+        """
+        if self.dqt.clock_format_12:
+            hour = self.dqt.min_time % 12 \
+                if self.dqt.min_time % 12 != 0 \
+                else 12
+            suffix = "AM" if self.dqt.min_time < 12 else "PM"
+            formatted_time = f"{hour} {suffix}"
         else:
-            # Format time in 12-hour or 24-hour clock
-            if self.dqt.clock_format_12:
-                hour = self.dqt.min_time % 12 \
-                    if self.dqt.min_time % 12 != 0 \
-                    else 12
-                suffix = "AM" if self.dqt.min_time < 12 else "PM"
-                formatted_time = f"{hour} {suffix}"
-            else:
-                formatted_time = str(self.dqt.min_time)
+            formatted_time = str(self.dqt.min_time)
 
-            print(f"\nYou can only input today's log after {formatted_time}.")
-            print("\nCome back later to enter today's log!")
+        print(f"\nYou can only input today's log after {formatted_time}.")
+        print("\nCome back later to enter today's log!")
+        print("(Or, select \"2) Edit [T]oday's log\" in the main menu to "
+              "override this)")
+
+    def logs_missed(self) -> bool:
+        """Return whether the user missed any logs.
+
+        **IGNORES intentionally skipped logs**, AKA dates without a log
+        but the following dates of which do.
+        """
+        if self.json.no_logs():  # Ignore for first-time runs
+            return False
+
+        log_dates = [
+            datetime.strptime(d, self.dqt.date_format).date()
+            for d in self.json.logs.keys()
+        ]
+        last_date = max(log_dates)
+        days_since_last = (_today.date() - last_date).days
+
+        return not days_since_last <= 1
 
     def change_todays_rating(self) -> None:
         """Prompt the user to change today's rating."""
@@ -198,8 +277,11 @@ class Manager:
         """Prompt the user to change today's memory entry."""
         self._change_data("today", self.json.MEMORY_KYNAME)
 
-    def prompt_prev_date(self) -> str:
-        """Prompt the user to enter a previous date."""
+    def prompt_date(self) -> str:
+        """Prompt the user to enter a date for a log.
+
+        Reject dates for logs that do not exist.
+        """
         selected_date = ""
         while True:
             inp = input("\nEnter the number of days ago or exact date "
@@ -218,7 +300,7 @@ class Manager:
                     datetime.strptime(inp, self.dqt.date_format)
                 except ValueError:
                     err("Enter either a valid date in the format "
-                        f"{self.dqt.date_format_print} or a positive "
+                        f"{self.dqt.date_format_print} or a non-negative "
                         "integer.")
                     continue
                 selected_date = inp
@@ -270,24 +352,24 @@ class Manager:
         else:
             self._change_memory_for_date(selected_date)
 
-    def _change_rating_for_date(self, date: str) -> None:
+    def _change_rating_for_date(self, _date: str) -> None:
         """Prompt the user to update a rating for a date and save it."""
         new_rating = self._input_rating(
-            f"Enter new rating for {date} "
+            f"Enter new rating for {_date} "
             f"({self.dqt.min_rating}~{self.dqt.max_rating}): "
         )
 
-        self.json.update(date=date, rating=new_rating)
+        self.json.update(date=_date, rating=new_rating)
         log_saved("Rating updated and saved!")
 
-    def _change_memory_for_date(self, date: str) -> None:
+    def _change_memory_for_date(self, _date: str) -> None:
         """Prompt the user to update a memory entry for a date and save it."""
-        original_mem = self.json.logs[date][self.json.MEMORY_KYNAME]
+        original_mem = self.json.logs[_date][self.json.MEMORY_KYNAME]
 
         new_file = True
         while True:
             raw, used_terminal = self._input_memory(
-                f"Enter new memory entry for {date}.",
+                f"Enter new memory entry for {_date}.",
                 new_file,
                 original_mem,
                 terminal_newline=False
@@ -301,7 +383,9 @@ class Manager:
             # The following 2 conditions MUST check for `not ...` and
             # continue instead of excluding `not` and using breaks.
 
-            if not self._check_memory_edit_length(new_entry, original_mem):
+            if used_terminal and not self._check_memory_edit(
+                    new_entry, original_mem
+            ):
                 new_file = False
                 continue
 
@@ -311,32 +395,40 @@ class Manager:
 
             break
 
-        self.json.update(date=date, memory=new_entry)
+        self.json.update(date=_date, memory=new_entry)
         log_saved("Memory entry updated and saved!")
 
-    def _check_memory_edit_length(self, entry: str, original: str) -> bool:
+    def _check_memory_edit(self, entry: str, original: str) -> bool:
         """Check for length differences between the new and original entry.
 
-        This prevents any potential data loss when editing an existing memory
-        entry.
+        Note: USE IF THE ENTRY IS ENTERED FROM TERMINAL ONLY. The memory editor
+        has its own check (see `_MemoryEditor` class).
+
+        Checks:
+            - whether length difference is higher than the specified threshold
+            (see attribute).
+            - whether entry is the same as the original
+
+        Prompt the user for confirmation. Return `True` if there are no
+        issues, or if the user chooses to ignore the warning.
 
         Return whether the user confirms their entry. Return `False` if the
         user wishes to re-enter their entry.
         """
-        if not original.strip() and entry.strip():
-            return confirm(
-                warning(
-                    "The original memory entry was empty. Are you sure?"
-                )
-            )
-
         len_diff = len(original) - len(entry)
         if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return confirm(
                 warning(
-                    "The new memory entry is significantly shorter than "
-                    f"the original (by {len_diff} characters). Are you "
-                    "sure?"
+                    f"The new memory entry is {len_diff} characters shorter "
+                    "than the original. Are you sure?"
+                )
+            )
+
+        if entry.strip() == original.strip():
+            return confirm(
+                warning(
+                    "It looks like your edit matches your original entry. "
+                    "Are you sure?"
                 )
             )
 
@@ -365,12 +457,41 @@ class Manager:
             )
         return mem_input
 
-    def _input_rating(self, prompt: str, newline: bool = True) -> float | None:
-        """Get and validate user float input."""
+    @overload
+    def _input_rating(self, prompt: str, newline: bool = True,
+                      skip_char: None = None) -> float | None: ...
+
+    @overload
+    def _input_rating(
+            self, prompt: str, skip_char: str, newline: bool = True,
+    ) -> float | None | Literal["SKIP"]: ...
+
+    def _input_rating(
+            self,
+            prompt: str,
+            newline: bool = True,
+            skip_char: str | None = None
+    ) -> float | None | Literal["SKIP"]:
+        """Get and validate user float input.
+
+        If `skip_char` is not `None`, the user can choose to enter
+        `skip_char` to indicate that they want to skip an entire log entry for
+        the day, including memory entry. Return "SKIP" in that case.
+
+        Args:
+            prompt (str): Input prompt
+            newline (bool, optional): Add a newline before the prompt if True
+            skip_char (str, optional):
+                The string a user can enter to indicate that they want to skip
+                an entire log entry for the day, including memory entry.
+                "SKIP" if returned is they choose. If `None`, this is not
+                allowed and will prompt the user to try again if they don't
+                enter a number.
+        """
         error_msg = (
-            f"Please enter a valid number from "
-            f"{self.dqt.min_rating} to {self.dqt.max_rating}."
-        )
+            f"Please enter a valid number from {self.dqt.min_rating} "
+            f"to {self.dqt.max_rating}"
+        ) + f" or '{skip_char}'." if skip_char is not None else ""
 
         while True:
             raw = input(f"{"\n" if newline else ""}{prompt}").lower().strip()
@@ -381,6 +502,9 @@ class Manager:
                 ):
                     return None
                 continue
+
+            if skip_char is not None and raw == skip_char:
+                return "SKIP"
 
             try:
                 value = float(raw)

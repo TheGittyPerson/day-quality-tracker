@@ -26,7 +26,7 @@ try:
 
     except KeyboardInterrupt as e:
         print("\n\n*⎋* —————————————————————————————— *⎋*")
-        print("\nUser interrupted the program.")
+        print("\nProgram interrupted.")
         print("\nSaving changes...")
         dqt.json.update()
         print(Txt("Success!").bold().green())

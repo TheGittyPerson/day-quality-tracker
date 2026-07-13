@@ -23,6 +23,8 @@ class UnsetType:
 
 _UNSET = UnsetType()
 
+# Today's date is used statically to prevent confusion
+# if the program is run through midnight
 _today: datetime = datetime.today()
 
 
@@ -81,7 +83,7 @@ class JSONManager:
         """Update logs with new log and dump to JSON file.
 
         Attempted rewrite of previous items will raise a KeyError.
-        Use `update()` instead to add a new log.
+        Use `update()` instead to update a log.
 
         It is recommended to explicitly provide both rating and memory
         arguments, even if it is equal to the default value.
@@ -104,8 +106,8 @@ class JSONManager:
         """Return memory entry for given date."""
         return self.logs[date][self.MEMORY_KYNAME]
     
-    def today_rated(self) -> bool:
-        """Check if a rating has been provided for today."""
+    def today_logged(self) -> bool:
+        """Check if a log has been provided for today."""
         today = _today.strftime(self.dqt.date_format)
         return today in self.logs
     

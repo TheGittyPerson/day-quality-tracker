@@ -43,7 +43,7 @@ def warn(*message: str, pause: bool = False) -> None:
 def warning(*message: str) -> str:
     """Return a formatted warning message."""
     return str(
-        StyleText("\n⚠️ WARNING: ").bold().yellow() + message[0]
+        StyleText("⚠️ WARNING: ").bold().yellow() + message[0]
         + "".join(f"\n{msg}" for msg in message[1:])
     )
 

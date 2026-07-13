@@ -6,9 +6,11 @@ from dqt.manager import Manager
 from dqt.graph import Graph
 from dqt.stats import Stats
 from dqt.settings_manager import SettingsManager
-from dqt.ui_utils import cont_on_enter, err, menu
+from dqt.ui_utils import confirm, cont_on_enter, err, menu, warning
 from dqt.styletext import StyleText as Txt
 
+# Today's date is used statically to prevent confusion
+# if the program is run through midnight
 _today: datetime = datetime.today()
 
 
@@ -81,21 +83,10 @@ class Tracker:
     def run(self) -> None:
         """Run Day Quality Tracker."""
         Txt.set_ansi(self.enable_ansi)
-        
-        title = f"*--- 📆 Day Quality Tracker {self.RELEASE_NUM}! 📈 ---*"
-        print(
-            Txt(
-                f"\n{title}"
-            ).bold().yellow()
-        )
-        semver_str = "~~~ " + self.SEMVER + " ~~~"
-        print(Txt(f"{semver_str:^{len(title) + 2}}").dim())
-        
-        choice = self.manager.handle_missing_logs()
-        
-        if choice in ["1", "3", None]:
-            if not self.json.today_rated():
-                self.manager.input_todays_log()
+
+        self._print_header()
+
+        self.manager.handle_logs_entry()
         
         while True:
             print("\n*❖* —————————————————————————————— *❖*")
@@ -104,10 +95,12 @@ class Tracker:
                 f"{Txt("— choose what to do:").bold()}"
             )
 
+            t = (f"1) 📝 {"Edit" if self.json.today_logged() else "Enter"} "
+                 f"[T]oday's log{"..." if self.json.today_logged() else ""}:")
             match menu(
-                "1) 📈 View ratings [G]raph",
-                "2) 📝 Edit [T]oday's log...",
-                "3) 🕗 Edit [P]revious log...",
+                t,  # 1) Enter/Edit [T]oday's log...
+                "2) 🕗 Edit [P]revious log...",
+                "3) 📈 View ratings [G]raph",
                 "4) 📊 See [S]tats",
                 "5) 📂 View [L]ogs...",
                 "6) 🔧 [O]pen settings",
@@ -116,16 +109,23 @@ class Tracker:
                 "9) E[x]it",
                 prompt=None
             ):
-                case "1" | "g":
-                    if self.json.no_logs():
-                        err("You haven't entered any logs yet!")
-                        continue
-                    self.graph.view_ratings_graph()
-                    cont_on_enter()
 
-                case "2" | "t":
-                    if not self.json.today_rated():
-                        err("You haven't entered today's log yet!")
+                case "1" | "t":
+                    if not self.json.today_logged():
+                        print("\nYou haven't entered today's log yet.")
+
+                        if self.manager.logs_missed():
+                            msg = warning(
+                                "\nWriting today's log means you will have "
+                                "to enter your missed logs manually in the "
+                                "JSON file later. Confirm?"
+                            )
+                            if not confirm(msg):
+                                continue
+                        else:
+                            print("\nThis will be your new log for today.")
+
+                        self.manager.input_todays_log()
                         continue
                     
                     print(Txt("\nToday's log:").bold())
@@ -152,7 +152,7 @@ class Tracker:
                         case "4" | "c":
                             continue
 
-                case "3" | "p":
+                case "2" | "p":
                     if self.json.no_logs():
                         err("You haven't entered any logs yet!")
                         continue
@@ -161,7 +161,7 @@ class Tracker:
                             "than today's!")
                         continue
                     while True:
-                        selected_d = self.manager.prompt_prev_date()
+                        selected_d = self.manager.prompt_date()
                         print(Txt("\nSelected log:").bold())
                         self.json.print_log(
                             date=selected_d,
@@ -196,6 +196,13 @@ class Tracker:
                             case "5" | "c":
                                 break
                         break
+
+                case "3" | "g":
+                    if self.json.no_logs():
+                        err("You haven't entered any logs yet!")
+                        continue
+                    self.graph.view_ratings_graph()
+                    cont_on_enter()
                 
                 case "4" | "s":
                     self.stats.show_stats()
@@ -209,7 +216,7 @@ class Tracker:
                         "4) [C]ancel -> Main menu",
                     ):
                         case "1" | "d":
-                            selected_d = self.manager.prompt_prev_date()
+                            selected_d = self.manager.prompt_date()
                             print(f"\nLog for {Txt(selected_d).bold()}:")
                             self.json.print_log(
                                 date=selected_d,
@@ -243,6 +250,16 @@ class Tracker:
                     print("\n*⎋* —————————————————————————————— *⎋*")
                     print("\nBye!")
                     raise SystemExit()
+
+    def _print_header(self) -> None:
+        title = f"*--- 📆 Day Quality Tracker {self.RELEASE_NUM}! 📈 ---*"
+        print(
+            Txt(
+                f"\n{title}"
+            ).bold().yellow()
+        )
+        semver_str = "~~~ " + self.SEMVER + " ~~~"
+        print(Txt(f"{semver_str:^{len(title) + 2}}").dim())
     
     def configure(self, **configs: int | str | bool | None) -> None:
         """Update configuration options via keyword arguments.
