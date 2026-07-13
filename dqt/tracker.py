@@ -109,8 +109,8 @@ class Tracker:
                 "5) 📂 View [L]ogs...",
                 "6) 🔧 [O]pen settings",
                 "7) 💾 [B]ack up logs...",
-                "8) ⎋ E[x]it",
-                "9) [M]ore...",
+                "8) [M]ore...",
+                "9) ⎋ E[x]it",
                 prompt=None
             ):
 
@@ -247,12 +247,7 @@ class Tracker:
                         continue
                     self.json.backup_json_file()
 
-                case "8" | "x":
-                    print("\n*⎋* —————————————————————————————— *⎋*")
-                    print("\nBye!")
-                    raise SystemExit()
-
-                case "9" | "m":
+                case "8" | "m":
                     match menu(
                         "1) 🔗 Create Desktop [S]hortcut",
                         "2) 📥 [I]mport logs...",
@@ -262,6 +257,7 @@ class Tracker:
                     ):
                         case "1" | "s":
                             shortcut_creator.main()
+                            cont_on_enter()
                         case "2" | "i":
                             self.json.import_logs()
                         case "3" | "v":
@@ -273,6 +269,11 @@ class Tracker:
                                 cont_on_enter()
                         case "4" | "c":
                             continue
+
+                case "9" | "x":
+                    print("\n*⎋* —————————————————————————————— *⎋*")
+                    print("\nBye!")
+                    raise SystemExit()
 
     def _print_header(self) -> None:
         title = f"*--- 📆 Day Quality Tracker {self.RELEASE_NUM}! 📈 ---*"
