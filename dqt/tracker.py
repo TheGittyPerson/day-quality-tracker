@@ -109,9 +109,8 @@ class Tracker:
                 "5) 📂 View [L]ogs...",
                 "6) 🔧 [O]pen settings",
                 "7) 💾 [B]ack up logs...",
-                "8) 📥 [I]mport logs...",
-                "9) ⎋ E[x]it",
-                "10) [M]ore...",
+                "8) ⎋ E[x]it",
+                "9) [M]ore...",
                 prompt=None
             ):
 
@@ -248,31 +247,31 @@ class Tracker:
                         continue
                     self.json.backup_json_file()
 
-                case "8" | "i":
-                    self.json.import_logs()
-
-                case "9" | "x":
+                case "8" | "x":
                     print("\n*⎋* —————————————————————————————— *⎋*")
                     print("\nBye!")
                     raise SystemExit()
 
-                case "10" | "m":
+                case "9" | "m":
                     match menu(
                         "1) 🔗 Create Desktop [S]hortcut",
-                        "2) 😻 [V]isit project on GitHub",
-                        "3) [C]ancel -> Main menu",
+                        "2) 📥 [I]mport logs...",
+                        "3) 😻 [V]isit project on GitHub",
+                        "4) [C]ancel -> Main menu",
                         prompt="More..."
                     ):
                         case "1" | "s":
                             shortcut_creator.main()
-                        case "2" | "v":
+                        case "2" | "i":
+                            self.json.import_logs()
+                        case "3" | "v":
                             success = webbrowser.open(REPO_URL)
                             if not success:
                                 err("Couldn't open webpage.",
                                     "Try pasting this URL in your browser "
                                     f"manually: \n\t{REPO_URL}")
                                 cont_on_enter()
-                        case "3" | "c":
+                        case "4" | "c":
                             continue
 
     def _print_header(self) -> None:
