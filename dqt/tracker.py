@@ -45,7 +45,6 @@ class Tracker:
     def __init__(self):
         """Load saved data, initialize settings and Graph instance."""
         # Initialize settings
-        self.min_time: int = 20  # Earliest hour the of day to enter rating
         self.min_rating: int = 1  # 1 recommended
         self.max_rating: int = 20  # Even number recommended
         self.rating_inp_dp: int = 2
@@ -125,6 +124,8 @@ class Tracker:
                                 "JSON file later. Confirm?"
                             )
                             if not confirm(msg):
+                                print("\nYou can enter your missed logs by "
+                                      "rerunning the program.")
                                 continue
                         else:
                             print("\nThis will be your new log for today.")

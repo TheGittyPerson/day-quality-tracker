@@ -16,7 +16,6 @@ CONFIGS: dict[str, dict[str, Any]] = {
     # UI BEHAVIOR & SETTINGS
     #                                          CONFIGURATION DESCRIPTION:
     "tracker": {
-        "min_time": 20,  #                     Earliest hour of day a log entry is accepted (0 = no limit)
         "min_rating": 1,  #                    Minimum day quality rating (1 recommended)
         "max_rating": 20,  #                   Maximum day quality rating (even number recommended)
         "rating_inp_dp": 2,  #                 Number of decimal units ratings are rounded to
