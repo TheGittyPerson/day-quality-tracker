@@ -39,7 +39,7 @@ class Manager:
         self.mem_editor = _MemoryEditor(self)
 
     def handle_logs_entry(self) -> None:
-        """Handle today's log entry + missing logs.
+        """Handle entry of missing logs.
 
         This should be called before entering the main menu loop.
 
@@ -53,54 +53,20 @@ class Manager:
         """
         if (last_log_date := self._report_missing_logs()) is not None:
             match menu(
-                "1) Enter missing logs now",
-                "2) Enter missing logs later -> Main menu",
-                "3) Skip missing logs -> Enter today's log",
+                "1) Enter missing logs [N]ow",
+                "2) Enter missing logs [L]ater -> Main menu",
             ):
-                case "1":
+                case "1" | "n":
                     self._input_missing_logs(last_log_date)
-                case "2":
+                case "2" | "l":
                     print_wrapped(
                         "\nRestart the program later to enter your missing "
-                        "logs! (You can only enter today's log after "
-                        "entering the missed logs, unless you choose to skip "
-                        "them.)",
+                        "logs! (Entering today's log before doing this means "
+                        "you need to enter your missing logs manually in the "
+                        "JSON file)",
                         self.dqt.linewrap_maxcol
                     )
                     return
-                case "3":
-                    print_wrapped(
-                        "\nYou will have to enter the missed logs later "
-                        f"manually in `{self.json.FILENAME}`, unless you "
-                        "don't enter today's log yet."
-                        "\nYou can open the file by selecting:"
-                        "\nMain menu -> 5) View [A]ll logs "
-                        "-> 2) [O]pen JSON file in default viewer/editor"
-                        "\nMake sure you save any changed before closing "
-                        "the file.",
-                        self.dqt.linewrap_maxcol
-                    )
-                    if not confirm(
-                        "Confirm? Enter 'n' to return to main menu instead"
-                    ):
-                        print(
-                            "\nRerun the program to see this dialogue again "
-                            "and enter the missing logs later!"
-                        )
-                        return
-
-        print("\n*❖* —————————————————————————————— *❖*")
-        if datetime.now().time().hour < self.dqt.min_time:
-            self._print_input_log_later()
-            return
-        if not self.json.today_logged():
-            if not confirm("Would you like to enter today's log now?"):
-                print(
-                    "\nIn the main menu, select 2) Edit Today's log..., or "
-                    "rerun the program later to enter your log for today!"
-                )
-                return
-            self.input_todays_log()
 
     def _report_missing_logs(self) -> date | None:
         """Check and report if any previous days are missing logs.
@@ -231,25 +197,6 @@ class Manager:
         today = _today.strftime(self.dqt.date_format)
         self.json.add(today, tdys_rating, tdys_memory)
         log_saved()
-
-    def _print_input_log_later(self) -> None:
-        """Tell the user to input their log later after the time limit.
-
-        Format time in 12-hour or 24-hour clock in message.
-        """
-        if self.dqt.clock_format_12:
-            hour = self.dqt.min_time % 12 \
-                if self.dqt.min_time % 12 != 0 \
-                else 12
-            suffix = "AM" if self.dqt.min_time < 12 else "PM"
-            formatted_time = f"{hour} {suffix}"
-        else:
-            formatted_time = str(self.dqt.min_time)
-
-        print(f"\nYou can only input today's log after {formatted_time}.")
-        print("\nCome back later to enter today's log!")
-        print("(Or, select \"2) Edit [T]oday's log\" in the main menu to "
-              "override this)")
 
     def logs_missed(self) -> bool:
         """Return whether the user missed any logs.
