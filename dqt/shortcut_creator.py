@@ -6,6 +6,7 @@ Ensure this is run within the project directory.
 import os
 import sys
 from pathlib import Path
+from platformdirs import user_desktop_path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -53,17 +54,7 @@ def main() -> None:
     raw_name = input("\nShortcut file name (e.g., launch_dqt): ").strip()
     filename = add_os_extension(raw_name)
 
-    while True:
-        d = input(
-            f"Directory to create shortcut in (e.g. Desktop): "
-            f"{Path.home()}{os.sep}"
-        ).strip()
-        destdir = Path.home() / d
-
-        if destdir.is_dir():
-            dest = destdir / filename
-            break
-        print("\nERROR: Directory not found. Try again\n")
+    dest = user_desktop_path() / filename
 
     print(f"\nCreating script at: {dest}")
 
@@ -77,7 +68,7 @@ def main() -> None:
     print(f"Executable shortcut created at: {dest}")
     print(
         "\nYou can now start DQT by simply double-clicking this shortcut file "
-        "instead of running it manually from your terminal."
+        "on your Desktop instead of running it manually from your terminal."
     )
 
 
