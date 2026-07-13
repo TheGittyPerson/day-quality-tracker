@@ -274,7 +274,7 @@ class Tracker:
 
     @staticmethod
     def _print_header() -> None:
-        title = f"*--- 📆 Day Quality Tracker {RELEASE_NUM}! 📈 ---*"
+        title = f"*--- 📆 Day Quality Tracker {RELEASE_NUM}! 📝 ---*"
         print(Txt(f"\n{title}").bold().yellow())
         semver_str = "~~~ " + SEMVER + " ~~~"
         print(Txt(f"{semver_str:^{len(title) + 2}}").dim())
