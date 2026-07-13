@@ -119,12 +119,12 @@ On the first run, DQT will create its logs file automatically if it does not
 already exist.
 
 - If the `data/` directory does not exist yet, DQT will create it.
-- Your logs are stored in `data/dq_logs.json`
+- Your logs are stored in `data/t.json`
 
 ### Key files
 
 - `dqt/settings.py`: user-editable configuration file
-- `data/dq_logs.json`: where your ratings and memory entries are stored
+- `data/dqt_logs.json`: where your ratings and memory entries are stored
 - `requirements.txt`: Python dependencies needed by the app
 
 ---
@@ -157,7 +157,7 @@ returning to the terminal.
 These temporary editor files use names like `MEM_ENTRY_EDIT_*.txt`. DQT creates
 a fresh file for each edit so an older open editor window cannot overwrite a new
 entry. Old temporary editor files are cleaned up automatically after a few days,
-but your actual saved logs are stored in `data/dq_logs.json`.
+but your actual saved logs are stored in `data/dqt_logs.json`.
 
 Do **NOT** use the temporary text files as your primary source of backup, as 
 they are **deleted after 7 days** by default and can be unreliable. Always use 

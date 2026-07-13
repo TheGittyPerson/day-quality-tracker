@@ -32,7 +32,7 @@ class JSONManager:
     """A class to manage Day Quality Tracker JSON contents handling."""
 
     FILEDIRNAME: str = "data"
-    FILENAME: str = "dq_logs.json"
+    FILENAME: str = "dqt_logs.json"
     _FILENAME_PRE_DQT5: str = "dq_ratings.json"
 
     RATING_KYNAME: str = "rating"
