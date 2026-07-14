@@ -220,7 +220,7 @@ class Tracker:
                             self.json.search_logs_by_date()
                         case "2" | "p":
                             self.json.print_all_logs()
-                            cont_on_enter()
+                            # cont_on_enter called in method. Don't move here.
                         case "3" | "o":
                             self.json.open_json_file()
                             cont_on_enter()
@@ -275,7 +275,7 @@ class Tracker:
     def configure(self, **configs: int | str | bool | None) -> None:
         """Update configuration options via keyword arguments.
 
-        Must be called before ``run()``.
+        Must be called before `run()`.
         Raises:
             ValueError: Invalid configuration option
             TypeError: Incorrect type

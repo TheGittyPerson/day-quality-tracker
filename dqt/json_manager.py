@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
 from dqt.ui_utils import (
-    confirm, err, log_saved, menu, print_wrapped, warn, warning
+    confirm, cont_on_enter, err, log_saved, menu, print_wrapped, warn, warning
 )
 from dqt.styletext import StyleText as Txt
 
@@ -176,7 +176,7 @@ class JSONManager:
         )
 
         current_datestr: str = self.dqt.manager.prompt_date()
-        
+
         current_index = next(
             i for i, (_, datestr) in enumerate(sorted_logs)
             if datestr == current_datestr
@@ -269,7 +269,7 @@ class JSONManager:
                 rating=self.get_rating(current_datestr),
                 memory=self.get_memory(current_datestr),
             )
-    
+
     def print_all_logs(self) -> None:
         """Print 30 logs at a time until the user chooses to stop."""
         #                `Any` is actually `str | float` 👇
@@ -303,6 +303,8 @@ class JSONManager:
             _loop_print(last_30_items)
             remaining_items = remaining_items[:-30] \
                 if len(remaining_items) >= 30 else []
+
+            cont_on_enter()
 
     def open_json_file(self) -> None:
         """Open the JSON file in the default system application."""
@@ -842,7 +844,7 @@ class JSONManager:
         days_since_last = (_today.date() - last_date).days
 
         return not days_since_last <= 1
-    
+
     def no_logs(self, check_file: bool = True) -> bool:
         """Determine whether the user has no logs.
 
