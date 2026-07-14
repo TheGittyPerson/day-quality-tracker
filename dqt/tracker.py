@@ -239,13 +239,13 @@ class Tracker:
 
                 case "8" | "m":
                     match menu(
-                        "1) 🔗 Create Desktop [S]hortcut",
+                        "1) 🔗 Create [D]esktop shortcut",
                         "2) 📥 [I]mport logs...",
                         "3) 😻 [V]isit project on GitHub",
                         "4) [C]ancel -> Main menu",
                         prompt="More..."
                     ):
-                        case "1" | "s":
+                        case "1" | "d":
                             shortcut_creator.main()
                             cont_on_enter()
                         case "2" | "i":
