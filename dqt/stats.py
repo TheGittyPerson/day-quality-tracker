@@ -286,7 +286,7 @@ class Stats:
         # But mostly because my type checker is complaining.
         chronologically_sorted_logs: list[tuple[date, str, dict[str, str]]]
 
-        memory_entries = [
+        memory_entries: list[tuple[str, str]] = [
             (date_str, log[self.json.MEMORY_KYNAME].strip())
             for _, date_str, log in chronologically_sorted_logs
             if log[self.json.MEMORY_KYNAME].strip()
@@ -296,7 +296,8 @@ class Stats:
             print("Day with longest memory entry: -")
             return
 
-        max_length = max(len(memory) for _, memory in memory_entries)
+        longest: str = max([mem for _, mem in memory_entries], key=len)
+        max_length: int = len(longest)
         longest_dates = [
             date_str for date_str, memory in memory_entries
             if len(memory) == max_length
@@ -309,7 +310,7 @@ class Stats:
         )
         print(
             f"{Txt(label).bold()} {self._format_dates(longest_dates)} "
-            f"({max_length} characters)"
+            f"({max_length} characters, {len(longest.split())} words)"
         )
 
     def _print_weekdays_ranked(

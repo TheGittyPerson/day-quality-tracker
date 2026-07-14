@@ -373,11 +373,13 @@ class Manager:
         user wishes to re-enter their entry.
         """
         len_diff = len(original) - len(entry)
+        word_diff = len(original.split()) - len(original.split())
         if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return confirm(
                 warning(
-                    f"The new memory entry is {len_diff} characters shorter "
-                    "than the original. Are you sure?"
+                    f"Your new memory entry is {len_diff} characters "
+                    f"({word_diff} words) shorter than your original entry. "
+                    f"Are you sure?"
                 )
             )
 
@@ -787,17 +789,20 @@ class _MemoryEditor:
         if original_contents is None:
             return None
 
-        len_diff = len("".join(original_contents)) - len("".join(contents))
+        original_contents = "".join(original_contents)
+        contents = "".join(contents)
+        len_diff = len(original_contents) - len(contents)
+        word_diff = len(original_contents.split()) - len(contents.split())
         if len_diff > self.manager.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return (
-                f"Your new memory entry is {len_diff} characters shorter "
-                "than your original entry. Are you sure you've saved "
-                "(Ctrl + S / ⌘ + S) your edit?"
+                f"Your new memory entry is {len_diff} characters ({word_diff} "
+                "words) shorter than your original entry. Are you sure "
+                "you've saved (Ctrl + S / ⌘ + S) your edit?"
             )
 
-        if "".join(original_contents).strip() == "".join(contents).strip():
+        if original_contents.strip() == original_contents.strip():
             return (
-                f"It looks like your edit matches your original entry. "
+                "It looks like your edit matches your original entry. "
                 "Are you sure you've saved (Ctrl + S / ⌘ + S) your edit?"
             )
 
