@@ -12,8 +12,8 @@ from dqt.ui_utils import confirm, cont_on_enter, err, menu, warning
 from dqt.styletext import StyleText as Txt
 from dqt import shortcut_creator
 
-# Today's date is used statically to prevent confusion
-# if the program is run through midnight
+# Today's date is initialized at the start and used statically to prevent
+# confusion if the program is run across midnight
 _today: datetime = datetime.today()
 _REPO_URL = "https://github.com/TheGittyPerson/day-quality-tracker"
 

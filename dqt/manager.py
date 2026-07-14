@@ -21,7 +21,7 @@ from dqt.styletext import StyleText as Txt
 if TYPE_CHECKING:
     from tracker import Tracker
 
-# Today's date is initialised at the start and used statically to prevent
+# Today's date is initialized at the start and used statically to prevent
 # confusion if the program is run across midnight
 _today: datetime = datetime.today()
 
