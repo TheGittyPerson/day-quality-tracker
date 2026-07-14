@@ -35,7 +35,6 @@ class JSONManager:
 
     FILEDIRNAME: str = "data"
     FILENAME: str = "dqt_logs.json"
-    _FILENAME_PRE_DQT5: str = "dq_ratings.json"
 
     RATING_KYNAME: str = "rating"
     MEMORY_KYNAME: str = "memory"
@@ -49,8 +48,7 @@ class JSONManager:
         rootdir: Path = Path(__file__).resolve().parent.parent
         self.filedirpath: Path = rootdir / self.FILEDIRNAME
         self.filepath: Path = self.filedirpath / self.FILENAME
-        self._filepath_pre5: Path = rootdir / self._FILENAME_PRE_DQT5
-        
+
         self._touch()
         
         self.logs: dict = self._load_json()
@@ -674,16 +672,9 @@ class JSONManager:
             self.filedirpath.mkdir()
             print("Success!")
         if not self.filepath.exists():
-            if self._filepath_pre5.exists():
-                print(f"\nRenaming pre-DQT-5 JSON file...")
-                self._filepath_pre5.rename(self.FILENAME)
-                print("Moving file...")
-                shutil.move(self.FILENAME, self.filedirpath)
-                print("Success!")
-            else:
-                print(f"\nCreating `{self.FILENAME}`...")
-                self.filepath.touch()
-                print("Success!")
+            print(f"\nCreating `{self.FILENAME}`...")
+            self.filepath.touch()
+            print("Success!")
     
     def _load_json(self) -> dict:
         """Load, validate, and normalize JSON log data."""
