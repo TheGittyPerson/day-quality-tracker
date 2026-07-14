@@ -110,8 +110,6 @@ class Tracker:
 
                 case "1" | "t":
                     if not self.json.today_logged():
-                        print("\nYou haven't entered today's log yet.")
-
                         if self.json.logs_missed():
                             msg = warning(
                                 "\nWriting today's log means you will have "
@@ -123,7 +121,7 @@ class Tracker:
                                       "rerunning the program.")
                                 continue
                         else:
-                            print("\nThis will be your new log for today.")
+                            print(Txt("\nWriting a new log for today.").bold())
 
                         self.manager.input_todays_log()
                         continue
