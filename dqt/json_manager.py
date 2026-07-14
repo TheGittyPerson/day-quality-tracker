@@ -387,7 +387,8 @@ class JSONManager:
             print(f"\nBackup will be saved to:\n{dirpath}")
 
             filename = self._prompt_filename(
-                "Name the backup file (use '~' to prepend a default prefix)"
+                "Name the backup file (use '~' to prepend a default prefix)",
+                f"{self.FILENAME.removesuffix(".json")}_backup"
             )
             dirpath: Path
             chosen_filepath = dirpath / filename
@@ -453,7 +454,7 @@ class JSONManager:
     
     def _prompt_filename(self,
                          prompt: str,
-                         default_name_prefix: str = "dqt_backup") -> str:
+                         default_name_prefix: str) -> str:
         """Prompt and validate file name based on OS.
 
         If user input starts with "~", the character will be replaced by
