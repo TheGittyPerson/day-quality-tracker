@@ -129,9 +129,6 @@ class Graph:
             )
         )
         
-        # Close existing windows to prevent overlapping
-        plt.close("all")
-        
         if not logs:
             raise ValueError("No logs saved")
         
