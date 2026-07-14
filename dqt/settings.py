@@ -20,8 +20,8 @@ CONFIGS: dict[str, dict[str, Any]] = {
         "max_rating": 20,  #                   Maximum day quality rating (even number recommended)
         "rating_inp_dp": 2,  #                 Number of decimal units ratings are rounded to
         "linewrap_maxcol": 70,  #              Line width at which long lines are wrapped
-        "date_format": "%Y-%m-%d",  #          ★ Date format used
-        "date_format_print": "YYYY-MM-DD",  #  Date format represented as a user-friendly string
+        "date_format": "%d-%m-%Y",  #          ✢ Date format used
+        "date_format_print": "DD-MM-YYYY",  #  Date format represented as a user-friendly string
         "clock_format_12": True,  #            Whether time will be printed in 12-hour clock format (24-hour otherwise)
         "enable_ansi": None,  #                Whether to enable ANSI escape codes for text coloring and styling (`None`
         #                                          = automatically detect terminal compatibility, not so reliable)
@@ -73,8 +73,8 @@ CONFIGS: dict[str, dict[str, Any]] = {
         "legend_frameon": True,  #                 Whether to show the legend in a box
     }
     
-    # * = See more options in the official Matplotlib documentation
-    #     at https://matplotlib.org/stable
-    # ★ = See more information on date format codes in the official Python documentation at
+    # ✢ = See more information on date format codes in the official Python documentation at
     #     https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+    # * = See more options in the official Matplotlib documentation at
+    #     https://matplotlib.org/stable
 }

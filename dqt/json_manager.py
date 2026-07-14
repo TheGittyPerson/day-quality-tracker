@@ -727,9 +727,11 @@ class JSONManager:
             # ---------- Validate date order ----------
             if prev_date_str is not None:
                 prev_date_str: str  # Assumptions, assumptions, assumptions
+
                 prev_dateobj = datetime.strptime(prev_date_str,
                                                  self.dqt.date_format).date()
                 d = datetime.strptime(date, self.dqt.date_format).date()
+
                 diff = (d - prev_dateobj).days
                 if diff < 0:
                     raise ValueError(
@@ -745,7 +747,7 @@ class JSONManager:
             
             # Format:
             # {
-            #     "YYYY-MM-DD": {
+            #     "DD-MM-YYYY": {
             #         "rating": 10,
             #         "memory": "This is a memory entry."
             #     }

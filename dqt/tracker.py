@@ -45,8 +45,8 @@ class Tracker:
         self.rating_inp_dp: int = 2
         self.linewrap_maxcol: int = 70
         
-        self.date_format: str = "%Y-%m-%d"
-        self.date_format_print: str = "YYYY-MM-DD"
+        self.date_format: str = "%d-%m-%Y"
+        self.date_format_print: str = "DD-MM-YYYY"
         self.clock_format_12: bool = True
         self.enable_ansi: bool | None = False
         self.delete_mem_edit_files_after: int | None = 7

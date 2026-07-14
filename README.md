@@ -184,7 +184,7 @@ instead allows you to edit your rating and/or memory entry.
 
 To choose the log to edit, the program will prompt you to enter either:
 - The date of the log you wish to edit
-  - By default, the format you must use is `YYYY-MM-DD` (e.g., `2026-01-20`)
+  - By default, the format you must use is `DD-MM-YYYY` (e.g., `20-01-2026`)
 - The number of days ago the log is for
   - e.g.: yesterday → `1`, last week → `7`
 
