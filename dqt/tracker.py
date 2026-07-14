@@ -2,7 +2,7 @@ import webbrowser
 from datetime import datetime
 from types import NoneType
 
-from dqt import RELEASE_NUM, SEMVER
+from dqt import RELEASE_NUM, SEMVER, _REPO_URL
 from dqt.manager import Manager
 from dqt.json_manager import JSONManager
 from dqt.graph import Graph
@@ -15,7 +15,6 @@ from dqt import shortcut_creator
 # Today's date is initialized at the start and used statically to prevent
 # confusion if the program is run across midnight
 _today: datetime = datetime.today()
-_REPO_URL = "https://github.com/TheGittyPerson/day-quality-tracker"
 
 
 class Tracker:
