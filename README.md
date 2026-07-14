@@ -131,7 +131,7 @@ already exist.
 
 ### Ratings
 
-You can enter a rating every day by selecting `1) Enter Today's log` from the 
+You can enter a rating every day by selecting `1) Write Today's log` from the 
 Main menu. Ratings are from 1 to 20 by default. After entering a rating, you 
 can choose to edit it by selecting the same option.
 

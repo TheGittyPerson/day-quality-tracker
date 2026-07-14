@@ -53,17 +53,17 @@ class Manager:
         """
         if (last_log_date := self._report_missing_logs()) is not None:
             match menu(
-                "1) Enter missing logs [N]ow",
-                "2) Enter missing logs [L]ater -> Main menu",
+                "1) Write missing logs [N]ow",
+                "2) Write missing logs [L]ater -> Main menu",
             ):
                 case "1" | "n":
                     self._input_missing_logs(last_log_date)
                 case "2" | "l":
                     print_wrapped(
-                        "\nRestart the program later to enter your missing "
-                        "logs! (Entering today's log before doing this means "
-                        "you need to enter your missing logs manually in the "
-                        "JSON file)",
+                        "\nRestart the program later to write your missing "
+                        "logs! (Writing today's log before doing this means "
+                        "you'll need to enter your missing logs manually in "
+                        f"{self.json.filepath})",
                         self.dqt.linewrap_maxcol
                     )
                     return
@@ -109,7 +109,7 @@ class Manager:
             return last_date
 
     def _input_missing_logs(self, last_log_date: date) -> None:
-        """Enter all missing logs in a loop.
+        """Prompt for all missing logs in a loop.
         
         Args:
             last_log_date (date): Date of most recent log
@@ -142,7 +142,7 @@ class Manager:
             new_file = True
             while True:
                 memory, _ = self._input_memory(
-                    "Enter a memory entry (leave blank to skip): ",
+                    "Write a memory entry (leave blank to skip): ",
                     new_file=new_file,
                 )
 
@@ -172,14 +172,14 @@ class Manager:
         new_file = True
         while True:
             tdys_memory, _ = self._input_memory(
-                f"Enter a memory entry; write a few sentences about your "
+                f"Write a memory entry; enter a few sentences about your "
                 f"day. \nLeave this blank to skip.",
                 new_file
             )
 
             if not tdys_memory:
                 print(
-                    "\nTo enter your memory entry later: "
+                    "\nTo write your memory entry later: "
                     "\nMain menu -> Edit today's/previous log "
                     "-> Edit memory"
                 )
@@ -326,7 +326,7 @@ class Manager:
         new_file = True
         while True:
             raw, used_terminal = self._input_memory(
-                f"Enter new memory entry for {_date}.",
+                f"Write new memory entry for {_date}.",
                 new_file,
                 original_mem,
                 terminal_newline=False
@@ -370,7 +370,7 @@ class Manager:
         issues, or if the user chooses to ignore the warning.
 
         Return whether the user confirms their entry. Return ``False`` if the
-        user wishes to re-enter their entry.
+        user wishes to rewrite their entry.
         """
         len_diff = len(original) - len(entry)
         word_diff = len(original.split()) - len(original.split())
@@ -553,7 +553,7 @@ class Manager:
 
         match menu(
             "1) Try starting the editor again",
-            "2) Enter your memory entry here in the CLI instead",
+            "2) Write your memory entry here in the CLI instead",
             prompt="Choose what to do next: "
         ):
             case "1":
@@ -772,7 +772,7 @@ class _MemoryEditor:
             contents: list[str],
             original_contents: list[str] | None = None
     ) -> str | None:
-        """Check the memory edit entered by the user to prevent data loss.
+        """Check the memory edit written by the user to prevent data loss.
 
         When ``original_contents`` is given, it means an existing entry is
         being edited. Otherwise, it means a new entry is being created.

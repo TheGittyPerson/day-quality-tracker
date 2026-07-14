@@ -93,10 +93,10 @@ class Tracker:
                 f"{Txt("— choose what to do:").bold()}"
             )
 
-            t = (f"1) 📝 {"Edit" if self.json.today_logged() else "Enter"} "
+            t = (f"1) 📝 {"Edit" if self.json.today_logged() else "Write"} "
                  f"[T]oday's log{"..." if self.json.today_logged() else ""}:")
             match menu(
-                t,  # 1) Enter/Edit [T]oday's log...
+                t,  # 1) Write/Edit [T]oday's log...
                 "2) 🕗 Edit [P]revious log...",
                 "3) 📈 View ratings [G]raph",
                 "4) 📊 See [S]tats",
@@ -155,8 +155,8 @@ class Tracker:
                         err("You haven't entered any logs yet!")
                         continue
                     if self.json.no_previous_logs():
-                        err("You haven't entered any previous logs yet other "
-                            "than today's!")
+                        err("You haven't written any previous logs yet other "
+                            "than for today!")
                         continue
                     while True:
                         selected_d = self.manager.prompt_date()
