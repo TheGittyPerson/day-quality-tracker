@@ -8,10 +8,41 @@ daily “day quality” ratings and visualize them over time using the
 
 ---
 
+## Table of Contents
+
+- [Pre-installation Requirements](#pre-installation-requirements)
+- [TL;DR](#tldr)
+- [Installation](#installation)
+- [Notes](#notes)
+- [Installing Dependencies](#installing-dependencies)
+- [How to use](#how-to-use)
+  - [What happens on first run](#what-happens-on-first-run)
+  - [Key files](#key-files)
+  - [Logs](#logs)
+    - [Ratings](#ratings)
+    - [Memory entries](#memory-entries)
+  - [Main menu](#main-menu)
+    - [Write/Edit today's log](#writeedit-todays-log)
+    - [Edit previous log](#edit-previous-log)
+    - [View ratings graph](#view-ratings-graph)
+    - [See stats](#see-stats)
+    - [View logs](#view-logs)
+    - [Open settings](#open-settings)
+    - [Back up logs](#back-up-logs)
+    - [Create Desktop Shortcut](#create-desktop-shortcut)
+    - [Import logs](#import-logs)
+  - [Missed logs](#missed-logs)
+  - [Custom Configurations](#custom-configurations)
+- [License](#license)
+
+---
+
 ## Pre-installation Requirements
 
 - Python 3.12 or later
 - An internet connection (only for dependency installation)
+
+[^ TOC](#table-of-contents)
 
 ---
 
@@ -34,6 +65,8 @@ For your convenience, in the main menu:
 - Select `1) Create Desktop Shortcut`
 - Enter the name of the Desktop Shortcut script.
 
+[^ TOC](#table-of-contents)
+
 ---
 
 ## Installation
@@ -45,9 +78,11 @@ On the [GitHub page][repo]:
 - Click on "Source code (zip)" (recommended for basic installation)
 - Unzip the ZIP file on your machine to produce a new folder.
 
+[^ TOC](#table-of-contents)
+
 ---
 
-## Switching to the correct directory
+## Notes
 
 **Before running any commands** from this guide in your terminal, ensure your
 terminal is running from the correct directory. You can open a terminal window
@@ -78,11 +113,13 @@ macOS/Linux) or `py` (common on Windows).
 
 You only have to do this once per Terminal session.
 
+[^ TOC](#table-of-contents)
+
 ---
 
 ## Installing Dependencies
 
-Run from the project directory:
+Run:
 
 ```bash
 python -m pip install --upgrade pip
@@ -90,6 +127,8 @@ python -m pip install -r requirements.txt
 ```
 
 After the dependencies are installed, you can start using DQT.
+
+[^ TOC](#table-of-contents)
 
 ---
 
@@ -125,6 +164,8 @@ already exist.
 - `dqt/settings.py`: user-editable configuration file
 - `data/dqt_logs.json`: where your ratings and memory entries are stored
 - `requirements.txt`: Python dependencies needed by the app
+
+[^ TOC](#table-of-contents)
 
 ---
 
@@ -169,6 +210,8 @@ the "Backup Logs" feature provided in the main menu.
 If the memory editor fails or if your device is incompatible for this feature, 
 DQT allows you to directly write your entry via terminal input.
 
+[^ TOC](#table-of-contents)
+
 ---
 
 ### Main menu
@@ -196,6 +239,8 @@ Visually display your ratings on a line graph.
 The graph also shows your average, highest, and lowest ratings.
 When the graph window opens, close it to return to the program.
 
+[^ TOC](#table-of-contents)
+
 #### See stats
 
 View detailed statistics about your ratings, including averages, highs, lows, 
@@ -221,6 +266,8 @@ periodically.
 
 This option creates a copy of your log JSON file in a directory of your 
 choosing.
+
+[^ TOC](#table-of-contents)
 
 #### Create Desktop Shortcut
 
@@ -250,6 +297,8 @@ logs before creating a new one. This is because the program identifies missed
 logs by only looking at the date of the most recent log. This is good if you 
 want to intentional skip logging for a day.
 
+[^ TOC](#table-of-contents)
+
 ---
 
 ### Custom Configurations
@@ -278,6 +327,8 @@ This project is licensed under the [MIT License](LICENSE.txt).
 ---
 
 🌟 Be an amazing person and [drop me a star][repo]!
+
+[^ TOC](#table-of-contents)
 
 
 [profile]: https://github.com/TheGittyPerson
