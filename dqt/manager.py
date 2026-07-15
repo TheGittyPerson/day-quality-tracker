@@ -194,7 +194,7 @@ class Manager:
         self.json.add(today, tdys_rating, tdys_memory)
         log_saved()
 
-    def logs_missed(self) -> bool:
+    def logs_missed(self) -> bool:  # TODO: move this to JSONManager
         """Return whether the user missed any logs.
 
         **IGNORES intentionally skipped logs**, AKA dates without a log
@@ -220,21 +220,47 @@ class Manager:
         """Prompt the user to change today's memory entry."""
         self._change_data("today", self.json.MEMORY_KYNAME)
 
-    def prompt_date(self) -> str:
+    def prompt_date(self,
+                    prompt: str | None = None,
+                    starting_date: str | datetime | date = _today) -> str:
         """Prompt the user to enter a date for a log.
 
         Reject dates for logs that do not exist.
-        """
-        selected_date = ""
-        while True:
-            inp = input("\nEnter the number of days ago or exact date "
-                        f"('{self.dqt.date_format_print}'): ").strip()
 
-            # If number of days ago specified, get date
+        Args:
+            prompt (str, optional): prompt to show
+            starting_date (datetime | date):
+                If the user enters an integer to specify the numbers days of
+                days ago, this date is used. e.g., ``2`` -> 2 days
+                before this date. Defaults to today's date. If the
+                user enters ``0``, this date is returned. A negative number
+                returns a *later* date from this date.
+        """
+        if isinstance(starting_date, str):
+            starting_date: datetime | date = datetime.strptime(
+                starting_date, self.dqt.date_format
+            )
+
+        selected_date: str = ""
+        while True:
+            inp = input(
+                "\nEnter the number of days ago or exact date "
+                f"('{self.dqt.date_format_print}'): "
+                if prompt is None else "\n" + prompt
+            ).strip()
+
+            # If number of days ago/later specified, get date
             if inp.isdigit():
                 inp = int(inp)
-                selected_date = _today - timedelta(days=inp)
-                selected_date = selected_date.strftime(self.dqt.date_format)
+                try:
+                    selected_dateobj = starting_date - timedelta(days=inp)
+                except OverflowError:
+                    err(
+                        "Date out of range.",
+                        "\nTry again."
+                    )
+                    continue
+                selected_date = selected_dateobj.strftime(self.dqt.date_format)
                 print(Txt(f"Date selected: {selected_date}").bold())
 
             # Else, validate date str
@@ -243,8 +269,7 @@ class Manager:
                     datetime.strptime(inp, self.dqt.date_format)
                 except ValueError:
                     err("Enter either a valid date in the format "
-                        f"{self.dqt.date_format_print} or a non-negative "
-                        "integer.")
+                        f"{self.dqt.date_format_print} or an integer.")
                     continue
                 selected_date = inp
 
@@ -254,8 +279,7 @@ class Manager:
             except KeyError:
                 err(
                     "Rating for specified date not found.",
-                    "Ensure you have already entered a "
-                    "rating for that date.",
+                    "Ensure you have already entered a rating for that date.",
                     "\nTry again."
                 )
                 continue
