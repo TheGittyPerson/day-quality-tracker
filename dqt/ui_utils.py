@@ -57,8 +57,7 @@ def log_saved(text: str = "Log saved!") -> None:
 def menu(*options: str,
          prompt: str | StyleText | None = "Choose what to do: ") -> str:
     """Display menu prompt and options and collect user input."""
-    if prompt is not None:
-        print(StyleText(f"\n{prompt}").bold())
+    print(StyleText(f"\n{prompt}" if prompt else "").bold())
     for i, option in enumerate(options, start=1):
         print(StyleText(f"{i})").bold(), option.removeprefix(f"{i}) "))
 
