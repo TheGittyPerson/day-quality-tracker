@@ -226,7 +226,7 @@ class Tracker:
                             )
                             cont_on_enter()
                         case "2" | "p":
-                            self.json.print_logs_to_stdout()
+                            self.json.print_all_logs()
                             cont_on_enter()
                         case "3" | "o":
                             self.json.open_json_file()

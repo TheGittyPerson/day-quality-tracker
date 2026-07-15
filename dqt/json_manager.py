@@ -154,13 +154,10 @@ class JSONManager:
             else:
                 print(Txt("Memory: ").bold() + "-")
     
-    def print_logs_to_stdout(self) -> None:
-        """Print last 30 saved logs.
-
-        The user can choose whether to show the rest of the logs.
-        """
-        
-        def _loop_print(items: list):
+    def print_all_logs(self) -> None:
+        """Print 30 logs at a time until the user chooses to stop."""
+        #                `Any` is actually `str | float` 👇
+        def _loop_print(items: list[tuple[str, dict[str, Any]]]) -> None:
             print("\n* —————————————————————————————— *")
             for date, log in items:
                 print()
@@ -177,21 +174,20 @@ class JSONManager:
         if not self.logs:
             print("\n[No logs found]")
             return
-        
+
         # Convert dictionary items to a list of tuples
-        items_list = list(self.logs.items())
-        # Get the last 30 items or all items if less than 30
-        last_30_items = items_list[-30:]
-        
-        _loop_print(last_30_items)
-        
-        if len(items_list) > 30:
-            if not confirm("Show the rest of the logs?"):
+        items_list: list[tuple[str, dict[str, Any]]] = list(self.logs.items())
+
+        _loop_print(items_list[-30:])
+        remaining_items = items_list[:-30] if len(items_list) >= 30 else []
+
+        while remaining_items:
+            if not confirm("Show 30 more logs?"):
                 return
-            
-            items_until_last_30th = items_list[:-30]
-            
-            _loop_print(items_until_last_30th)
+            last_30_items = remaining_items[-30:]
+            _loop_print(last_30_items)
+            remaining_items = remaining_items[:-30] \
+                if len(remaining_items) >= 30 else []
 
     def open_json_file(self) -> None:
         """Open the JSON file in the default system application."""
