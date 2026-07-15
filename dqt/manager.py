@@ -167,10 +167,6 @@ class Manager:
         )
 
         if tdys_rating == "SKIP":
-            print(
-                f"\nLogging canceled. Enter today's log later from the main "
-                f"menu or rerun the program!"
-            )
             return
 
         new_file = True
