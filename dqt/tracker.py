@@ -217,14 +217,7 @@ class Tracker:
                         "4) [C]ancel -> Main menu",
                     ):
                         case "1" | "d":
-                            selected_d = self.manager.prompt_date()
-                            print(f"\nLog for {Txt(selected_d).bold()}:")
-                            self.json.print_log(
-                                date=selected_d,
-                                rating=self.json.get_rating(selected_d),
-                                memory=self.json.get_memory(selected_d),
-                            )
-                            cont_on_enter()
+                            self.json.search_logs_by_date()
                         case "2" | "p":
                             self.json.print_all_logs()
                             cont_on_enter()

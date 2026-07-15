@@ -222,22 +222,27 @@ class Manager:
 
     def prompt_date(self,
                     prompt: str | None = None,
-                    starting_date: str | datetime | date = _today) -> str:
+                    starting_date: str | datetime = _today,
+                    backwards_offset: bool = True) -> str:
         """Prompt the user to enter a date for a log.
 
         Reject dates for logs that do not exist.
 
         Args:
             prompt (str, optional): prompt to show
-            starting_date (datetime | date):
+            starting_date (datetime):
                 If the user enters an integer to specify the numbers days of
                 days ago, this date is used. e.g., ``2`` -> 2 days
                 before this date. Defaults to today's date. If the
                 user enters ``0``, this date is returned. A negative number
                 returns a *later* date from this date.
+            backwards_offset (bool, optional):
+                If ``True``, a positive integer input would return an earlier
+                log (date before ``starting_date``), and a later log for a
+                negative number, instead of the other way round.
         """
         if isinstance(starting_date, str):
-            starting_date: datetime | date = datetime.strptime(
+            starting_date: datetime = datetime.strptime(
                 starting_date, self.dqt.date_format
             )
 
@@ -253,7 +258,10 @@ class Manager:
             if inp.isdigit():
                 inp = int(inp)
                 try:
-                    selected_dateobj = starting_date - timedelta(days=inp)
+                    if backwards_offset:
+                        selected_dateobj = starting_date - timedelta(days=inp)
+                    else:
+                        selected_dateobj = starting_date + timedelta(days=inp)
                 except OverflowError:
                     err(
                         "Date out of range.",

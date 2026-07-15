@@ -3,22 +3,26 @@ import sys
 import os
 import shutil
 import subprocess
+import copy
 from pathlib import Path
 from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
 from dqt.ui_utils import (
-    confirm, err, log_saved, print_wrapped, warn, warning
+    confirm, err, log_saved, menu, print_wrapped, warn, warning
 )
 from dqt.styletext import StyleText as Txt
 
 if TYPE_CHECKING:
+    from datetime import date as date_t
     from tracker import Tracker
 
 
 class UnsetType:
     def __repr__(self) -> str:
         return "UNSET"
+
+# TODO: use ```` in docstrings
 
 
 _UNSET = UnsetType()
@@ -115,7 +119,7 @@ class JSONManager:
                   date: str | UnsetType = _UNSET,
                   rating: float | None | UnsetType = _UNSET,
                   memory: str | UnsetType = _UNSET,
-                  linewrap_memory: bool = False) -> None:
+                  linewrap_memory: bool = True) -> None:
         """Print a formatted log, and represent "empty" values with text.
 
         Null (None) ratings are printed as "[No rating]".
@@ -153,6 +157,120 @@ class JSONManager:
                     print(memory)
             else:
                 print(Txt("Memory: ").bold() + "-")
+
+    def search_logs_by_date(self) -> None:
+        """`print_all_logs()` but one by one + more freedom.
+
+        Users first enter a date to see the log for that day. They can
+        choose to read the next, previous log, first, or last log, or
+        reselect the date.
+        """
+        if self.no_logs():
+            err("You don't have any logs yet!")
+            return
+
+        sorted_logs: list[tuple[date_t, str]] = sorted(
+            [
+                (datetime.strptime(datestr, self.dqt.date_format).date(),
+                 datestr)
+                for datestr in self.logs
+            ]
+        )
+
+        current_datestr: str = self.dqt.manager.prompt_date()
+        
+        current_index = next(
+            i for i, (_, datestr) in enumerate(sorted_logs)
+            if datestr == current_datestr
+        )
+
+        self.print_log(
+            date=current_datestr,
+            rating=self.get_rating(current_datestr),
+            memory=self.get_memory(current_datestr),
+        )
+
+        while True:
+            match menu(
+                "1) See [N]ext",
+                "2) See [P]revious",
+                "3) Jump to [F]irst log",
+                "4) Jump to [L]ast log",
+                "5) Reselect [D]ate",
+                "6) [C]ancel -> Main menu",
+                prompt=None
+            ):
+                case "1" | "n":
+                    if current_index >= len(sorted_logs) - 1:
+                        print("\nYou're already on the most recent log!")
+                        continue
+
+                    next_index = current_index + 1
+                    next_dateobj, next_datestr = sorted_logs[next_index]
+                    current_dateobj = sorted_logs[current_index][0]
+
+                    days_skipped = (next_dateobj - current_dateobj).days - 1
+                    if days_skipped > 0:
+                        print(f"\n(Skipped {days_skipped} empty days ahead)")
+
+                    current_datestr = next_datestr
+                    current_index = next_index
+
+                case "2" | "p":
+                    if current_index <= 0:
+                        print("\nYou're already on the oldest log!")
+                        continue
+
+                    prev_index = current_index - 1
+                    prev_dateobj, prev_datestr = sorted_logs[prev_index]
+                    current_dateobj = sorted_logs[current_index][0]
+
+                    days_skipped = (current_dateobj - prev_dateobj).days - 1
+                    if days_skipped > 0:
+                        print(f"\n(Skipped {days_skipped} empty days backward)")
+
+                    current_datestr = prev_datestr
+                    current_index = prev_index
+
+                case "3" | "f":
+                    if current_index == 0:
+                        print("\nYou're already on the first log!")
+                        continue
+
+                    current_index = 0
+                    current_datestr = sorted_logs[current_index][1]
+
+                case "4" | "l":
+                    if current_index == len(sorted_logs) - 1:
+                        print("\nYou're already on the last log!")
+                        continue
+
+                    current_index = len(sorted_logs) - 1
+                    current_datestr = sorted_logs[current_index][1]
+
+                case "5" | "d":
+                    current_datestr: str = self.dqt.manager.prompt_date(
+                        "Enter the number of days from the current date or "
+                        f"the exact date ({self.dqt.date_format}): ",
+                        starting_date=current_datestr,
+                        backwards_offset=False
+                    )
+                    # Find new index in sorted list after reselection
+                    current_index = next(
+                        i for i, (_, datestr) in enumerate(sorted_logs)
+                        if datestr == current_datestr
+                    )
+                case "6" | "c":
+                    return
+
+            # Placed this at the end so that I can easily `continue` to print
+            # the menu again without printing the log
+            print()
+            self.print_log(
+                date=current_datestr,
+                rating=self.get_rating(current_datestr),
+                memory=self.get_memory(current_datestr),
+            )
     
     def print_all_logs(self) -> None:
         """Print 30 logs at a time until the user chooses to stop."""
@@ -165,7 +283,6 @@ class JSONManager:
                     date=date,
                     rating=log[self.RATING_KYNAME],
                     memory=log[self.MEMORY_KYNAME],
-                    linewrap_memory=True,
                 )
             print("\n* —————————————————————————————— *")
         
@@ -600,29 +717,30 @@ class JSONManager:
         - Ensures rating exists
         - Auto-fills missing memory entries (optional)
         """
-        prev_date = None
+        prev_date_str = None
         validated: dict[str, dict[str, float | None | str]] = {}
         updated = False
         
         for date, value in contents.items():
             
             # ---------- Validate date order ----------
-            if prev_date is not None:
-                prev_date: str  # Assumptions, assumptions, assumptions
-                prev_d = datetime.strptime(prev_date, self.dqt.date_format)
-                d = datetime.strptime(date, self.dqt.date_format)
-                diff = (d - prev_d).days
+            if prev_date_str is not None:
+                prev_date_str: str  # Assumptions, assumptions, assumptions
+                prev_dateobj = datetime.strptime(prev_date_str,
+                                                 self.dqt.date_format).date()
+                d = datetime.strptime(date, self.dqt.date_format).date()
+                diff = (d - prev_dateobj).days
                 if diff < 0:
                     raise ValueError(
                         f"Date '{date}' is older than previous date "
-                        f"'{prev_date}'"
+                        f"'{prev_date_str}'"
                     )
                 if diff == 0:
                     raise ValueError(
-                        f"Date '{prev_date}' is repeated"
+                        f"Date '{prev_date_str}' is repeated"
                     )
             
-            prev_date = date
+            prev_date_str = date
             
             # Format:
             # {
@@ -709,10 +827,10 @@ class JSONManager:
             )
     
     def no_logs(self, check_file: bool = True) -> bool:
-        """Determine whether there are no logs available.
+        """Determine whether the user has no logs.
 
         Return True if `self.logs` is empty and, if `check_file` is True,
-        the JSON log file is also empty.
+        if the JSON log file is also empty.
 
         If `check_file` is True and `self.logs` is empty but the JSON file
         contains data, the user is prompted to load the data. If the user
@@ -743,7 +861,9 @@ class JSONManager:
         return True
     
     def no_previous_logs(self) -> bool:
-        """Return whether there are no previous logs (other than today's)."""
-        if len(self.logs) <= 1:
-            return True
-        return False
+        """Return whether there are no previous logs (i.e. exc. today's)."""
+        if not self.today_logged():
+            return self.no_logs(check_file=False)
+        return not copy.deepcopy(self.logs).pop(
+            _today.strftime(self.dqt.date_format)
+        )
