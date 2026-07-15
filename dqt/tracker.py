@@ -113,7 +113,7 @@ class Tracker:
                     if not self.json.today_logged():
                         print("\nYou haven't entered today's log yet.")
 
-                        if self.manager.logs_missed():
+                        if self.json.logs_missed():
                             msg = warning(
                                 "\nWriting today's log means you will have "
                                 "to enter your missed logs manually in the "

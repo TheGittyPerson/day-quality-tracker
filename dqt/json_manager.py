@@ -825,6 +825,24 @@ class JSONManager:
                 file,
                 indent=self.JSON_INDENT
             )
+
+    def logs_missed(self) -> bool:
+        """Return whether the user missed any logs.
+
+        **IGNORES intentionally skipped logs**, AKA dates without a log
+        but the following dates of which do.
+        """
+        if self.no_logs():  # Ignore for first-time runs
+            return False
+
+        log_dates = [
+            datetime.strptime(d, self.dqt.date_format).date()
+            for d in self.logs.keys()
+        ]
+        last_date = max(log_dates)
+        days_since_last = (_today.date() - last_date).days
+
+        return not days_since_last <= 1
     
     def no_logs(self, check_file: bool = True) -> bool:
         """Determine whether the user has no logs.

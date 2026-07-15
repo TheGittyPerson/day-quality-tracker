@@ -194,24 +194,6 @@ class Manager:
         self.json.add(today, tdys_rating, tdys_memory)
         log_saved()
 
-    def logs_missed(self) -> bool:  # TODO: move this to JSONManager
-        """Return whether the user missed any logs.
-
-        **IGNORES intentionally skipped logs**, AKA dates without a log
-        but the following dates of which do.
-        """
-        if self.json.no_logs():  # Ignore for first-time runs
-            return False
-
-        log_dates = [
-            datetime.strptime(d, self.dqt.date_format).date()
-            for d in self.json.logs.keys()
-        ]
-        last_date = max(log_dates)
-        days_since_last = (_today.date() - last_date).days
-
-        return not days_since_last <= 1
-
     def change_todays_rating(self) -> None:
         """Prompt the user to change today's rating."""
         self._change_data("today", self.json.RATING_KYNAME)
