@@ -3,16 +3,18 @@ import sys
 import os
 import shutil
 import subprocess
+import copy
 from pathlib import Path
 from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
 from dqt.ui_utils import (
-    confirm, err, log_saved, print_wrapped, warn, warning
+    confirm, err, log_saved, menu, print_wrapped, warn, warning
 )
 from dqt.styletext import StyleText as Txt
 
 if TYPE_CHECKING:
+    from datetime import date as date_t
     from tracker import Tracker
 
 
@@ -60,7 +62,7 @@ class JSONManager:
         """Dump updated logs to JSON file.
 
         Update with new rating and memory values if provided before dumping.
-        Attempted creation of new items will raise a KeyError. Use `add()`
+        Attempted creation of new items will raise a KeyError. Use ``add()``
         instead to add a new log.
         """
         if date is None:
@@ -83,7 +85,7 @@ class JSONManager:
         """Update logs with new log and dump to JSON file.
 
         Attempted rewrite of previous items will raise a KeyError.
-        Use `update()` instead to update a log.
+        Use ``update()`` instead to update a log.
 
         It is recommended to explicitly provide both rating and memory
         arguments, even if it is equal to the default value.
@@ -115,7 +117,7 @@ class JSONManager:
                   date: str | UnsetType = _UNSET,
                   rating: float | None | UnsetType = _UNSET,
                   memory: str | UnsetType = _UNSET,
-                  linewrap_memory: bool = False) -> None:
+                  linewrap_memory: bool = True) -> None:
         """Print a formatted log, and represent "empty" values with text.
 
         Null (None) ratings are printed as "[No rating]".
@@ -153,14 +155,125 @@ class JSONManager:
                     print(memory)
             else:
                 print(Txt("Memory: ").bold() + "-")
-    
-    def print_logs_to_stdout(self) -> None:
-        """Print last 30 saved logs.
 
-        The user can choose whether to show the rest of the logs.
+    def search_logs_by_date(self) -> None:
+        """``print_all_logs()`` but one by one + more freedom.
+
+        Users first enter a date to see the log for that day. They can
+        choose to read the next, previous log, first, or last log, or
+        reselect the date.
         """
+        if self.no_logs():
+            err("You don't have any logs yet!")
+            return
+
+        sorted_logs: list[tuple[date_t, str]] = sorted(
+            [
+                (datetime.strptime(datestr, self.dqt.date_format).date(),
+                 datestr)
+                for datestr in self.logs
+            ]
+        )
+
+        current_datestr: str = self.dqt.manager.prompt_date()
         
-        def _loop_print(items: list):
+        current_index = next(
+            i for i, (_, datestr) in enumerate(sorted_logs)
+            if datestr == current_datestr
+        )
+
+        self.print_log(
+            date=current_datestr,
+            rating=self.get_rating(current_datestr),
+            memory=self.get_memory(current_datestr),
+        )
+
+        while True:
+            match menu(
+                "1) See [N]ext",
+                "2) See [P]revious",
+                "3) Jump to [F]irst log",
+                "4) Jump to [L]ast log",
+                "5) Reselect [D]ate",
+                "6) [C]ancel -> Main menu",
+                prompt=None
+            ):
+                case "1" | "n":
+                    if current_index >= len(sorted_logs) - 1:
+                        print("\nYou're already on the most recent log!")
+                        continue
+
+                    next_index = current_index + 1
+                    next_dateobj, next_datestr = sorted_logs[next_index]
+                    current_dateobj = sorted_logs[current_index][0]
+
+                    days_skipped = (next_dateobj - current_dateobj).days - 1
+                    if days_skipped > 0:
+                        print(f"\n(Skipped {days_skipped} empty days ahead)")
+
+                    current_datestr = next_datestr
+                    current_index = next_index
+
+                case "2" | "p":
+                    if current_index <= 0:
+                        print("\nYou're already on the oldest log!")
+                        continue
+
+                    prev_index = current_index - 1
+                    prev_dateobj, prev_datestr = sorted_logs[prev_index]
+                    current_dateobj = sorted_logs[current_index][0]
+
+                    days_skipped = (current_dateobj - prev_dateobj).days - 1
+                    if days_skipped > 0:
+                        print(f"\n(Skipped {days_skipped} empty days backward)")
+
+                    current_datestr = prev_datestr
+                    current_index = prev_index
+
+                case "3" | "f":
+                    if current_index == 0:
+                        print("\nYou're already on the first log!")
+                        continue
+
+                    current_index = 0
+                    current_datestr = sorted_logs[current_index][1]
+
+                case "4" | "l":
+                    if current_index == len(sorted_logs) - 1:
+                        print("\nYou're already on the last log!")
+                        continue
+
+                    current_index = len(sorted_logs) - 1
+                    current_datestr = sorted_logs[current_index][1]
+
+                case "5" | "d":
+                    current_datestr: str = self.dqt.manager.prompt_date(
+                        "Enter the number of days from the current date or "
+                        f"the exact date ({self.dqt.date_format}): ",
+                        starting_date=current_datestr,
+                        backwards_offset=False
+                    )
+                    # Find new index in sorted list after reselection
+                    current_index = next(
+                        i for i, (_, datestr) in enumerate(sorted_logs)
+                        if datestr == current_datestr
+                    )
+                case "6" | "c":
+                    return
+
+            # Placed this at the end so that I can easily `continue` to print
+            # the menu again without printing the log
+            print()
+            self.print_log(
+                date=current_datestr,
+                rating=self.get_rating(current_datestr),
+                memory=self.get_memory(current_datestr),
+            )
+    
+    def print_all_logs(self) -> None:
+        """Print 30 logs at a time until the user chooses to stop."""
+        #                `Any` is actually `str | float` 👇
+        def _loop_print(items: list[tuple[str, dict[str, Any]]]) -> None:
             print("\n* —————————————————————————————— *")
             for date, log in items:
                 print()
@@ -168,7 +281,6 @@ class JSONManager:
                     date=date,
                     rating=log[self.RATING_KYNAME],
                     memory=log[self.MEMORY_KYNAME],
-                    linewrap_memory=True,
                 )
             print("\n* —————————————————————————————— *")
         
@@ -177,21 +289,20 @@ class JSONManager:
         if not self.logs:
             print("\n[No logs found]")
             return
-        
+
         # Convert dictionary items to a list of tuples
-        items_list = list(self.logs.items())
-        # Get the last 30 items or all items if less than 30
-        last_30_items = items_list[-30:]
-        
-        _loop_print(last_30_items)
-        
-        if len(items_list) > 30:
-            if not confirm("Show the rest of the logs?"):
+        items_list: list[tuple[str, dict[str, Any]]] = list(self.logs.items())
+
+        _loop_print(items_list[-30:])
+        remaining_items = items_list[:-30] if len(items_list) >= 30 else []
+
+        while remaining_items:
+            if not confirm("Show 30 more logs?"):
                 return
-            
-            items_until_last_30th = items_list[:-30]
-            
-            _loop_print(items_until_last_30th)
+            last_30_items = remaining_items[-30:]
+            _loop_print(last_30_items)
+            remaining_items = remaining_items[:-30] \
+                if len(remaining_items) >= 30 else []
 
     def open_json_file(self) -> None:
         """Open the JSON file in the default system application."""
@@ -318,9 +429,9 @@ class JSONManager:
     def _prompt_dirpath(prompt: str, from_home_dir: bool = True) -> Path:
         """Prompt and validate directory path input.
         
-        If `from_home_dir` is True, the user's path input will be appended to
+        If ``from_home_dir`` is True, the user's path input will be appended to
         the home directory. e.g. If the user inputs "Desktop", the final path
-        will be Path("User/username/Desktop").
+        will be ``Path("User/username/Desktop")``.
         """
         home_dir = Path.home() if from_home_dir else Path()
         while True:
@@ -346,7 +457,7 @@ class JSONManager:
         """Prompt and validate file name based on OS.
 
         If user input starts with "~", the character will be replaced by
-        `default_name_prefix`.
+        ``default_name_prefix``.
         """
         while True:
             filename = input(f"\n{prompt}: ").strip()
@@ -381,7 +492,7 @@ class JSONManager:
         return invalid
     
     def _memory_matches_file(self, order_matters: bool = True) -> bool:
-        """Return if the logs in `self.logs` matches those in the JSON file."""
+        """Return whether logs in ``self.logs`` matches JSON file."""
         file_logs = self._load_raw_json()
         if order_matters:
             return file_logs == self.logs
@@ -520,10 +631,10 @@ class JSONManager:
                          auto_append: str | None = None) -> Path:
         """Prompt and validate file path input.
 
-        If `from_home_dir` is True, the user's path input will be appended to
+        If ``from_home_dir`` is True, the user's path input will be appended to
         the home directory. e.g. If the user inputs "Desktop/file.json",
-        the final path will be Path("User/username/Desktop/file.json").
-        If `auto_append` is provided, it will be appended to the input when
+        the final path will be ``Path("User/username/Desktop/file.json")``.
+        If ``auto_append`` is provided, it will be appended to the input when
         the input does not already end with it.
 
         Args:
@@ -604,29 +715,30 @@ class JSONManager:
         - Ensures rating exists
         - Auto-fills missing memory entries (optional)
         """
-        prev_date = None
+        prev_date_str = None
         validated: dict[str, dict[str, float | None | str]] = {}
         updated = False
         
         for date, value in contents.items():
             
             # ---------- Validate date order ----------
-            if prev_date is not None:
-                prev_date: str  # Assumptions, assumptions, assumptions
-                prev_d = datetime.strptime(prev_date, self.dqt.date_format)
-                d = datetime.strptime(date, self.dqt.date_format)
-                diff = (d - prev_d).days
+            if prev_date_str is not None:
+                prev_date_str: str  # Assumptions, assumptions, assumptions
+                prev_dateobj = datetime.strptime(prev_date_str,
+                                                 self.dqt.date_format).date()
+                d = datetime.strptime(date, self.dqt.date_format).date()
+                diff = (d - prev_dateobj).days
                 if diff < 0:
                     raise ValueError(
                         f"Date '{date}' is older than previous date "
-                        f"'{prev_date}'"
+                        f"'{prev_date_str}'"
                     )
                 if diff == 0:
                     raise ValueError(
-                        f"Date '{prev_date}' is repeated"
+                        f"Date '{prev_date_str}' is repeated"
                     )
             
-            prev_date = date
+            prev_date_str = date
             
             # Format:
             # {
@@ -685,7 +797,7 @@ class JSONManager:
               prevent_empty_overwrite: bool = True) -> None:
         """Dump logs to the JSON file.
 
-        If `logs` is None (default), dump the contents of `self.logs`.
+        If ``logs`` is None (default), dump the contents of ``self.logs``.
         If a logs dict is provided, dump that dict instead.
         
         To prevent data loss, dumping is aborted if the JSON file already
@@ -711,16 +823,34 @@ class JSONManager:
                 file,
                 indent=self.JSON_INDENT
             )
+
+    def logs_missed(self) -> bool:
+        """Return whether the user missed any logs.
+
+        **IGNORES intentionally skipped logs**, AKA dates without a log
+        but the following dates of which do.
+        """
+        if self.no_logs():  # Ignore for first-time runs
+            return False
+
+        log_dates = [
+            datetime.strptime(d, self.dqt.date_format).date()
+            for d in self.logs.keys()
+        ]
+        last_date = max(log_dates)
+        days_since_last = (_today.date() - last_date).days
+
+        return not days_since_last <= 1
     
     def no_logs(self, check_file: bool = True) -> bool:
-        """Determine whether there are no logs available.
+        """Determine whether the user has no logs.
 
-        Return True if `self.logs` is empty and, if `check_file` is True,
-        the JSON log file is also empty.
+        Return True if ``self.logs`` is empty and, if ``check_file`` is True,
+        if the JSON log file is also empty.
 
-        If `check_file` is True and `self.logs` is empty but the JSON file
+        If ``check_file`` is True and ``self.logs`` is empty but the JSON file
         contains data, the user is prompted to load the data. If the user
-        agrees, `self.logs` is populated and False is returned.
+        agrees, ``self.logs`` is populated and False is returned.
         """
         # If only checking in-memory logs
         if not check_file:
@@ -747,7 +877,9 @@ class JSONManager:
         return True
     
     def no_previous_logs(self) -> bool:
-        """Return whether there are no previous logs (other than today's)."""
-        if len(self.logs) <= 1:
-            return True
-        return False
+        """Return whether there are no previous logs (i.e. exc. today's)."""
+        if not self.today_logged():
+            return self.no_logs(check_file=False)
+        return not copy.deepcopy(self.logs).pop(
+            _today.strftime(self.dqt.date_format)
+        )

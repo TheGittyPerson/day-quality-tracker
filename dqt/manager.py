@@ -75,8 +75,8 @@ class Manager:
         but the following dates of which do.
 
         Returns:
-            `None` if no missed logs. Otherwise, return `date` object of the
-             last log. Plug this value into `enter_missing_logs()`.
+            ``None`` if no missed logs. Otherwise, return ``date`` object of
+            the last log. Plug this value into ``enter_missing_logs()``.
         """
         if self.json.no_logs():  # Ignore for first-time runs
             return None
@@ -167,10 +167,6 @@ class Manager:
         )
 
         if tdys_rating == "SKIP":
-            print(
-                f"\nLogging canceled. Enter today's log later from the main "
-                f"menu or rerun the program!"
-            )
             return
 
         new_file = True
@@ -198,24 +194,6 @@ class Manager:
         self.json.add(today, tdys_rating, tdys_memory)
         log_saved()
 
-    def logs_missed(self) -> bool:
-        """Return whether the user missed any logs.
-
-        **IGNORES intentionally skipped logs**, AKA dates without a log
-        but the following dates of which do.
-        """
-        if self.json.no_logs():  # Ignore for first-time runs
-            return False
-
-        log_dates = [
-            datetime.strptime(d, self.dqt.date_format).date()
-            for d in self.json.logs.keys()
-        ]
-        last_date = max(log_dates)
-        days_since_last = (_today.date() - last_date).days
-
-        return not days_since_last <= 1
-
     def change_todays_rating(self) -> None:
         """Prompt the user to change today's rating."""
         self._change_data("today", self.json.RATING_KYNAME)
@@ -224,21 +202,55 @@ class Manager:
         """Prompt the user to change today's memory entry."""
         self._change_data("today", self.json.MEMORY_KYNAME)
 
-    def prompt_date(self) -> str:
+    def prompt_date(self,
+                    prompt: str | None = None,
+                    starting_date: str | datetime = _today,
+                    backwards_offset: bool = True) -> str:
         """Prompt the user to enter a date for a log.
 
         Reject dates for logs that do not exist.
-        """
-        selected_date = ""
-        while True:
-            inp = input("\nEnter the number of days ago or exact date "
-                        f"('{self.dqt.date_format_print}'): ").strip()
 
-            # If number of days ago specified, get date
+        Args:
+            prompt (str, optional): prompt to show
+            starting_date (datetime):
+                If the user enters an integer to specify the numbers days of
+                days ago, this date is used. e.g., ``2`` -> 2 days
+                before this date. Defaults to today's date. If the
+                user enters ``0``, this date is returned. A negative number
+                returns a *later* date from this date.
+            backwards_offset (bool, optional):
+                If ``True``, a positive integer input would return an earlier
+                log (date before ``starting_date``), and a later log for a
+                negative number, instead of the other way round.
+        """
+        if isinstance(starting_date, str):
+            starting_date: datetime = datetime.strptime(
+                starting_date, self.dqt.date_format
+            )
+
+        selected_date: str = ""
+        while True:
+            inp = input(
+                "\nEnter the number of days ago or exact date "
+                f"('{self.dqt.date_format_print}'): "
+                if prompt is None else "\n" + prompt
+            ).strip()
+
+            # If number of days ago/later specified, get date
             if inp.isdigit():
                 inp = int(inp)
-                selected_date = _today - timedelta(days=inp)
-                selected_date = selected_date.strftime(self.dqt.date_format)
+                try:
+                    if backwards_offset:
+                        selected_dateobj = starting_date - timedelta(days=inp)
+                    else:
+                        selected_dateobj = starting_date + timedelta(days=inp)
+                except OverflowError:
+                    err(
+                        "Date out of range.",
+                        "\nTry again."
+                    )
+                    continue
+                selected_date = selected_dateobj.strftime(self.dqt.date_format)
                 print(Txt(f"Date selected: {selected_date}").bold())
 
             # Else, validate date str
@@ -247,8 +259,7 @@ class Manager:
                     datetime.strptime(inp, self.dqt.date_format)
                 except ValueError:
                     err("Enter either a valid date in the format "
-                        f"{self.dqt.date_format_print} or a non-negative "
-                        "integer.")
+                        f"{self.dqt.date_format_print} or an integer.")
                     continue
                 selected_date = inp
 
@@ -258,8 +269,7 @@ class Manager:
             except KeyError:
                 err(
                     "Rating for specified date not found.",
-                    "Ensure you have already entered a "
-                    "rating for that date.",
+                    "Ensure you have already entered a rating for that date.",
                     "\nTry again."
                 )
                 continue
@@ -278,11 +288,11 @@ class Manager:
     def _change_data(self, selected_date: str, changing: str) -> None:
         """Change data for the selected date and update JSON.
         
-        If the specified date is the string 'today', today's date (or rather,
-        the date specified in the global variable `_today`, which is evaluated
-        at the start of runtime) will be used.
+        If the specified date is the string "today", today's date (or rather,
+        the date specified in the global variable ``_today``, which is
+        evaluated at the start of runtime) will be used.
         
-        Parameter `changing` must be either the rating or memory key name
+        Parameter ``changing`` must be either the rating or memory key name
         specified in JSONManager (raises a ValueError otherwise).
         """
         if changing not in (self.json.RATING_KYNAME, self.json.MEMORY_KYNAME):
@@ -349,17 +359,17 @@ class Manager:
         """Check for length differences between the new and original entry.
 
         Note: USE IF THE ENTRY IS ENTERED FROM TERMINAL ONLY. The memory editor
-        has its own check (see `_MemoryEditor` class).
+        has its own check (see ``_MemoryEditor`` class).
 
         Checks:
             - whether length difference is higher than the specified threshold
             (see attribute).
             - whether entry is the same as the original
 
-        Prompt the user for confirmation. Return `True` if there are no
+        Prompt the user for confirmation. Return ``True`` if there are no
         issues, or if the user chooses to ignore the warning.
 
-        Return whether the user confirms their entry. Return `False` if the
+        Return whether the user confirms their entry. Return ``False`` if the
         user wishes to re-enter their entry.
         """
         len_diff = len(original) - len(entry)
@@ -421,8 +431,8 @@ class Manager:
     ) -> float | None | Literal["SKIP"]:
         """Get and validate user float input.
 
-        If `skip_char` is not `None`, the user can choose to enter
-        `skip_char` to indicate that they want to skip an entire log entry for
+        If ``skip_char`` is not ``None``, the user can choose to enter
+        ``skip_char`` to indicate that they want to skip an entire log entry for
         the day, including memory entry. Return "SKIP" in that case.
 
         Args:
@@ -431,7 +441,7 @@ class Manager:
             skip_char (str, optional):
                 The string a user can enter to indicate that they want to skip
                 an entire log entry for the day, including memory entry.
-                "SKIP" if returned is they choose. If `None`, this is not
+                "SKIP" if returned is they choose. If ``None``, this is not
                 allowed and will prompt the user to try again if they don't
                 enter a number.
         """
@@ -481,11 +491,11 @@ class Manager:
                 If using Terminal fallback, shown as printed prompt.
             new_file (bool):
                 Whether to create and seed a new temp editor file. Set this to
-                `False` only when retrying after a failure, so the previous
+                ``False`` only when retrying after a failure, so the previous
                 temp file path and any saved user draft are preserved.
             original_mem (str. optional):
                 If the user is to write a new memory entry, this should be
-                `None`. Otherwise, if a `str` is given, it means the user is
+                ``None``. Otherwise, if a ``str`` is given, it means the user is
                 editing an existing entry.
             terminal_newline (bool, optional):
                 Applies to terminal fallback only. Determines whether to
@@ -623,15 +633,15 @@ class _MemoryEditor:
             prompt (str):
                 prompt inserted to top of file as comment
             original_entry (str):
-                When `original_contents` is given, it means an existing
+                When ``original_contents`` is given, it means an existing
                 entry is being edited and the string will be inserted into
                 the initial contents of the file. Otherwise, it means a new
                 entry is being created.
             new_file (bool):
                 Whether to create a fresh timestamped temp file and write its
-                initial contents. Set this to `False` only when retrying after
-                a failure, so the existing temp file path and any saved user
-                draft are preserved.
+                initial contents. Set this to ``False`` only when retrying
+                after a failure, so the existing temp file path and any saved
+                user draft are preserved.
 
         Return:
             str: new memory entry
@@ -702,7 +712,7 @@ class _MemoryEditor:
             prompt (str): Written at the start of the file as comments.
             entry_to_load (str, optional): Written to the end of the file.
 
-        If editing existing entry (meaning `entry_to_load` is given),
+        If editing existing entry (meaning ``entry_to_load`` is given),
         that will also be inserted at the end of the file.
         """
         initial_contents = f"{prompt}\n\n" + self.INITIAL_CONTENTS_TEMPLATE
@@ -762,7 +772,7 @@ class _MemoryEditor:
     ) -> str | None:
         """Check the memory edit entered by the user to prevent data loss.
 
-        When `original_contents` is given, it means an existing entry is
+        When ``original_contents`` is given, it means an existing entry is
         being edited. Otherwise, it means a new entry is being created.
 
         Return user warning if the user needs to be warned. Return None if

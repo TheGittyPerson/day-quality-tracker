@@ -195,7 +195,7 @@ class Stats:
             ],
             days: int,
     ) -> float | None:
-        """Return the average rating over the last `days` calendar days."""
+        """Return the average rating over the last ``days`` calendar days."""
         cutoff = _today.date() - timedelta(days=days - 1)
         ratings = [
             log[self.json.RATING_KYNAME]

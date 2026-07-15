@@ -10,7 +10,7 @@ def confirm(message: str, confirm_char: str = "y",
     """Prompt the user for confirmation and validate input.
     
     Keep looping until user enters 'y' or 'n'.
-    Return whether user input (lowercased) is equal to `confirm_char`.
+    Return whether user input (lowercased) is equal to ``confirm_char``.
     """
     while (
             inp := input(f"\n{message} [y/n]: ").strip().lower()
@@ -57,8 +57,7 @@ def log_saved(text: str = "Log saved!") -> None:
 def menu(*options: str,
          prompt: str | StyleText | None = "Choose what to do: ") -> str:
     """Display menu prompt and options and collect user input."""
-    if prompt is not None:
-        print(StyleText(f"\n{prompt}").bold())
+    print(StyleText(f"\n{prompt}" if prompt else "").bold())
     for i, option in enumerate(options, start=1):
         print(StyleText(f"{i})").bold(), option.removeprefix(f"{i}) "))
 
@@ -85,7 +84,7 @@ def menu(*options: str,
 
 
 def print_wrapped(text: str, maxcol: int):
-    """Print line-wrapped text with a maximum of `maxcol` chars per line."""
+    """Print line-wrapped text with a maximum of ``maxcol`` chars per line."""
     leading_newlines = len(text) - len(text.lstrip("\n"))
     stripped = text.lstrip("\n")
 

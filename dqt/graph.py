@@ -166,7 +166,7 @@ class Graph:
     def configure(self, **configs: str | float | int | bool | tuple) -> None:
         """Update configuration options via keyword arguments.
         
-        Must be called before `run()`.
+        Must be called before ``run()``.
         Raises:
             ValueError: Invalid configuration option
             TypeError: Incorrect type

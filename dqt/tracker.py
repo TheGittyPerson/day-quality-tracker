@@ -74,7 +74,7 @@ class Tracker:
     def neutral_rating(self) -> int:
         """The neutral, baseline or "middle" rating.
         
-        Derived from the floor-division half of `max_rating`.
+        Derived from the floor-division half of ``max_rating``.
         Only rounds down.
         """
         return (self.min_rating + self.max_rating) // 2
@@ -90,7 +90,7 @@ class Tracker:
         while True:
             print("\n*❖* —————————————————————————————— *❖*")
             print(
-                f"🏠 {Txt("MAIN MENU").blue().underline().bold()} "
+                f"\n🏠 {Txt("MAIN MENU").blue().underline().bold()} "
                 f"{Txt("— choose what to do:").bold()}"
             )
 
@@ -113,7 +113,7 @@ class Tracker:
                     if not self.json.today_logged():
                         print("\nYou haven't entered today's log yet.")
 
-                        if self.manager.logs_missed():
+                        if self.json.logs_missed():
                             msg = warning(
                                 "\nWriting today's log means you will have "
                                 "to enter your missed logs manually in the "
@@ -217,16 +217,9 @@ class Tracker:
                         "4) [C]ancel -> Main menu",
                     ):
                         case "1" | "d":
-                            selected_d = self.manager.prompt_date()
-                            print(f"\nLog for {Txt(selected_d).bold()}:")
-                            self.json.print_log(
-                                date=selected_d,
-                                rating=self.json.get_rating(selected_d),
-                                memory=self.json.get_memory(selected_d),
-                            )
-                            cont_on_enter()
+                            self.json.search_logs_by_date()
                         case "2" | "p":
-                            self.json.print_logs_to_stdout()
+                            self.json.print_all_logs()
                             cont_on_enter()
                         case "3" | "o":
                             self.json.open_json_file()
@@ -282,7 +275,7 @@ class Tracker:
     def configure(self, **configs: int | str | bool | None) -> None:
         """Update configuration options via keyword arguments.
 
-        Must be called before `run()`.
+        Must be called before ``run()``.
         Raises:
             ValueError: Invalid configuration option
             TypeError: Incorrect type
