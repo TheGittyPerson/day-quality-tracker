@@ -74,7 +74,7 @@ class Tracker:
     def neutral_rating(self) -> int:
         """The neutral, baseline or "middle" rating.
         
-        Derived from the floor-division half of `max_rating`.
+        Derived from the floor-division half of ``max_rating``.
         Only rounds down.
         """
         return (self.min_rating + self.max_rating) // 2
@@ -275,7 +275,7 @@ class Tracker:
     def configure(self, **configs: int | str | bool | None) -> None:
         """Update configuration options via keyword arguments.
 
-        Must be called before `run()`.
+        Must be called before ``run()``.
         Raises:
             ValueError: Invalid configuration option
             TypeError: Incorrect type

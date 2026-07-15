@@ -10,7 +10,7 @@ def confirm(message: str, confirm_char: str = "y",
     """Prompt the user for confirmation and validate input.
     
     Keep looping until user enters 'y' or 'n'.
-    Return whether user input (lowercased) is equal to `confirm_char`.
+    Return whether user input (lowercased) is equal to ``confirm_char``.
     """
     while (
             inp := input(f"\n{message} [y/n]: ").strip().lower()
@@ -84,7 +84,7 @@ def menu(*options: str,
 
 
 def print_wrapped(text: str, maxcol: int):
-    """Print line-wrapped text with a maximum of `maxcol` chars per line."""
+    """Print line-wrapped text with a maximum of ``maxcol`` chars per line."""
     leading_newlines = len(text) - len(text.lstrip("\n"))
     stripped = text.lstrip("\n")
 

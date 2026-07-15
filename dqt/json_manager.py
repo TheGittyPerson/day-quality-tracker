@@ -22,8 +22,6 @@ class UnsetType:
     def __repr__(self) -> str:
         return "UNSET"
 
-# TODO: use ```` in docstrings
-
 
 _UNSET = UnsetType()
 
@@ -64,7 +62,7 @@ class JSONManager:
         """Dump updated logs to JSON file.
 
         Update with new rating and memory values if provided before dumping.
-        Attempted creation of new items will raise a KeyError. Use `add()`
+        Attempted creation of new items will raise a KeyError. Use ``add()``
         instead to add a new log.
         """
         if date is None:
@@ -87,7 +85,7 @@ class JSONManager:
         """Update logs with new log and dump to JSON file.
 
         Attempted rewrite of previous items will raise a KeyError.
-        Use `update()` instead to update a log.
+        Use ``update()`` instead to update a log.
 
         It is recommended to explicitly provide both rating and memory
         arguments, even if it is equal to the default value.
@@ -159,7 +157,7 @@ class JSONManager:
                 print(Txt("Memory: ").bold() + "-")
 
     def search_logs_by_date(self) -> None:
-        """`print_all_logs()` but one by one + more freedom.
+        """``print_all_logs()`` but one by one + more freedom.
 
         Users first enter a date to see the log for that day. They can
         choose to read the next, previous log, first, or last log, or
@@ -431,9 +429,9 @@ class JSONManager:
     def _prompt_dirpath(prompt: str, from_home_dir: bool = True) -> Path:
         """Prompt and validate directory path input.
         
-        If `from_home_dir` is True, the user's path input will be appended to
+        If ``from_home_dir`` is True, the user's path input will be appended to
         the home directory. e.g. If the user inputs "Desktop", the final path
-        will be Path("User/username/Desktop").
+        will be ``Path("User/username/Desktop")``.
         """
         home_dir = Path.home() if from_home_dir else Path()
         while True:
@@ -459,7 +457,7 @@ class JSONManager:
         """Prompt and validate file name based on OS.
 
         If user input starts with "~", the character will be replaced by
-        `default_name_prefix`.
+        ``default_name_prefix``.
         """
         while True:
             filename = input(f"\n{prompt}: ").strip()
@@ -494,7 +492,7 @@ class JSONManager:
         return invalid
     
     def _memory_matches_file(self, order_matters: bool = True) -> bool:
-        """Return if the logs in `self.logs` matches those in the JSON file."""
+        """Return whether logs in ``self.logs`` matches JSON file."""
         file_logs = self._load_raw_json()
         if order_matters:
             return file_logs == self.logs
@@ -633,10 +631,10 @@ class JSONManager:
                          auto_append: str | None = None) -> Path:
         """Prompt and validate file path input.
 
-        If `from_home_dir` is True, the user's path input will be appended to
+        If ``from_home_dir`` is True, the user's path input will be appended to
         the home directory. e.g. If the user inputs "Desktop/file.json",
-        the final path will be Path("User/username/Desktop/file.json").
-        If `auto_append` is provided, it will be appended to the input when
+        the final path will be ``Path("User/username/Desktop/file.json")``.
+        If ``auto_append`` is provided, it will be appended to the input when
         the input does not already end with it.
 
         Args:
@@ -799,7 +797,7 @@ class JSONManager:
               prevent_empty_overwrite: bool = True) -> None:
         """Dump logs to the JSON file.
 
-        If `logs` is None (default), dump the contents of `self.logs`.
+        If ``logs`` is None (default), dump the contents of ``self.logs``.
         If a logs dict is provided, dump that dict instead.
         
         To prevent data loss, dumping is aborted if the JSON file already
@@ -847,12 +845,12 @@ class JSONManager:
     def no_logs(self, check_file: bool = True) -> bool:
         """Determine whether the user has no logs.
 
-        Return True if `self.logs` is empty and, if `check_file` is True,
+        Return True if ``self.logs`` is empty and, if ``check_file`` is True,
         if the JSON log file is also empty.
 
-        If `check_file` is True and `self.logs` is empty but the JSON file
+        If ``check_file`` is True and ``self.logs`` is empty but the JSON file
         contains data, the user is prompted to load the data. If the user
-        agrees, `self.logs` is populated and False is returned.
+        agrees, ``self.logs`` is populated and False is returned.
         """
         # If only checking in-memory logs
         if not check_file:
