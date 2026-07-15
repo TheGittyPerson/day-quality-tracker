@@ -1,10 +1,8 @@
 """Customize DQT behavior and settings here.
 
 Make sure to enter values with the right data type. Incorrect data types will
-raise an error. You will be notified to fix the issue before proceeding.
-
-Adding unknown configurations will raise an error. You will be notified to fix
-the issue before proceeding.
+raise an error. Adding unknown configurations will also raise an error. You
+will be notified to fix any issues before proceeding.
 
 If any configuration is removed, the default value will be used.
 """
