@@ -90,7 +90,7 @@ class Tracker:
         while True:
             print("\n*❖* —————————————————————————————— *❖*")
             print(
-                f"🏠 {Txt("MAIN MENU").blue().underline().bold()} "
+                f"\n🏠 {Txt("MAIN MENU").blue().underline().bold()} "
                 f"{Txt("— choose what to do:").bold()}"
             )
 
