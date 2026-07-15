@@ -709,17 +709,17 @@ class JSONManager:
         - Ensures rating exists
         - Auto-fills missing memory entries (optional)
         """
-        prev_date_str = None
+        prev_datestr = None
         validated: dict[str, dict[str, float | None | str]] = {}
         updated = False
         
         for date, value in contents.items():
             
             # ---------- Validate date order ----------
-            if prev_date_str is not None:
-                prev_date_str: str  # Assumptions, assumptions, assumptions
+            if prev_datestr is not None:
+                prev_datestr: str  # Assumptions, assumptions, assumptions
 
-                prev_dateobj = datetime.strptime(prev_date_str,
+                prev_dateobj = datetime.strptime(prev_datestr,
                                                  self.dqt.date_format).date()
                 d = datetime.strptime(date, self.dqt.date_format).date()
 
@@ -727,14 +727,14 @@ class JSONManager:
                 if diff < 0:
                     raise ValueError(
                         f"Date '{date}' is older than previous date "
-                        f"'{prev_date_str}'"
+                        f"'{prev_datestr}'"
                     )
                 if diff == 0:
                     raise ValueError(
-                        f"Date '{prev_date_str}' is repeated"
+                        f"Date '{prev_datestr}' is repeated"
                     )
             
-            prev_date_str = date
+            prev_datestr = date
             
             # Format:
             # {
