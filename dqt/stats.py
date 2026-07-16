@@ -30,11 +30,11 @@ class Stats:
             - Lowest rating
             - Days of the week ranked from best to worst
         """
-        print(Txt("\nDay Quality Ratings Stats:\n").bold().cyan().underline())
+        print(Txt("\n📋📊 Day Quality Tracker Stats:\n").bold().cyan())
 
         rating_key = self.json.RATING_KYNAME
         logs = self.json.logs
-        chronologically_sorted_logs = sorted(
+        chronologically_sorted_logs: list[tuple[date, str, dict]] = sorted(
             (
                 datetime.strptime(date_str, self.dqt.date_format).date(),
                 date_str,
@@ -43,21 +43,26 @@ class Stats:
             for date_str, log in logs.items()
         )
 
-        dates_to_ratings: list[tuple[str, float]] = [
+        datestr_to_ratings: list[tuple[str, float]] = [
             (date_str, log[rating_key])
             for _, date_str, log in chronologically_sorted_logs
+            if log[rating_key] is not None
+        ]
+        dateobj_to_ratings: list[tuple[date, float]] = [
+            (dateobj, log[rating_key])
+            for dateobj, _, log in chronologically_sorted_logs
             if log[rating_key] is not None
         ]
 
         self._print_logging_streaks(chronologically_sorted_logs)
         print()
 
-        self._print_days_rated(logs, dates_to_ratings)
+        self._print_days_rated(logs, dateobj_to_ratings)
         print()
 
         self._print_recent_average_ratings(chronologically_sorted_logs)
 
-        if not dates_to_ratings:
+        if not datestr_to_ratings:
             print("Average rating: -")
             print("Highest rating: -")
             print("Lowest rating: -")
@@ -68,15 +73,15 @@ class Stats:
             print("\nBest days of the week: -")
             return
 
-        ratings_only = [r for _, r in dates_to_ratings]
+        ratings_only = [r for _, r in datestr_to_ratings]
 
         self._print_avg_rating(ratings_only)
-        self._print_highest_and_lowest_ratings(ratings_only, dates_to_ratings)
-        self._print_rating_distribution(dates_to_ratings)
+        self._print_highest_and_lowest_ratings(ratings_only, datestr_to_ratings)
+        self._print_rating_distribution(datestr_to_ratings)
         self._print_longest_memory_day(chronologically_sorted_logs)
         print()
 
-        self._print_weekdays_ranked(dates_to_ratings)
+        self._print_weekdays_ranked(dateobj_to_ratings)
 
     def _print_logging_streaks(
             self,
@@ -157,13 +162,13 @@ class Stats:
 
     @staticmethod
     def _print_days_rated(logs: dict[str, dict[str, float | None | str]],
-                          dates_to_ratings: list[tuple[str, float]]) -> None:
+                          dateobj_to_ratings: list[tuple[date, float]]) -> None:
         """Print the number of days rated."""
         days_total = len(logs)
-        days_rated = len(dates_to_ratings)
+        days_rated = len(dateobj_to_ratings)
         output = f"{Txt("Days rated:").bold()} {Txt(days_rated).bold()} "
-        if dates_to_ratings:
-            first_rated_date = min(_date for _date, _ in dates_to_ratings)
+        if dateobj_to_ratings:
+            first_rated_date = min(_date for _date, _ in dateobj_to_ratings)
             output += f"since {Txt(first_rated_date).bold()} "
         if not days_rated == days_total:
             output += f"({days_total} including null ratings)"
@@ -315,14 +320,13 @@ class Stats:
 
     def _print_weekdays_ranked(
             self,
-            dates_to_ratings: list[tuple[str, float]]
+            dateobj_to_ratings: list[tuple[date, float]]
     ) -> None:
         """Print the days of the week in rank order of highest avg rating"""
         weekday_scores: dict[str, list[float]] = defaultdict(list)
 
-        for date_str, rating in dates_to_ratings:
-            _date = datetime.strptime(date_str, self.dqt.date_format)
-            weekday = _date.strftime("%A")
+        for dateobj, rating in dateobj_to_ratings:
+            weekday = dateobj.strftime("%A")
             weekday_scores[weekday].append(rating)
 
         weekday_averages = {
