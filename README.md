@@ -1,4 +1,4 @@
-# Day Quality Tracker 5 <sub><sup>(v1.3.0)</sup></sub>
+# Day Quality Tracker 5 <sub><sup>(v1.4.0)</sup></sub>
 
 Day Quality Tracker (DQT) is a simple Python CLI that helps you record and track
 daily “day quality” ratings and visualize them over time using the 
@@ -8,10 +8,41 @@ daily “day quality” ratings and visualize them over time using the
 
 ---
 
+## Table of Contents
+
+- [Pre-installation Requirements](#pre-installation-requirements)
+- [TL;DR](#tldr)
+- [Installation](#installation)
+- [Notes](#notes)
+- [Installing Dependencies](#installing-dependencies)
+- [How to use](#how-to-use)
+  - [What happens on first run](#what-happens-on-first-run)
+  - [Key files](#key-files)
+  - [Logs](#logs)
+    - [Ratings](#ratings)
+    - [Memory entries](#memory-entries)
+  - [Main menu](#main-menu)
+    - [Write/Edit today's log](#writeedit-todays-log)
+    - [Edit previous log](#edit-previous-log)
+    - [View ratings graph](#view-ratings-graph)
+    - [See stats](#see-stats)
+    - [View logs](#view-logs)
+    - [Open settings](#open-settings)
+    - [Back up logs](#back-up-logs)
+    - [Create Desktop Shortcut](#create-desktop-shortcut)
+    - [Import logs](#import-logs)
+  - [Missed logs](#missed-logs)
+  - [Custom Configurations](#custom-configurations)
+- [License](#license)
+
+---
+
 ## Pre-installation Requirements
 
 - Python 3.12 or later
 - An internet connection (only for dependency installation)
+
+[^ TOC](#table-of-contents)
 
 ---
 
@@ -23,17 +54,18 @@ For a quick start:
 2. Open a terminal window
 3. Run:
 ```shell
-cd <PATH-TO-FOLDER>  # Replace this with the path to the folder you installed
+cd <PATH/TO/FOLDER>  # Replace this with the path to the folder you installed
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m dqt
 ```
 
-In the main menu:
+For your convenience, in the main menu:
 - Select `10) More...`
 - Select `1) Create Desktop Shortcut`
-- Enter the name of the Desktop Shortcut script so that you don't have to 
-  open your terminal every time you want to run DQT.
+- Enter the name of the Desktop Shortcut script.
+
+[^ TOC](#table-of-contents)
 
 ---
 
@@ -46,9 +78,11 @@ On the [GitHub page][repo]:
 - Click on "Source code (zip)" (recommended for basic installation)
 - Unzip the ZIP file on your machine to produce a new folder.
 
+[^ TOC](#table-of-contents)
+
 ---
 
-## Switching to the correct directory
+## Notes
 
 **Before running any commands** from this guide in your terminal, ensure your
 terminal is running from the correct directory. You can open a terminal window
@@ -70,7 +104,7 @@ from the new dqt folder:
 
 Alternatively:
 1. Open a new Terminal window
-2. Run `cd path/to/day_quality_tracker`
+2. Run `cd <path/to/day_quality_tracker>`
    - Replace `path/to/day_quality_tracker` with the actual path to the DQT 
      folder
 
@@ -79,18 +113,22 @@ macOS/Linux) or `py` (common on Windows).
 
 You only have to do this once per Terminal session.
 
+[^ TOC](#table-of-contents)
+
 ---
 
 ## Installing Dependencies
 
-Run from the project directory:
+Run:
 
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-After the dependencies are installed, you can [start using DQT](#how-to-use).
+After the dependencies are installed, you can start using DQT.
+
+[^ TOC](#table-of-contents)
 
 ---
 
@@ -119,7 +157,7 @@ On the first run, DQT will create its logs file automatically if it does not
 already exist.
 
 - If the `data/` directory does not exist yet, DQT will create it.
-- Your logs are stored in `data/t.json`
+- Your logs are stored in `data/dqt_logs.json`
 
 ### Key files
 
@@ -127,24 +165,30 @@ already exist.
 - `data/dqt_logs.json`: where your ratings and memory entries are stored
 - `requirements.txt`: Python dependencies needed by the app
 
+[^ TOC](#table-of-contents)
+
 ---
 
-### Ratings
+### Logs
 
-You can enter a rating every day by selecting `1) Enter Today's log` from the 
+Logs are a rating + a memory entry. You do not have to enter a log every day.
+You can choose to skip them when DQT says you have logs missing.
+
+Logs can be easily edited at any time.
+
+#### Ratings
+
+You can enter a rating every day by selecting `1) Write Today's log` from the 
 Main menu. Ratings are from 1 to 20 by default. After entering a rating, you 
 can choose to edit it by selecting the same option.
 
-You may also enter a null rating, indicating that you are unable or unwilling to
-rate your day at the moment. Ratings can be edited at any time.
+You may also enter a null rating if you don't want to rate your day yet. 
 
----
+#### Memory entries
 
-### Memory entries
-
-You may optionally add a memory entry alongside your rating. Memory entries can
-be diary/journal entries, notes, or anything you want to remember for the 
-future. You can leave the entry empty if you do not want to write one.
+Memory entries can be diary/journal entries, notes, or anything you want to 
+remember for the future. You can leave the entry empty if you do not want 
+to write one.
 
 When you want to write a new memory entry or edit an existing one, DQT
 creates a new temporary text file in `data/` and opens it with your device's
@@ -166,11 +210,28 @@ the "Backup Logs" feature provided in the main menu.
 If the memory editor fails or if your device is incompatible for this feature, 
 DQT allows you to directly write your entry via terminal input.
 
+[^ TOC](#table-of-contents)
+
 ---
 
 ### Main menu
 
-After entering your log for the day, you have a number of options:
+This is the first thing you see when you run the program and is DQT's "Homepage"
+
+#### Write/Edit today's log
+
+Write a new log for the day. If you've already done this, this option 
+instead allows you to edit your rating and/or memory entry.
+
+#### Edit previous log
+
+To choose the log to edit, the program will prompt you to enter either:
+- The date of the log you wish to edit
+  - By default, the format you must use is `DD-MM-YYYY` (e.g., `20-01-2026`)
+- The number of days ago the log is for
+  - e.g.: yesterday → `1`, last week → `7`
+
+Then choose to edit the rating and/or memory you've written for that day.
 
 #### View ratings graph
 
@@ -178,20 +239,7 @@ Visually display your ratings on a line graph.
 The graph also shows your average, highest, and lowest ratings.
 When the graph window opens, close it to return to the program.
 
-#### Edit today's log
-
-Choose to edit the rating or memory (or both) you entered today. If you 
-haven't entered a log for today yet, this option creates a new log.
-
-#### Edit previous log
-
-To choose the log to edit, the program will prompt you to enter either:
-* The date of the log you wish to edit
-    * By default, the format you must use is `YYYY-MM-DD` (e.g., `2026-01-20`)
-* The number of days ago the log is for
-    * e.g.: yesterday → `1`, last week → `7`
-
-Choose to edit the rating or memory (or both) you entered for that day.
+[^ TOC](#table-of-contents)
 
 #### See stats
 
@@ -219,6 +267,8 @@ periodically.
 This option creates a copy of your log JSON file in a directory of your 
 choosing.
 
+[^ TOC](#table-of-contents)
+
 #### Create Desktop Shortcut
 
 You can create a shell script that acts as a shortcut to run DQT on your 
@@ -237,14 +287,17 @@ current JSON file used by the program.
 
 ### Missed logs
 
-After running the program, DQT first checks if you've missed any prior logs.
+At the start of the program, DQT first checks if you've missed any prior logs.
 
 You may choose to enter the missed logs immediately or skip them for later.
 
-If you skip missed logs, they must be entered manually at a later time (unless 
-the program is exited before entering today’s log). This is because the program 
-determines missed logs by comparing dates against the most recent recorded 
-entry.
+If you skip missed logs and write a new log, the missed logs must be entered 
+manually at a later time, unless you rerun the program and enter the missing 
+logs before creating a new one. This is because the program identifies missed 
+logs by only looking at the date of the most recent log. This is good if you 
+want to intentional skip logging for a day.
+
+[^ TOC](#table-of-contents)
 
 ---
 
@@ -255,29 +308,27 @@ To configure and customize DQT, select `6) Open Settings` from the main menu.
 Each configuration comes with a description, and to change a setting, simply 
 change the value after the colon.
 
-For example, to set the earliest hour of day a log entry is accepted to 
-**10:00 PM**:
+For example, to change the date format to YYYY/MM/DD:
 ```python
-# (Simplified)
-CONFIGS: dict[str, dict[str, ...]] = {
-    'tracker': {
-        "min_rating": 1,  # Minimum day quality rating (1 recommended)
+        "date_format": "%Y/%m/%d",  #          ★ Date format used
 ```
 
 **Remember to save any changes made** and rerun the program for changes to take
 effect.
 
-Feel free to experiment with each setting to tune DQT to your preferences.
+Feel free to experiment with each setting to tune DQT to your preferences!
 
 ---
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE.txt).
 
 ---
 
-Be an amazing person and [drop me a star][repo]!
+🌟 Be an amazing person and [drop me a star][repo]!
+
+[^ TOC](#table-of-contents)
 
 
 [profile]: https://github.com/TheGittyPerson

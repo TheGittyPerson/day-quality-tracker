@@ -21,7 +21,7 @@ from dqt.styletext import StyleText as Txt
 if TYPE_CHECKING:
     from tracker import Tracker
 
-# Today's date is initialised at the start and used statically to prevent
+# Today's date is initialized at the start and used statically to prevent
 # confusion if the program is run across midnight
 _today: datetime = datetime.today()
 
@@ -53,17 +53,17 @@ class Manager:
         """
         if (last_log_date := self._report_missing_logs()) is not None:
             match menu(
-                "1) Enter missing logs [N]ow",
-                "2) Enter missing logs [L]ater -> Main menu",
+                "1) Write missing logs [N]ow",
+                "2) Write missing logs [L]ater -> Main menu",
             ):
                 case "1" | "n":
                     self._input_missing_logs(last_log_date)
                 case "2" | "l":
                     print_wrapped(
-                        "\nRestart the program later to enter your missing "
-                        "logs! (Entering today's log before doing this means "
-                        "you need to enter your missing logs manually in the "
-                        "JSON file)",
+                        "\nRestart the program later to write your missing "
+                        "logs! (Writing today's log before doing this means "
+                        "you'll need to enter your missing logs manually in "
+                        f"{self.json.filepath})",
                         self.dqt.linewrap_maxcol
                     )
                     return
@@ -109,7 +109,7 @@ class Manager:
             return last_date
 
     def _input_missing_logs(self, last_log_date: date) -> None:
-        """Enter all missing logs in a loop.
+        """Prompt for all missing logs in a loop.
         
         Args:
             last_log_date (date): Date of most recent log
@@ -117,7 +117,7 @@ class Manager:
         # Get list of missed dates
         days_since_last = (_today.date() - last_log_date).days
 
-        missed_dates = []
+        missed_dates: list[date] = []
         curr_loop_date = last_log_date + timedelta(days=1)
         #                               Exclude today
         while len(missed_dates) < days_since_last - 1:
@@ -142,7 +142,7 @@ class Manager:
             new_file = True
             while True:
                 memory, _ = self._input_memory(
-                    "Enter a memory entry (leave blank to skip): ",
+                    "Write a memory entry (leave blank to skip): ",
                     new_file=new_file,
                 )
 
@@ -150,7 +150,7 @@ class Manager:
                     break
                 new_file = False
 
-            date_str = datetime.strftime(d, self.dqt.date_format)
+            date_str = d.strftime(self.dqt.date_format)
 
             self.json.add(date_str, rating, memory)
 
@@ -172,14 +172,14 @@ class Manager:
         new_file = True
         while True:
             tdys_memory, _ = self._input_memory(
-                f"Enter a memory entry; write a few sentences about your "
+                f"Write a memory entry; enter a few sentences about your "
                 f"day. \nLeave this blank to skip.",
                 new_file
             )
 
             if not tdys_memory:
                 print(
-                    "\nTo enter your memory entry later: "
+                    "\nTo write your memory entry later: "
                     "\nMain menu -> Edit today's/previous log "
                     "-> Edit memory"
                 )
@@ -326,7 +326,7 @@ class Manager:
         new_file = True
         while True:
             raw, used_terminal = self._input_memory(
-                f"Enter new memory entry for {_date}.",
+                f"Write new memory entry for {_date}.",
                 new_file,
                 original_mem,
                 terminal_newline=False
@@ -370,14 +370,16 @@ class Manager:
         issues, or if the user chooses to ignore the warning.
 
         Return whether the user confirms their entry. Return ``False`` if the
-        user wishes to re-enter their entry.
+        user wishes to rewrite their entry.
         """
         len_diff = len(original) - len(entry)
+        word_diff = len(original.split()) - len(original.split())
         if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return confirm(
                 warning(
-                    f"The new memory entry is {len_diff} characters shorter "
-                    "than the original. Are you sure?"
+                    f"Your new memory entry is {len_diff} characters "
+                    f"({word_diff} words) shorter than your original entry. "
+                    f"Are you sure?"
                 )
             )
 
@@ -551,7 +553,7 @@ class Manager:
 
         match menu(
             "1) Try starting the editor again",
-            "2) Enter your memory entry here in the CLI instead",
+            "2) Write your memory entry here in the CLI instead",
             prompt="Choose what to do next: "
         ):
             case "1":
@@ -770,7 +772,7 @@ class _MemoryEditor:
             contents: list[str],
             original_contents: list[str] | None = None
     ) -> str | None:
-        """Check the memory edit entered by the user to prevent data loss.
+        """Check the memory edit written by the user to prevent data loss.
 
         When ``original_contents`` is given, it means an existing entry is
         being edited. Otherwise, it means a new entry is being created.
@@ -787,17 +789,20 @@ class _MemoryEditor:
         if original_contents is None:
             return None
 
-        len_diff = len("".join(original_contents)) - len("".join(contents))
+        original_contents = "".join(original_contents)
+        contents = "".join(contents)
+        len_diff = len(original_contents) - len(contents)
+        word_diff = len(original_contents.split()) - len(contents.split())
         if len_diff > self.manager.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return (
-                f"Your new memory entry is {len_diff} characters shorter "
-                "than your original entry. Are you sure you've saved "
-                "(Ctrl + S / ⌘ + S) your edit?"
+                f"Your new memory entry is {len_diff} characters ({word_diff} "
+                "words) shorter than your original entry. Are you sure "
+                "you've saved (Ctrl + S / ⌘ + S) your edit?"
             )
 
-        if "".join(original_contents).strip() == "".join(contents).strip():
+        if original_contents.strip() == original_contents.strip():
             return (
-                f"It looks like your edit matches your original entry. "
+                "It looks like your edit matches your original entry. "
                 "Are you sure you've saved (Ctrl + S / ⌘ + S) your edit?"
             )
 

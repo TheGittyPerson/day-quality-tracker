@@ -31,6 +31,18 @@ try:
         dqt.json.update()
         print(Txt("Success!").bold().green())
         sys.exit()
+
+except ModuleNotFoundError as e:
+    print("\n*!* —————————————————————————————— *!*")
+    print("\n❌ Error!")
+    print(f"Could not import '{e.name}'")
+    print("\nEnsure that you have installed all required dependencies before "
+          "running DQT.")
+except (SyntaxError, NameError, AttributeError) as e:
+    print("\n*!* —————————————————————————————— *!*")
+    print("\n❌ Error!")
+    print(f"It seems some modules have been corrupted/changed.")
+    print("\nTry reinstalling DQT and try again.")
 except Exception:
     print("\n*!* —————————————————————————————— *!*")
     print("\n❌ Error!")

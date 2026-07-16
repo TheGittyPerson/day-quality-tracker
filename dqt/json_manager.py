@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
 from dqt.ui_utils import (
-    confirm, err, log_saved, menu, print_wrapped, warn, warning
+    confirm, cont_on_enter, err, log_saved, menu, print_wrapped, warn, warning
 )
 from dqt.styletext import StyleText as Txt
 
@@ -25,8 +25,8 @@ class UnsetType:
 
 _UNSET = UnsetType()
 
-# Today's date is used statically to prevent confusion
-# if the program is run through midnight
+# Today's date is initialized at the start and used statically to prevent
+# confusion if the program is run across midnight
 _today: datetime = datetime.today()
 
 
@@ -35,7 +35,6 @@ class JSONManager:
 
     FILEDIRNAME: str = "data"
     FILENAME: str = "dqt_logs.json"
-    _FILENAME_PRE_DQT5: str = "dq_ratings.json"
 
     RATING_KYNAME: str = "rating"
     MEMORY_KYNAME: str = "memory"
@@ -49,8 +48,7 @@ class JSONManager:
         rootdir: Path = Path(__file__).resolve().parent.parent
         self.filedirpath: Path = rootdir / self.FILEDIRNAME
         self.filepath: Path = self.filedirpath / self.FILENAME
-        self._filepath_pre5: Path = rootdir / self._FILENAME_PRE_DQT5
-        
+
         self._touch()
         
         self.logs: dict = self._load_json()
@@ -176,7 +174,7 @@ class JSONManager:
         )
 
         current_datestr: str = self.dqt.manager.prompt_date()
-        
+
         current_index = next(
             i for i, (_, datestr) in enumerate(sorted_logs)
             if datestr == current_datestr
@@ -269,7 +267,7 @@ class JSONManager:
                 rating=self.get_rating(current_datestr),
                 memory=self.get_memory(current_datestr),
             )
-    
+
     def print_all_logs(self) -> None:
         """Print 30 logs at a time until the user chooses to stop."""
         #                `Any` is actually `str | float` 👇
@@ -303,6 +301,8 @@ class JSONManager:
             _loop_print(last_30_items)
             remaining_items = remaining_items[:-30] \
                 if len(remaining_items) >= 30 else []
+
+            cont_on_enter()
 
     def open_json_file(self) -> None:
         """Open the JSON file in the default system application."""
@@ -387,7 +387,8 @@ class JSONManager:
             print(f"\nBackup will be saved to:\n{dirpath}")
 
             filename = self._prompt_filename(
-                "Name the backup file (use '~' to prepend a default prefix)"
+                "Name the backup file (use '~' to prepend a default prefix)",
+                f"{self.FILENAME.removesuffix(".json")}_backup"
             )
             dirpath: Path
             chosen_filepath = dirpath / filename
@@ -453,7 +454,7 @@ class JSONManager:
     
     def _prompt_filename(self,
                          prompt: str,
-                         default_name_prefix: str = "dqt_backup") -> str:
+                         default_name_prefix: str) -> str:
         """Prompt and validate file name based on OS.
 
         If user input starts with "~", the character will be replaced by
@@ -590,7 +591,7 @@ class JSONManager:
             success (bool)
         """
         print("Saving to runtime memory...")
-        backup = self.logs.copy()
+        backup = copy.deepcopy(self.logs)
         self.logs = src_contents_cleaned
         
         print(f"Writing contents from runtime memory to '{self.filepath}'...")
@@ -671,16 +672,9 @@ class JSONManager:
             self.filedirpath.mkdir()
             print("Success!")
         if not self.filepath.exists():
-            if self._filepath_pre5.exists():
-                print(f"\nRenaming pre-DQT-5 JSON file...")
-                self._filepath_pre5.rename(self.FILENAME)
-                print("Moving file...")
-                shutil.move(self.FILENAME, self.filedirpath)
-                print("Success!")
-            else:
-                print(f"\nCreating `{self.FILENAME}`...")
-                self.filepath.touch()
-                print("Success!")
+            print(f"\nCreating `{self.FILENAME}`...")
+            self.filepath.touch()
+            print("Success!")
     
     def _load_json(self) -> dict:
         """Load, validate, and normalize JSON log data."""
@@ -715,34 +709,36 @@ class JSONManager:
         - Ensures rating exists
         - Auto-fills missing memory entries (optional)
         """
-        prev_date_str = None
+        prev_datestr = None
         validated: dict[str, dict[str, float | None | str]] = {}
         updated = False
         
         for date, value in contents.items():
             
             # ---------- Validate date order ----------
-            if prev_date_str is not None:
-                prev_date_str: str  # Assumptions, assumptions, assumptions
-                prev_dateobj = datetime.strptime(prev_date_str,
+            if prev_datestr is not None:
+                prev_datestr: str  # Assumptions, assumptions, assumptions
+
+                prev_dateobj = datetime.strptime(prev_datestr,
                                                  self.dqt.date_format).date()
                 d = datetime.strptime(date, self.dqt.date_format).date()
+
                 diff = (d - prev_dateobj).days
                 if diff < 0:
                     raise ValueError(
                         f"Date '{date}' is older than previous date "
-                        f"'{prev_date_str}'"
+                        f"'{prev_datestr}'"
                     )
                 if diff == 0:
                     raise ValueError(
-                        f"Date '{prev_date_str}' is repeated"
+                        f"Date '{prev_datestr}' is repeated"
                     )
             
-            prev_date_str = date
+            prev_datestr = date
             
             # Format:
             # {
-            #     "YYYY-MM-DD": {
+            #     "DD-MM-YYYY": {
             #         "rating": 10,
             #         "memory": "This is a memory entry."
             #     }
@@ -841,7 +837,7 @@ class JSONManager:
         days_since_last = (_today.date() - last_date).days
 
         return not days_since_last <= 1
-    
+
     def no_logs(self, check_file: bool = True) -> bool:
         """Determine whether the user has no logs.
 

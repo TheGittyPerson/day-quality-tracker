@@ -2,7 +2,7 @@ import webbrowser
 from datetime import datetime
 from types import NoneType
 
-from dqt import RELEASE_NUM, SEMVER
+from dqt import RELEASE_NUM, SEMVER, _REPO_URL
 from dqt.manager import Manager
 from dqt.json_manager import JSONManager
 from dqt.graph import Graph
@@ -12,10 +12,9 @@ from dqt.ui_utils import confirm, cont_on_enter, err, menu, warning
 from dqt.styletext import StyleText as Txt
 from dqt import shortcut_creator
 
-# Today's date is used statically to prevent confusion
-# if the program is run through midnight
+# Today's date is initialized at the start and used statically to prevent
+# confusion if the program is run across midnight
 _today: datetime = datetime.today()
-_REPO_URL = "https://github.com/TheGittyPerson/day-quality-tracker"
 
 
 class Tracker:
@@ -46,8 +45,8 @@ class Tracker:
         self.rating_inp_dp: int = 2
         self.linewrap_maxcol: int = 70
         
-        self.date_format: str = "%Y-%m-%d"
-        self.date_format_print: str = "YYYY-MM-DD"
+        self.date_format: str = "%d-%m-%Y"
+        self.date_format_print: str = "DD-MM-YYYY"
         self.clock_format_12: bool = True
         self.enable_ansi: bool | None = False
         self.delete_mem_edit_files_after: int | None = 7
@@ -94,10 +93,10 @@ class Tracker:
                 f"{Txt("— choose what to do:").bold()}"
             )
 
-            t = (f"1) 📝 {"Edit" if self.json.today_logged() else "Enter"} "
+            t = (f"1) 📝 {"Edit" if self.json.today_logged() else "Write"} "
                  f"[T]oday's log{"..." if self.json.today_logged() else ""}:")
             match menu(
-                t,  # 1) Enter/Edit [T]oday's log...
+                t,  # 1) Write/Edit [T]oday's log...
                 "2) 🕗 Edit [P]revious log...",
                 "3) 📈 View ratings [G]raph",
                 "4) 📊 See [S]tats",
@@ -111,8 +110,6 @@ class Tracker:
 
                 case "1" | "t":
                     if not self.json.today_logged():
-                        print("\nYou haven't entered today's log yet.")
-
                         if self.json.logs_missed():
                             msg = warning(
                                 "\nWriting today's log means you will have "
@@ -124,7 +121,7 @@ class Tracker:
                                       "rerunning the program.")
                                 continue
                         else:
-                            print("\nThis will be your new log for today.")
+                            print(Txt("\nWriting a new log for today.").bold())
 
                         self.manager.input_todays_log()
                         continue
@@ -158,8 +155,8 @@ class Tracker:
                         err("You haven't entered any logs yet!")
                         continue
                     if self.json.no_previous_logs():
-                        err("You haven't entered any previous logs yet other "
-                            "than today's!")
+                        err("You haven't written any previous logs yet other "
+                            "than for today!")
                         continue
                     while True:
                         selected_d = self.manager.prompt_date()
@@ -212,16 +209,16 @@ class Tracker:
                 case "5" | "l":
                     match menu(
                         "1) Search by [D]ate",
-                        "2) [P]rint all logs",
-                        "3) [O]pen JSON file in default viewer/editor",
+                        "2) Print [A]ll logs",
+                        "3) Open JSON [F]ile in default viewer/editor",
                         "4) [C]ancel -> Main menu",
                     ):
                         case "1" | "d":
                             self.json.search_logs_by_date()
-                        case "2" | "p":
+                        case "2" | "a":
                             self.json.print_all_logs()
-                            cont_on_enter()
-                        case "3" | "o":
+                            # cont_on_enter called in method. Don't move here.
+                        case "3" | "f":
                             self.json.open_json_file()
                             cont_on_enter()
                         case "4" | "c":
@@ -239,13 +236,13 @@ class Tracker:
 
                 case "8" | "m":
                     match menu(
-                        "1) 🔗 Create Desktop [S]hortcut",
+                        "1) 🔗 Create [D]esktop shortcut",
                         "2) 📥 [I]mport logs...",
                         "3) 😻 [V]isit project on GitHub",
                         "4) [C]ancel -> Main menu",
                         prompt="More..."
                     ):
-                        case "1" | "s":
+                        case "1" | "d":
                             shortcut_creator.main()
                             cont_on_enter()
                         case "2" | "i":
@@ -275,7 +272,7 @@ class Tracker:
     def configure(self, **configs: int | str | bool | None) -> None:
         """Update configuration options via keyword arguments.
 
-        Must be called before ``run()``.
+        Must be called before `run()`.
         Raises:
             ValueError: Invalid configuration option
             TypeError: Incorrect type
