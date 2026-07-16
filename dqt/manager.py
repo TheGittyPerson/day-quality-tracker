@@ -373,7 +373,7 @@ class Manager:
         user wishes to rewrite their entry.
         """
         len_diff = len(original) - len(entry)
-        word_diff = len(original.split()) - len(original.split())
+        word_diff = len(original.split()) - len(entry.split())
         if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return confirm(
                 warning(
@@ -800,7 +800,7 @@ class _MemoryEditor:
                 "you've saved (Ctrl + S / ⌘ + S) your edit?"
             )
 
-        if original_contents.strip() == original_contents.strip():
+        if original_contents.strip() == contents.strip():
             return (
                 "It looks like your edit matches your original entry. "
                 "Are you sure you've saved (Ctrl + S / ⌘ + S) your edit?"
