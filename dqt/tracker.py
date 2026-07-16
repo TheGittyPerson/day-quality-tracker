@@ -209,16 +209,16 @@ class Tracker:
                 case "5" | "l":
                     match menu(
                         "1) Search by [D]ate",
-                        "2) [P]rint all logs",
-                        "3) [O]pen JSON file in default viewer/editor",
+                        "2) Print [A]ll logs",
+                        "3) Open JSON [F]ile in default viewer/editor",
                         "4) [C]ancel -> Main menu",
                     ):
                         case "1" | "d":
                             self.json.search_logs_by_date()
-                        case "2" | "p":
+                        case "2" | "a":
                             self.json.print_all_logs()
                             # cont_on_enter called in method. Don't move here.
-                        case "3" | "o":
+                        case "3" | "f":
                             self.json.open_json_file()
                             cont_on_enter()
                         case "4" | "c":
