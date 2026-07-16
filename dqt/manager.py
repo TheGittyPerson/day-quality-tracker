@@ -321,7 +321,7 @@ class Manager:
 
     def _change_memory_for_date(self, _date: str) -> None:
         """Prompt the user to update a memory entry for a date and save it."""
-        original_mem = self.json.logs[_date][self.json.MEMORY_KYNAME]
+        original_mem = self.json.get_memory(_date)
 
         new_file = True
         while True:
@@ -373,7 +373,7 @@ class Manager:
         user wishes to rewrite their entry.
         """
         len_diff = len(original) - len(entry)
-        word_diff = len(original.split()) - len(original.split())
+        word_diff = len(original.split()) - len(entry.split())
         if len_diff > self.MEMORY_EDIT_LENGTH_DIFF_ALERT_THRESHOLD:
             return confirm(
                 warning(
@@ -450,7 +450,7 @@ class Manager:
         error_msg = (
             f"Please enter a valid number from {self.dqt.min_rating} "
             f"to {self.dqt.max_rating}"
-        ) + f" or '{skip_char}'." if skip_char is not None else ""
+        ) + (f" or '{skip_char}'." if skip_char is not None else "")
 
         while True:
             raw = input(f"{"\n" if newline else ""}{prompt}").lower().strip()
@@ -800,7 +800,7 @@ class _MemoryEditor:
                 "you've saved (Ctrl + S / ⌘ + S) your edit?"
             )
 
-        if original_contents.strip() == original_contents.strip():
+        if original_contents.strip() == contents.strip():
             return (
                 "It looks like your edit matches your original entry. "
                 "Are you sure you've saved (Ctrl + S / ⌘ + S) your edit?"
