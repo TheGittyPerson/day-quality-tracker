@@ -352,9 +352,7 @@ class JSONManager:
         
         successful, dst_filepath = self._start_file_backup_process()
         if successful:
-            log_saved(
-                f"Backup created successfully at '{dst_filepath}'!"
-            )
+            log_saved(f"Backup created successfully at '{dst_filepath}'!")
     
     def _start_file_backup_process(self) -> tuple[bool, str]:
         """Start the backup JSON prompting and file creation process.
@@ -699,10 +697,8 @@ class JSONManager:
             return json.load(file)
     
     def _validate_and_normalize_logs(
-            self,
-            contents: dict,
-            dump_if_updated: bool = True
-    ) -> dict[str, dict[str, float | None | str]]:
+            self, contents: dict, dump_if_updated: bool = True
+            ) -> dict[str, dict[str, float | None | str]]:
         """Validate and normalize raw log data.
 
         - Ensures dates are increasing

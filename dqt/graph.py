@@ -356,6 +356,7 @@ class Graph:
     
     def _draw_legend(self, ax: plt.Axes) -> None:
         """Draw legend."""
+        # noinspection PyTypeChecker
         ax.legend(
             fontsize=self.legend_fontsize,
             loc=self.legend_loc,

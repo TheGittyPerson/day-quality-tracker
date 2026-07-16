@@ -87,8 +87,7 @@ class Stats:
             self,
             chronologically_sorted_logs: list[
                 tuple[date, str, dict[str, float | None | str]]
-            ]
-    ) -> None:
+            ]) -> None:
         """Print the current and longest streak of consecutive logged days."""
         current_streak = self._current_logging_streak(
             chronologically_sorted_logs
@@ -113,8 +112,7 @@ class Stats:
     def _current_logging_streak(
             chronologically_sorted_logs: list[
                 tuple[date, str, dict[str, float | None | str]]
-            ]
-    ) -> int:
+            ]) -> int:
         """Return the ongoing streak ending today or yesterday."""
         if not chronologically_sorted_logs:
             return 0
@@ -139,8 +137,7 @@ class Stats:
     def _longest_logging_streak(
             chronologically_sorted_logs: list[
                 tuple[date, str, dict[str, float | None | str]]
-            ]
-    ) -> int:
+            ]) -> int:
         """Return the longest streak of consecutive logged days."""
         if not chronologically_sorted_logs:
             return 0
@@ -179,8 +176,7 @@ class Stats:
             self,
             chronologically_sorted_logs: list[
                 tuple[date, str, dict[str, float | None | str]]
-            ]
-    ) -> None:
+            ]) -> None:
         """Print rolling rating averages for recent calendar windows."""
         for days in (7, 30, 365):
             avg = self._recent_average_rating(chronologically_sorted_logs, days)
@@ -197,9 +193,8 @@ class Stats:
             self,
             chronologically_sorted_logs: list[
                 tuple[date, str, dict[str, float | None | str]]
-            ],
-            days: int,
-    ) -> float | None:
+            ], days: int
+            ) -> float | None:
         """Return the average rating over the last ``days`` calendar days."""
         cutoff = _today.date() - timedelta(days=days - 1)
         ratings = [
@@ -225,10 +220,8 @@ class Stats:
               f"{Txt(f"{avg:g}").bold()}/{self.dqt.max_rating}")
 
     def _print_highest_and_lowest_ratings(
-            self,
-            ratings_only: list[float],
-            dates_to_ratings: list[tuple[str, float]]
-    ) -> None:
+            self, ratings_only: list[float],
+            dates_to_ratings: list[tuple[str, float]]) -> None:
         """Print highest and lowest ratings, and the date for each.
 
         Prints the dates of ALL days that share the highest/lowest rating.
@@ -257,9 +250,7 @@ class Stats:
         )
 
     def _print_rating_distribution(
-            self,
-            dates_to_ratings: list[tuple[str, float]]
-    ) -> None:
+            self, dates_to_ratings: list[tuple[str, float]]) -> None:
         """Print the distribution of ratings.
         
         Show number of ratings over, at, and under the neutral rating.
@@ -284,8 +275,7 @@ class Stats:
             self,
             chronologically_sorted_logs: list[
                 tuple[date, str, dict[str, float | None | str]]
-            ]
-    ) -> None:
+            ]) -> None:
         """Print the day or days with the longest non-empty memory entry."""
         # The below is because we're dealing with the memory entries.
         # But mostly because my type checker is complaining.
@@ -319,9 +309,7 @@ class Stats:
         )
 
     def _print_weekdays_ranked(
-            self,
-            dateobj_to_ratings: list[tuple[date, float]]
-    ) -> None:
+            self, dateobj_to_ratings: list[tuple[date, float]]) -> None:
         """Print the days of the week in rank order of highest avg rating"""
         weekday_scores: dict[str, list[float]] = defaultdict(list)
 

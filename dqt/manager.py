@@ -422,15 +422,14 @@ class Manager:
 
     @overload
     def _input_rating(
-            self, prompt: str, skip_char: str, newline: bool = True,
-    ) -> float | None | Literal["SKIP"]: ...
+            self, prompt: str, skip_char: str,
+            newline: bool = True) -> float | None | Literal["SKIP"]: ...
 
     def _input_rating(
             self,
             prompt: str,
             newline: bool = True,
-            skip_char: str | None = None
-    ) -> float | None | Literal["SKIP"]:
+            skip_char: str | None = None) -> float | None | Literal["SKIP"]:
         """Get and validate user float input.
 
         If ``skip_char`` is not ``None``, the user can choose to enter
@@ -768,10 +767,8 @@ class _MemoryEditor:
                 / f"{self.FILENAME_PREFIX}_{timestamp}.txt")
 
     def _check_edit(
-            self,
-            contents: list[str],
-            original_contents: list[str] | None = None
-    ) -> str | None:
+            self, contents: list[str],
+            original_contents: list[str] | None = None) -> str | None:
         """Check the memory edit written by the user to prevent data loss.
 
         When ``original_contents`` is given, it means an existing entry is
