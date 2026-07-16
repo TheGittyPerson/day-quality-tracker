@@ -321,7 +321,7 @@ class Manager:
 
     def _change_memory_for_date(self, _date: str) -> None:
         """Prompt the user to update a memory entry for a date and save it."""
-        original_mem = self.json.logs[_date][self.json.MEMORY_KYNAME]
+        original_mem = self.json.get_memory(_date)
 
         new_file = True
         while True:
