@@ -89,7 +89,7 @@ terminal is running from the correct directory. You can open a terminal window
 from the new dqt folder:
 
 - macOS:
-  1. Open the folder in finder
+  1. Open the folder in Finder
   2. Right-click the folder and select **"New Terminal at folder"**
 - Windows (10/11):
   1. Click on the address bar in File Explorer (or press Alt + D), type `cmd` 
@@ -207,7 +207,7 @@ Do **NOT** use the temporary text files as your primary source of backup, as
 they are **deleted after 7 days** by default and can be unreliable. Always use 
 the "Backup Logs" feature provided in the main menu.
 
-If the memory editor fails or if your device is incompatible for this feature, 
+If the memory editor fails or if your device is incompatible with this feature, 
 DQT allows you to directly write your entry via terminal input.
 
 [^ TOC](#table-of-contents)
@@ -295,7 +295,7 @@ If you skip missed logs and write a new log, the missed logs must be entered
 manually at a later time, unless you rerun the program and enter the missing 
 logs before creating a new one. This is because the program identifies missed 
 logs by only looking at the date of the most recent log. This is good if you 
-want to intentional skip logging for a day.
+want to intentionally skip logging for a day.
 
 [^ TOC](#table-of-contents)
 
