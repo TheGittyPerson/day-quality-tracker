@@ -129,6 +129,7 @@ class Manager:
                 f"Enter your rating for {d} "
                 f"({self.dqt.min_rating}~{self.dqt.max_rating}, or '-' for a "
                 "null rating. 's' to permanently skip this day): ",
+                skip_char="s"
             )
 
             if rating == "SKIP":
@@ -313,8 +314,13 @@ class Manager:
         """Prompt the user to update a rating for a date and save it."""
         new_rating = self._input_rating(
             f"Enter new rating for {_date} "
-            f"({self.dqt.min_rating}~{self.dqt.max_rating}): "
+            f"({self.dqt.min_rating}~{self.dqt.max_rating}, 'c' to cancel): ",
+            skip_char="c"
         )
+
+        if new_rating == "SKIP":
+            print("\nCanceled log edit")
+            return
 
         self.json.update(date=_date, rating=new_rating)
         log_saved("Rating updated and saved!")
