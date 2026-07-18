@@ -126,9 +126,9 @@ class Manager:
 
         for d in missed_dates:
             rating = self._input_rating(
-                f"Enter your rating for {d} "
-                f"({self.dqt.min_rating}~{self.dqt.max_rating}, or '-' for a "
-                "null rating. 's' to permanently skip this day): ",
+                f"Enter your rating ({self.dqt.min_rating}~"
+                f"{self.dqt.max_rating} or '-' for a null rating) for {d} "
+                f"\n('s' to permanently skip this day): ",
                 skip_char="s"
             )
 
@@ -384,7 +384,7 @@ class Manager:
             return confirm(
                 warning(
                     f"Your new memory entry is {len_diff} characters "
-                    f"({word_diff} words) shorter than your original entry. "
+                    f"({word_diff} words) shorter than your original entry.",
                     f"Are you sure?"
                 )
             )
@@ -392,7 +392,7 @@ class Manager:
         if entry.strip() == original.strip():
             return confirm(
                 warning(
-                    "It looks like your edit matches your original entry. "
+                    "It looks like your edit matches your original entry.",
                     "Are you sure?"
                 )
             )
@@ -455,7 +455,7 @@ class Manager:
         error_msg = (
             f"Please enter a valid number from {self.dqt.min_rating} "
             f"to {self.dqt.max_rating}"
-        ) + (f" or '{skip_char}'." if skip_char is not None else "")
+        ) + (f" or '{skip_char}'." if skip_char is not None else ".")
 
         while True:
             raw = input(f"{"\n" if newline else ""}{prompt}").lower().strip()

@@ -116,7 +116,7 @@ class Tracker:
                             msg = warning(
                                 "\nWriting today's log means you will have "
                                 "to enter your missed logs manually in the "
-                                "JSON file later. Confirm?"
+                                "JSON file later.", "Confirm?"
                             )
                             if not confirm(msg):
                                 print("\nYou can enter your missed logs by "
