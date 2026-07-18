@@ -207,7 +207,8 @@ class JSONManager:
 
                     days_skipped = (next_dateobj - current_dateobj).days - 1
                     if days_skipped > 0:
-                        print(f"\n(Skipped {days_skipped} empty days ahead)")
+                        print(Txt(f"\n(Skipped {days_skipped} empty days "
+                                  f"ahead)").bold())
 
                     current_datestr = next_datestr
                     current_index = next_index
@@ -223,7 +224,8 @@ class JSONManager:
 
                     days_skipped = (current_dateobj - prev_dateobj).days - 1
                     if days_skipped > 0:
-                        print(f"\n(Skipped {days_skipped} empty days backward)")
+                        print(Txt(f"\n(Skipped {days_skipped} empty days "
+                                  f"backward)").bold())
 
                     current_datestr = prev_datestr
                     current_index = prev_index
@@ -776,7 +778,7 @@ class JSONManager:
             else:
                 raise ValueError(
                     f"Invalid log format for date '{date}'; "
-                    f"must be a valid key-value pair"
+                    "must be a valid key-value pair"
                 )
         
         if updated and dump_if_updated:
