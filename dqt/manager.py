@@ -10,7 +10,7 @@ from dqt.json_manager import JSONManager
 from dqt.ui_utils import *
 
 if TYPE_CHECKING:
-    from tracker import Tracker
+    from dqt.tracker import Tracker
 
 # Today's date is initialized at the start and used statically to prevent
 # confusion if the program is run across midnight
@@ -655,8 +655,8 @@ class _MemoryEditor:
             print("\nOpening memory editor...")
             self._open_memory_edit_file()
             input(
-                f"\n[{bld}Press ENTER{RST} once you are done editing and "
-                f"have {bld}{RED}saved the text file{RST}]"
+                f"\n[{BLD}Press ENTER{RST} once you are done editing and "
+                f"have {BLD}{RED}saved the text file{RST}]"
             )
             contents: list[str] = self._read_text_file()
             comments_removed = self._remove_commented_lines(contents)
