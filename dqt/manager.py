@@ -10,7 +10,7 @@ from dqt.json_manager import JSONManager
 from dqt.ui_utils import *
 
 if TYPE_CHECKING:
-    from tracker import Tracker
+    from dqt.tracker import Tracker
 
 # Today's date is initialized at the start and used statically to prevent
 # confusion if the program is run across midnight
