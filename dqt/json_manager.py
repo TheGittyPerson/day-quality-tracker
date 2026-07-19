@@ -381,7 +381,7 @@ class JSONManager:
                     "the backup file"
                 )
 
-            print(f"\nBackup will be saved to:\n{dirpath}")
+            print(f"\nBackup will be saved to:\n{bld(dirpath)}")
 
             filename = self._prompt_filename(
                 "Name the backup file (use '~' to prepend a default prefix)",
@@ -395,7 +395,8 @@ class JSONManager:
                     f"Continuing will overwrite data in {filename}."
                 )
             else:
-                print(f"\nBackup file will be created at '{chosen_filepath}'.")
+                print("\nBackup file will be created at "
+                      f"'{bld(chosen_filepath)}'.")
             if not confirm("Confirm?"):
                 continue
             

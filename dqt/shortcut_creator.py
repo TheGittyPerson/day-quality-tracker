@@ -53,7 +53,13 @@ def add_os_extension(name: str) -> str:
 
 def main() -> None:
     """Create an executable shell script as a shortcut to start DQT."""
-    raw_name = input("\nShortcut file name (e.g., launch_dqt): ").strip()
+    raw_name = input(
+        "\nShortcut file name, e.g., launch_dqt ('c' to cancel): "
+    ).strip()
+    if raw_name.lower() == "c":
+        print(dim("\nShortcut file creation canceled."))
+        return
+
     filename = add_os_extension(raw_name)
 
     dest = user_desktop_path() / filename
@@ -67,7 +73,7 @@ def main() -> None:
     make_executable(dest)
 
     report_success("Success!")
-    print(f"Executable shortcut created at: {dest}")
+    print(f"\nExecutable shortcut created at: {bld(dest)}")
     print(
         "\nYou can now start DQT by simply double-clicking this shortcut file "
         "on your Desktop instead of running it manually from your terminal."

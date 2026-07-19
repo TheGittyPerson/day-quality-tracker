@@ -159,6 +159,7 @@ class Manager:
         )
 
         if tdys_rating == "SKIP":
+            print(dim("\nLog entry canceled."))
             return
 
         new_file = True
@@ -310,7 +311,7 @@ class Manager:
         )
 
         if new_rating == "SKIP":
-            print("\nCanceled log edit")
+            print(dim("\nCanceled log edit"))
             return
 
         self.json.update(date=_date, rating=new_rating)
