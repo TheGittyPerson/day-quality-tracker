@@ -8,8 +8,7 @@ from dqt.json_manager import JSONManager
 from dqt.graph import Graph
 from dqt.stats import Stats
 from dqt.settings_manager import SettingsManager
-from dqt.ui_utils import confirm, cont_on_enter, err, menu, warning
-from dqt.styletext import StyleText as Txt
+from dqt.ui_utils import *
 from dqt import shortcut_creator
 
 # Today's date is initialized at the start and used statically to prevent
@@ -31,7 +30,6 @@ class Tracker:
         "date_format": str,
         "date_format_print": str,
         "clock_format_12": bool,
-        "enable_ansi": (bool, NoneType),
         "delete_mem_edit_files_after": (int, NoneType),
         "backup_dir_path": (str, NoneType),
         "autofill_json": bool,
@@ -48,7 +46,6 @@ class Tracker:
         self.date_format: str = "%d-%m-%Y"
         self.date_format_print: str = "DD-MM-YYYY"
         self.clock_format_12: bool = True
-        self.enable_ansi: bool | None = False
         self.delete_mem_edit_files_after: int | None = 7
         self.backup_dir_path: str | None = None
         self.autofill_json: bool = True
@@ -80,8 +77,6 @@ class Tracker:
     
     def run(self) -> None:
         """Run Day Quality Tracker."""
-        Txt.set_ansi(self.enable_ansi)
-
         self._print_header()
 
         self.manager.handle_logs_entry()
@@ -89,12 +84,14 @@ class Tracker:
         while True:
             print("\n*❖* —————————————————————————————— *❖*")
             print(
-                f"\n🏠 {Txt("MAIN MENU").blue().underline().bold()} "
-                f"{Txt("— choose what to do:").bold()}"
+                f"\n🏠 {BLD}{UDL}{BLU}MAIN MENU{RST} " +
+                bld("— choose what to do:")
             )
 
-            t = (f"1) 📝 {"Edit" if self.json.today_logged() else "Write"} "
-                 f"[T]oday's log{"..." if self.json.today_logged() else ""}:")
+            today_logged = self.json.today_logged()
+            t = (f"1) 📝 {"Edit" if today_logged else "Write"} "
+                 f"[T]oday's log{"..." if today_logged else ""}")
+
             match menu(
                 t,  # 1) Write/Edit [T]oday's log...
                 "2) 🕗 Edit [P]revious log...",
@@ -114,19 +111,19 @@ class Tracker:
                             msg = warning(
                                 "\nWriting today's log means you will have "
                                 "to enter your missed logs manually in the "
-                                "JSON file later. Confirm?"
+                                "JSON file later.", "Confirm?"
                             )
                             if not confirm(msg):
                                 print("\nYou can enter your missed logs by "
                                       "rerunning the program.")
                                 continue
                         else:
-                            print(Txt("\nWriting a new log for today.").bold())
+                            print(bld("\nWriting a new log for today."))
 
                         self.manager.input_todays_log()
                         continue
                     
-                    print(Txt("\nToday's log:").bold())
+                    print(bld("\nToday's log:"))
                     today = _today.strftime(self.date_format)
                     self.json.print_log(
                         date=today,
@@ -160,7 +157,7 @@ class Tracker:
                         continue
                     while True:
                         selected_d = self.manager.prompt_date()
-                        print(Txt("\nSelected log:").bold())
+                        print(bld("\nSelected log:"))
                         self.json.print_log(
                             date=selected_d,
                             rating=self.json.get_rating(selected_d),
@@ -265,9 +262,9 @@ class Tracker:
     @staticmethod
     def _print_header() -> None:
         title = f"*--- 📆 Day Quality Tracker {RELEASE_NUM}! 📝 ---*"
-        print(Txt(f"\n{title}").bold().yellow())
+        print(bld(ylw(f"\n{title}")))
         semver_str = "~~~ " + SEMVER + " ~~~"
-        print(Txt(f"{semver_str:^{len(title) + 2}}").dim())
+        print(dim(f"{semver_str:^{len(title) + 2}}"))
     
     def configure(self, **configs: int | str | bool | None) -> None:
         """Update configuration options via keyword arguments.

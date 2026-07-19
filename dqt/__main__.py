@@ -4,7 +4,7 @@ try:
 
     from dqt.tracker import Tracker
     from dqt.settings import CONFIGS
-    from dqt.styletext import StyleText as Txt
+    from dqt.ui_utils import *
 
     dqt: Tracker = Tracker()
 
@@ -15,7 +15,7 @@ try:
 
     except ValueError as e:
         print("\n*!* —————————————————————————————— *!*")
-        print(Txt("\n❌ Error!").bold().red())
+        print(bld(red("\n❌ Error!")))
         print(f"{e}.")
         print("Ensure that you have passed valid configuration keys in "
               "`settings.py`.")
@@ -29,7 +29,7 @@ try:
         print("\nProgram interrupted.")
         print("\nSaving changes...")
         dqt.json.update()
-        print(Txt("Success!").bold().green())
+        print(bld(grn("Success!")))
         sys.exit()
 
 except ModuleNotFoundError as e:

@@ -16,7 +16,7 @@ class SettingsManager:
         rootdir: Path = Path(__file__).resolve().parent
         self.settings_path: Path = rootdir / Path(self.FILENAME)
         
-    def open_file(self):
+    def open_file(self) -> None:
         """Open the settings file."""
         if not self.settings_path.exists():
             err("Could not find settings file.")

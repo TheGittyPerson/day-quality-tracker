@@ -7,16 +7,7 @@ from pathlib import Path
 from typing import Literal, TYPE_CHECKING, overload
 
 from dqt.json_manager import JSONManager
-from dqt.ui_utils import (
-    confirm,
-    err,
-    log_saved,
-    menu,
-    print_wrapped,
-    warn,
-    warning,
-)
-from dqt.styletext import StyleText as Txt
+from dqt.ui_utils import *
 
 if TYPE_CHECKING:
     from tracker import Tracker
@@ -126,9 +117,10 @@ class Manager:
 
         for d in missed_dates:
             rating = self._input_rating(
-                f"Enter your rating for {d} "
-                f"({self.dqt.min_rating}~{self.dqt.max_rating}, or '-' for a "
-                "null rating. 's' to permanently skip this day): ",
+                f"Enter your rating ({self.dqt.min_rating}~"
+                f"{self.dqt.max_rating} or '-' for a null rating) for {d} "
+                f"\n('s' to permanently skip this day): ",
+                skip_char="s"
             )
 
             if rating == "SKIP":
@@ -154,7 +146,7 @@ class Manager:
 
             self.json.add(date_str, rating, memory)
 
-        log_saved("Logs saved!")
+        report_success("Logs saved!")
 
     def input_todays_log(self) -> None:
         """Prompt for today's rating and memory entry if not entered yet."""
@@ -167,6 +159,7 @@ class Manager:
         )
 
         if tdys_rating == "SKIP":
+            print(dim("\nLog entry canceled."))
             return
 
         new_file = True
@@ -192,7 +185,7 @@ class Manager:
         # Save data
         today = _today.strftime(self.dqt.date_format)
         self.json.add(today, tdys_rating, tdys_memory)
-        log_saved()
+        report_success("Log saved!")
 
     def change_todays_rating(self) -> None:
         """Prompt the user to change today's rating."""
@@ -251,7 +244,7 @@ class Manager:
                     )
                     continue
                 selected_date = selected_dateobj.strftime(self.dqt.date_format)
-                print(Txt(f"Date selected: {selected_date}").bold())
+                print(bld(f"Date selected: {selected_date}"))
 
             # Else, validate date str
             else:
@@ -313,11 +306,16 @@ class Manager:
         """Prompt the user to update a rating for a date and save it."""
         new_rating = self._input_rating(
             f"Enter new rating for {_date} "
-            f"({self.dqt.min_rating}~{self.dqt.max_rating}): "
+            f"({self.dqt.min_rating}~{self.dqt.max_rating}, 'c' to cancel): ",
+            skip_char="c"
         )
 
+        if new_rating == "SKIP":
+            print(dim("\nCanceled log edit"))
+            return
+
         self.json.update(date=_date, rating=new_rating)
-        log_saved("Rating updated and saved!")
+        report_success("Rating updated and saved!")
 
     def _change_memory_for_date(self, _date: str) -> None:
         """Prompt the user to update a memory entry for a date and save it."""
@@ -353,7 +351,7 @@ class Manager:
             break
 
         self.json.update(date=_date, memory=new_entry)
-        log_saved("Memory entry updated and saved!")
+        report_success("Memory entry updated and saved!")
 
     def _check_memory_edit(self, entry: str, original: str) -> bool:
         """Check for length differences between the new and original entry.
@@ -378,7 +376,7 @@ class Manager:
             return confirm(
                 warning(
                     f"Your new memory entry is {len_diff} characters "
-                    f"({word_diff} words) shorter than your original entry. "
+                    f"({word_diff} words) shorter than your original entry.",
                     f"Are you sure?"
                 )
             )
@@ -386,7 +384,7 @@ class Manager:
         if entry.strip() == original.strip():
             return confirm(
                 warning(
-                    "It looks like your edit matches your original entry. "
+                    "It looks like your edit matches your original entry.",
                     "Are you sure?"
                 )
             )
@@ -399,7 +397,7 @@ class Manager:
         Use as confirmation right before saving (at the end of memory entry
         pipelines)
         """
-        print(Txt("\nNew memory entry:\n").bold())
+        print(bld("\nNew memory entry:\n"))
         print_wrapped(entry, self.dqt.linewrap_maxcol)
 
         if not (confirmed := confirm("Confirm?")):
@@ -422,15 +420,14 @@ class Manager:
 
     @overload
     def _input_rating(
-            self, prompt: str, skip_char: str, newline: bool = True,
-    ) -> float | None | Literal["SKIP"]: ...
+            self, prompt: str, skip_char: str,
+            newline: bool = True) -> float | None | Literal["SKIP"]: ...
 
     def _input_rating(
             self,
             prompt: str,
             newline: bool = True,
-            skip_char: str | None = None
-    ) -> float | None | Literal["SKIP"]:
+            skip_char: str | None = None) -> float | None | Literal["SKIP"]:
         """Get and validate user float input.
 
         If ``skip_char`` is not ``None``, the user can choose to enter
@@ -450,7 +447,7 @@ class Manager:
         error_msg = (
             f"Please enter a valid number from {self.dqt.min_rating} "
             f"to {self.dqt.max_rating}"
-        ) + (f" or '{skip_char}'." if skip_char is not None else "")
+        ) + (f" or '{skip_char}'." if skip_char is not None else ".")
 
         while True:
             raw = input(f"{"\n" if newline else ""}{prompt}").lower().strip()
@@ -546,7 +543,7 @@ class Manager:
             )
 
         warn(
-            f"\nIf you've made changes to the file, {Txt("DO NOT").bold()} "
+            f"\nIf you've made changes to the file, {BLD}DO NOT{RST} "
             "close your text editor yet. Copy and paste any text you want "
             "to save to a safe place."
         )
@@ -658,8 +655,8 @@ class _MemoryEditor:
             print("\nOpening memory editor...")
             self._open_memory_edit_file()
             input(
-                f"\n[{Txt("Press ENTER").bold()} once you are done editing and "
-                f"have {Txt("saved the text file").bold().red()}]"
+                f"\n[{bld}Press ENTER{RST} once you are done editing and "
+                f"have {bld}{RED}saved the text file{RST}]"
             )
             contents: list[str] = self._read_text_file()
             comments_removed = self._remove_commented_lines(contents)
@@ -768,10 +765,8 @@ class _MemoryEditor:
                 / f"{self.FILENAME_PREFIX}_{timestamp}.txt")
 
     def _check_edit(
-            self,
-            contents: list[str],
-            original_contents: list[str] | None = None
-    ) -> str | None:
+            self, contents: list[str],
+            original_contents: list[str] | None = None) -> str | None:
         """Check the memory edit written by the user to prevent data loss.
 
         When ``original_contents`` is given, it means an existing entry is
