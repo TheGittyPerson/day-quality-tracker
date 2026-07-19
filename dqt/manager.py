@@ -146,7 +146,7 @@ class Manager:
 
             self.json.add(date_str, rating, memory)
 
-        log_saved("Logs saved!")
+        report_success("Logs saved!")
 
     def input_todays_log(self) -> None:
         """Prompt for today's rating and memory entry if not entered yet."""
@@ -184,7 +184,7 @@ class Manager:
         # Save data
         today = _today.strftime(self.dqt.date_format)
         self.json.add(today, tdys_rating, tdys_memory)
-        log_saved()
+        report_success("Log saved!")
 
     def change_todays_rating(self) -> None:
         """Prompt the user to change today's rating."""
@@ -314,7 +314,7 @@ class Manager:
             return
 
         self.json.update(date=_date, rating=new_rating)
-        log_saved("Rating updated and saved!")
+        report_success("Rating updated and saved!")
 
     def _change_memory_for_date(self, _date: str) -> None:
         """Prompt the user to update a memory entry for a date and save it."""
@@ -350,7 +350,7 @@ class Manager:
             break
 
         self.json.update(date=_date, memory=new_entry)
-        log_saved("Memory entry updated and saved!")
+        report_success("Memory entry updated and saved!")
 
     def _check_memory_edit(self, entry: str, original: str) -> bool:
         """Check for length differences between the new and original entry.

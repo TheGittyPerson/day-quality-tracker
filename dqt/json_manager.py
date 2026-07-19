@@ -351,7 +351,7 @@ class JSONManager:
         
         successful, dst_filepath = self._start_file_backup_process()
         if successful:
-            log_saved(f"Backup created successfully at '{dst_filepath}'!")
+            report_success(f"Backup created successfully at '{dst_filepath}'!")
     
     def _start_file_backup_process(self) -> tuple[bool, str]:
         """Start the backup JSON prompting and file creation process.
@@ -570,7 +570,7 @@ class JSONManager:
         print("\nBeginning import process...")
         success = self._start_logs_import_process(src_contents_cleaned)
         if success:
-            log_saved("Import process completed successfully!")
+            report_success("Import process completed successfully!")
         return
     
     def _start_logs_import_process(self,

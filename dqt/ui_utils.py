@@ -7,7 +7,7 @@ __all__: list[str] = [
     "RST", "BLD", "DIM", "ITA", "UDL", "RED", "GRN", "YLW", "BLU", "MGT",
     "CYN", "WHT", "bld", "dim", "ita", "udl", "red", "grn", "ylw", "blu",
     "mgt", "cyn", "wht", "confirm", "cont_on_enter", "err", "warn",
-    "warning", "log_saved", "menu", "print_wrapped"
+    "warning", "report_success", "menu", "print_wrapped"
 ]
 
 
@@ -54,13 +54,11 @@ def warning(*message: str) -> str:
     )
 
 
-def log_saved(text: str = "Log saved!") -> None:
-    """Print formatted message indicating success.
-
-    Default to "Log saved!".
-    """
+def report_success(text: str, pause: bool = True) -> None:
+    """Print formatted message indicating success."""
     print("\n✅ " + bld(grn(text)))
-    sleep(1)
+    if pause:
+        sleep(1)
 
 
 def menu(*options: str, prompt: str | None = "Choose what to do: ") -> str:

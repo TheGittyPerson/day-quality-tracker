@@ -66,7 +66,7 @@ def main() -> None:
     print("Setting permissions...")
     make_executable(dest)
 
-    log_saved("Success!")
+    report_success("Success!")
     print(f"Executable shortcut created at: {dest}")
     print(
         "\nYou can now start DQT by simply double-clicking this shortcut file "
