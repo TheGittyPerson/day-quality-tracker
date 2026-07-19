@@ -8,10 +8,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
-from dqt.ui_utils import (
-    confirm, cont_on_enter, err, log_saved, menu, print_wrapped, warn, warning
-)
-from dqt.styletext import StyleText as Txt
+from dqt.ui_utils import *
 
 if TYPE_CHECKING:
     from datetime import date as date_t
@@ -129,30 +126,30 @@ class JSONManager:
         # ----- Date -----
         if not isinstance(date, UnsetType):
             if date == "today":
-                print(Txt("\nToday's log:").bold().yellow())
+                print(bld(ylw("\nToday's log:")))
             else:
-                print(Txt(f"Date: ").bold() + date)
+                print(bld(f"Date: ") + date)
         
         # ----- Rating -----
         if not isinstance(rating, UnsetType):
             if rating is None:
-                print(Txt("Rating: ").bold() + "-")
+                print(bld("Rating: ") + "-")
             else:
                 print(
-                    f"{Txt("Rating:").bold()}",
+                    f"{bld("Rating:")}",
                     f"{rating:g}/{self.dqt.max_rating}"
                 )
         
         # ----- Memory -----
         if not isinstance(memory, UnsetType):
             if memory:
-                print(Txt("Memory:").bold())
+                print(bld("Memory:"))
                 if linewrap_memory:
                     print_wrapped(memory, self.dqt.linewrap_maxcol)
                 else:
                     print(memory)
             else:
-                print(Txt("Memory: ").bold() + "-")
+                print(bld("Memory: ") + "-")
 
     def search_logs_by_date(self) -> None:
         """``print_all_logs()`` but one by one + more freedom.
@@ -207,8 +204,8 @@ class JSONManager:
 
                     days_skipped = (next_dateobj - current_dateobj).days - 1
                     if days_skipped > 0:
-                        print(Txt(f"\n(Skipped {days_skipped} empty days "
-                                  f"ahead)").bold())
+                        print(bld(f"\n(Skipped {days_skipped} empty days "
+                                  f"ahead)"))
 
                     current_datestr = next_datestr
                     current_index = next_index
@@ -224,15 +221,15 @@ class JSONManager:
 
                     days_skipped = (current_dateobj - prev_dateobj).days - 1
                     if days_skipped > 0:
-                        print(Txt(f"\n(Skipped {days_skipped} empty days "
-                                  f"backward)").bold())
+                        print(bld(f"\n(Skipped {days_skipped} empty days "
+                                  f"backward)"))
 
                     current_datestr = prev_datestr
                     current_index = prev_index
 
                 case "3" | "f":
                     if current_index == 0:
-                        print("\nYou're already on the first log!")
+                        print(bld("\nYou're already on the first log!"))
                         continue
 
                     current_index = 0
@@ -240,7 +237,7 @@ class JSONManager:
 
                 case "4" | "l":
                     if current_index == len(sorted_logs) - 1:
-                        print("\nYou're already on the last log!")
+                        print(bld("\nYou're already on the last log!"))
                         continue
 
                     current_index = len(sorted_logs) - 1
@@ -284,7 +281,7 @@ class JSONManager:
                 )
             print("\n* —————————————————————————————— *")
         
-        print("\nLast 30 logs, most recent last:")
+        print(mgt("\nLast 30 logs, most recent last:"))
         
         if not self.logs:
             print("\n[No logs found]")
@@ -322,7 +319,7 @@ class JSONManager:
             print("(Incompatible OS: unable to open the file with the program)")
             return
         
-        print(f"File opened in a new window.")
+        print(grn("File opened in a new window."))
         print("Remember to save changes before closing the file!")
         print("(Rerun the program for changes to take effect)")
     

@@ -7,16 +7,7 @@ from pathlib import Path
 from typing import Literal, TYPE_CHECKING, overload
 
 from dqt.json_manager import JSONManager
-from dqt.ui_utils import (
-    confirm,
-    err,
-    log_saved,
-    menu,
-    print_wrapped,
-    warn,
-    warning,
-)
-from dqt.styletext import StyleText as Txt
+from dqt.ui_utils import *
 
 if TYPE_CHECKING:
     from tracker import Tracker
@@ -252,7 +243,7 @@ class Manager:
                     )
                     continue
                 selected_date = selected_dateobj.strftime(self.dqt.date_format)
-                print(Txt(f"Date selected: {selected_date}").bold())
+                print(bld(f"Date selected: {selected_date}"))
 
             # Else, validate date str
             else:
@@ -405,7 +396,7 @@ class Manager:
         Use as confirmation right before saving (at the end of memory entry
         pipelines)
         """
-        print(Txt("\nNew memory entry:\n").bold())
+        print(bld("\nNew memory entry:\n"))
         print_wrapped(entry, self.dqt.linewrap_maxcol)
 
         if not (confirmed := confirm("Confirm?")):
@@ -551,7 +542,7 @@ class Manager:
             )
 
         warn(
-            f"\nIf you've made changes to the file, {Txt("DO NOT").bold()} "
+            f"\nIf you've made changes to the file, {BLD}DO NOT{RST} "
             "close your text editor yet. Copy and paste any text you want "
             "to save to a safe place."
         )
@@ -663,8 +654,8 @@ class _MemoryEditor:
             print("\nOpening memory editor...")
             self._open_memory_edit_file()
             input(
-                f"\n[{Txt("Press ENTER").bold()} once you are done editing and "
-                f"have {Txt("saved the text file").bold().red()}]"
+                f"\n[{bld}Press ENTER{RST} once you are done editing and "
+                f"have {bld}{RED}saved the text file{RST}]"
             )
             contents: list[str] = self._read_text_file()
             comments_removed = self._remove_commented_lines(contents)

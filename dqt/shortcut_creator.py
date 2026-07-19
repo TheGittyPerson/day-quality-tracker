@@ -8,6 +8,8 @@ import sys
 from pathlib import Path
 from platformdirs import user_desktop_path
 
+from ui_utils import *
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -64,7 +66,7 @@ def main() -> None:
     print("Setting permissions...")
     make_executable(dest)
 
-    print("\n✅ \033[32m\033[1mSuccess!\033[0m")
+    log_saved("Success!")
     print(f"Executable shortcut created at: {dest}")
     print(
         "\nYou can now start DQT by simply double-clicking this shortcut file "
