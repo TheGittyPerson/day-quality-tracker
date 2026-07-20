@@ -32,7 +32,7 @@ def cont_on_enter(msg: str = "[Press ENTER ↩ to return to main menu]") -> None
 
 def err(*message: str, pause: bool = False) -> None:
     """Print formatted error message."""
-    prefix = bld(ylw("\n❌ Error: "))
+    prefix = bld(red("\n❌ Error: "))
     print(prefix + message[0], *message[1:], sep="\n")
     if pause:
         sleep(1)
