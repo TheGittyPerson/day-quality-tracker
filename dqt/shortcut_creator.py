@@ -79,6 +79,8 @@ def main() -> None:
         "on your Desktop instead of running it manually from your terminal."
     )
 
+    cont_on_enter()
+
 
 if __name__ == "__main__":
     main()

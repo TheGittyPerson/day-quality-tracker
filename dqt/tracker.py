@@ -241,7 +241,7 @@ class Tracker:
                     ):
                         case "1" | "d":
                             shortcut_creator.main()
-                            cont_on_enter()
+                            # cont on enter in function
                         case "2" | "i":
                             self.json.import_logs()
                         case "3" | "v":
