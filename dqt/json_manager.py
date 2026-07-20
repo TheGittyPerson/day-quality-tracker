@@ -301,7 +301,7 @@ class JSONManager:
             remaining_items = remaining_items[:-30] \
                 if len(remaining_items) >= 30 else []
 
-            cont_on_enter()
+        cont_on_enter()
 
     def open_json_file(self) -> None:
         """Open the JSON file in the default system application."""
