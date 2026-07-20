@@ -52,5 +52,5 @@ class SettingsManager:
             return
 
         print(f"\nFile opened in a new window.")
-        print(f"Remember to {BLD}save changes before closing the file{RST}!")
+        print(f"Remember to {BOL}save changes before closing the file{RST}!")
         print("(Rerun the program for changes to take effect)")

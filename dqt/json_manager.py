@@ -126,30 +126,30 @@ class JSONManager:
         # ----- Date -----
         if not isinstance(date, UnsetType):
             if date == "today":
-                print(bld(ylw("\nToday's log:")))
+                print(bol(ylw("\nToday's log:")))
             else:
-                print(bld(f"Date: ") + date)
+                print(bol(f"Date: ") + date)
         
         # ----- Rating -----
         if not isinstance(rating, UnsetType):
             if rating is None:
-                print(bld("Rating: ") + "-")
+                print(bol("Rating: ") + "-")
             else:
                 print(
-                    f"{bld("Rating:")}",
+                    f"{bol("Rating:")}",
                     f"{rating:g}/{self.dqt.max_rating}"
                 )
         
         # ----- Memory -----
         if not isinstance(memory, UnsetType):
             if memory:
-                print(bld("Memory:"))
+                print(bol("Memory:"))
                 if linewrap_memory:
                     print_wrapped(memory, self.dqt.linewrap_maxcol)
                 else:
                     print(memory)
             else:
-                print(bld("Memory: ") + "-")
+                print(bol("Memory: ") + "-")
 
     def search_logs_by_date(self) -> None:
         """``print_all_logs()`` but one by one + more freedom.
@@ -195,7 +195,7 @@ class JSONManager:
             ):
                 case "1" | "n":
                     if current_index >= len(sorted_logs) - 1:
-                        print(bld("\nYou're already on the most recent log!"))
+                        print(bol("\nYou're already on the most recent log!"))
                         continue
 
                     next_index = current_index + 1
@@ -204,7 +204,7 @@ class JSONManager:
 
                     days_skipped = (next_dateobj - current_dateobj).days - 1
                     if days_skipped > 0:
-                        print(bld(f"\n(Skipped {days_skipped} empty days "
+                        print(bol(f"\n(Skipped {days_skipped} empty days "
                                   f"ahead)"))
 
                     current_datestr = next_datestr
@@ -212,7 +212,7 @@ class JSONManager:
 
                 case "2" | "p":
                     if current_index <= 0:
-                        print(bld("\nYou're already on the oldest log!"))
+                        print(bol("\nYou're already on the oldest log!"))
                         continue
 
                     prev_index = current_index - 1
@@ -221,7 +221,7 @@ class JSONManager:
 
                     days_skipped = (current_dateobj - prev_dateobj).days - 1
                     if days_skipped > 0:
-                        print(bld(f"\n(Skipped {days_skipped} empty days "
+                        print(bol(f"\n(Skipped {days_skipped} empty days "
                                   f"backward)"))
 
                     current_datestr = prev_datestr
@@ -229,7 +229,7 @@ class JSONManager:
 
                 case "3" | "f":
                     if current_index == 0:
-                        print(bld("\nYou're already on the first log!"))
+                        print(bol("\nYou're already on the first log!"))
                         continue
 
                     current_index = 0
@@ -237,7 +237,7 @@ class JSONManager:
 
                 case "4" | "l":
                     if current_index == len(sorted_logs) - 1:
-                        print(bld("\nYou're already on the last log!"))
+                        print(bol("\nYou're already on the last log!"))
                         continue
 
                     current_index = len(sorted_logs) - 1
@@ -381,7 +381,7 @@ class JSONManager:
                     "the backup file"
                 )
 
-            print(f"\nBackup will be saved to:\n{bld(dirpath)}")
+            print(f"\nBackup will be saved to:\n{bol(dirpath)}")
 
             filename = self._prompt_filename(
                 "Name the backup file (use '~' to prepend a default prefix)",
@@ -396,7 +396,7 @@ class JSONManager:
                 )
             else:
                 print("\nBackup file will be created at "
-                      f"'{bld(chosen_filepath)}'.")
+                      f"'{bol(chosen_filepath)}'.")
             if not confirm("Confirm?"):
                 continue
             

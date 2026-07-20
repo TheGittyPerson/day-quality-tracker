@@ -4,8 +4,8 @@ from time import sleep
 from typing import Any
 
 __all__: list[str] = [
-    "RST", "BLD", "DIM", "ITA", "UDL", "RED", "GRN", "YLW", "BLU", "MGT",
-    "CYN", "WHT", "bld", "dim", "ita", "udl", "red", "grn", "ylw", "blu",
+    "RST", "BOL", "DIM", "ITA", "UDL", "RED", "GRN", "YLW", "BLU", "MGT",
+    "CYN", "WHT", "bol", "dim", "ita", "udl", "red", "grn", "ylw", "blu",
     "mgt", "cyn", "wht", "confirm", "cont_on_enter", "err", "warn",
     "warning", "report_success", "menu", "print_wrapped"
 ]
@@ -32,7 +32,7 @@ def cont_on_enter(msg: str = "[Press ENTER ↩ to return to main menu]") -> None
 
 def err(*message: str, pause: bool = False) -> None:
     """Print formatted error message."""
-    prefix = bld(red("\n❌ Error: "))
+    prefix = bol(red("\n❌ Error: "))
     print(prefix + message[0], *message[1:], sep="\n")
     if pause:
         sleep(1)
@@ -40,7 +40,7 @@ def err(*message: str, pause: bool = False) -> None:
 
 def warn(*message: str, pause: bool = False) -> None:
     """Print formatted warning message."""
-    prefix = bld(ylw("\n⚠️ WARNING: "))
+    prefix = bol(ylw("\n⚠️ WARNING: "))
     print(prefix + message[0], *message[1:], sep="\n")
     if pause:
         sleep(1)
@@ -49,23 +49,23 @@ def warn(*message: str, pause: bool = False) -> None:
 def warning(*message: str) -> str:
     """Return a formatted warning message."""
     return str(
-        bld(ylw("⚠️ WARNING: ")) + message[0]
+        bol(ylw("⚠️ WARNING: ")) + message[0]
         + "".join(f"\n{msg}" for msg in message[1:])
     )
 
 
 def report_success(text: str, pause: bool = True) -> None:
     """Print formatted message indicating success."""
-    print("\n✅ " + bld(grn(text)))
+    print("\n✅ " + bol(grn(text)))
     if pause:
         sleep(1)
 
 
 def menu(*options: str, prompt: str | None = "Choose what to do: ") -> str:
     """Display menu prompt and options and collect user input."""
-    print(bld(f"\n{prompt}" if prompt else ""))
+    print(bol(f"\n{prompt}" if prompt else ""))
     for i, option in enumerate(options, start=1):
-        print(bld(f"{i})"), option.removeprefix(f"{i}) "))
+        print(bol(f"{i})"), option.removeprefix(f"{i}) "))
 
     opts_count = len(options)
 
@@ -110,7 +110,7 @@ def print_wrapped(text: str, maxcol: int):
 
 RST = "\033[0m"
 
-BLD = "\033[1m"
+BOL = "\033[1m"
 DIM = "\033[2m"
 ITA = "\033[3m"
 UDL = "\033[4m"
@@ -124,9 +124,9 @@ CYN = "\033[36m"
 WHT = "\033[37m"
 
 
-def bld(obj: Any) -> str:
+def bol(obj: Any) -> str:
     """Return bolded string representation of the object."""
-    return f"{BLD}{obj}{RST}"
+    return f"{BOL}{obj}{RST}"
 
 
 def dim(obj: Any) -> str:

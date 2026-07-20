@@ -84,8 +84,8 @@ class Tracker:
         while True:
             print("\n*❖* —————————————————————————————— *❖*")
             print(
-                f"\n🏠 {BLD}{UDL}{BLU}MAIN MENU{RST} " +
-                bld("— choose what to do:")
+                f"\n🏠 {BOL}{UDL}{BLU}MAIN MENU{RST} " +
+                bol("— choose what to do:")
             )
 
             today_logged = self.json.today_logged()
@@ -118,12 +118,12 @@ class Tracker:
                                       "rerunning the program.")
                                 continue
                         else:
-                            print(bld("\nWriting a new log for today."))
+                            print(bol("\nWriting a new log for today."))
 
                         self.manager.input_todays_log()
                         continue
                     
-                    print(bld("\nToday's log:"))
+                    print(bol("\nToday's log:"))
                     today = _today.strftime(self.date_format)
                     self.json.print_log(
                         date=today,
@@ -157,7 +157,7 @@ class Tracker:
                         continue
                     while True:
                         selected_d = self.manager.prompt_date()
-                        print(bld("\nSelected log:"))
+                        print(bol("\nSelected log:"))
                         self.json.print_log(
                             date=selected_d,
                             rating=self.json.get_rating(selected_d),
@@ -262,7 +262,7 @@ class Tracker:
     @staticmethod
     def _print_header() -> None:
         title = f"*--- 📆 Day Quality Tracker {RELEASE_NUM}! 📝 ---*"
-        print(bld(ylw(f"\n{title}")))
+        print(bol(ylw(f"\n{title}")))
         semver_str = "~~~ " + SEMVER + " ~~~"
         print(dim(f"{semver_str:^{len(title) + 2}}"))
     
