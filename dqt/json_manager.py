@@ -195,7 +195,7 @@ class JSONManager:
             ):
                 case "1" | "n":
                     if current_index >= len(sorted_logs) - 1:
-                        print("\nYou're already on the most recent log!")
+                        print(bld("\nYou're already on the most recent log!"))
                         continue
 
                     next_index = current_index + 1
@@ -212,7 +212,7 @@ class JSONManager:
 
                 case "2" | "p":
                     if current_index <= 0:
-                        print("\nYou're already on the oldest log!")
+                        print(bld("\nYou're already on the oldest log!"))
                         continue
 
                     prev_index = current_index - 1
