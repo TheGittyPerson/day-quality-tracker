@@ -30,7 +30,7 @@ class Stats:
             - Lowest rating
             - Days of the week ranked from best to worst
         """
-        print(bld(cyn("\n📋📊 Day Quality Tracker Stats:\n")))
+        print(bol(cyn("\n📋📊 Day Quality Tracker Stats:\n")))
 
         rating_key = self.json.RATING_KYNAME
         logs = self.json.logs
@@ -100,11 +100,11 @@ class Stats:
         longest_unit = "day" if longest_streak == 1 else "days"
 
         print(
-            f"{bld("Current logging streak:")} "
+            f"{bol("Current logging streak:")} "
             f"{current_streak} {current_unit}"
         )
         print(
-            f"{bld("Longest logging streak:")} "
+            f"{bol("Longest logging streak:")} "
             f"{longest_streak} {longest_unit}"
         )
 
@@ -163,10 +163,10 @@ class Stats:
         """Print the number of days rated."""
         days_total = len(logs)
         days_rated = len(dateobj_to_ratings)
-        output = f"{bld("Days rated:")} {bld(days_rated)} "
+        output = f"{bol("Days rated:")} {bol(days_rated)} "
         if dateobj_to_ratings:
             first_rated_date = min(_date for _date, _ in dateobj_to_ratings)
-            output += f"since {bld(first_rated_date)} "
+            output += f"since {bol(first_rated_date)} "
         if not days_rated == days_total:
             output += f"({days_total} including null ratings)"
 
@@ -185,8 +185,8 @@ class Stats:
                 print(f"Last {label} average: -")
                 continue
             print(
-                f"{bld(f"Last {label} average:")} "
-                f"{bld(f"{avg:g}")}/{self.dqt.max_rating}"
+                f"{bol(f"Last {label} average:")} "
+                f"{bol(f"{avg:g}")}/{self.dqt.max_rating}"
             )
 
     def _recent_average_rating(
@@ -216,8 +216,8 @@ class Stats:
             sum(ratings_only) / len(ratings_only),
             self.dqt.rating_inp_dp
         )
-        print(f"{bld("Average rating:")} "
-              f"{bld(f"{avg:g}")}/{self.dqt.max_rating}")
+        print(f"{bol("Average rating:")} "
+              f"{bol(f"{avg:g}")}/{self.dqt.max_rating}")
 
     def _print_highest_and_lowest_ratings(
             self, ratings_only: list[float],
@@ -239,13 +239,13 @@ class Stats:
         ]
 
         print(
-            f"{bld("Highest rating:")} "
-            f"{bld(f"{highest:g}")}/{self.dqt.max_rating} "
+            f"{bol("Highest rating:")} "
+            f"{bol(f"{highest:g}")}/{self.dqt.max_rating} "
             f"on {self._format_dates(highest_dates)}"
         )
         print(
-            f"{bld("Lowest rating:")} "
-            f"{bld(f"{lowest:g}")}/{self.dqt.max_rating} "
+            f"{bol("Lowest rating:")} "
+            f"{bol(f"{lowest:g}")}/{self.dqt.max_rating} "
             f"on {self._format_dates(lowest_dates)}"
         )
 
@@ -267,9 +267,9 @@ class Stats:
             else:
                 at += 1
 
-        print(bld(f"Days rated over {neutral_rat}: {over}"))
-        print(bld(f"Days rated at {neutral_rat}: {at}"))
-        print(bld(f"Days rated under {neutral_rat}: {under}"))
+        print(bol(f"Days rated over {neutral_rat}: {over}"))
+        print(bol(f"Days rated at {neutral_rat}: {at}"))
+        print(bol(f"Days rated under {neutral_rat}: {under}"))
 
     def _print_longest_memory_day(
             self,
@@ -304,7 +304,7 @@ class Stats:
             else "Days with longest memory entry:"
         )
         print(
-            f"{bld(label)} {self._format_dates(longest_dates)} "
+            f"{bol(label)} {self._format_dates(longest_dates)} "
             f"({max_length} characters, {len(longest.split())} words)"
         )
 
@@ -328,14 +328,14 @@ class Stats:
             reverse=True
         )
 
-        print(f"{bld("Best days of the week")} "
+        print(f"{bol("Best days of the week")} "
               "(highest to lowest average rating):")
         counter = 0
         for day, value in ranked_days:
             counter += 1
             cleaned_avg = f"{round(value, self.dqt.rating_inp_dp):g}"
-            print(f"  #{counter} {bld(day)}: "
-                  f"{bld(cleaned_avg)}"
+            print(f"  #{counter} {bol(day)}: "
+                  f"{bol(cleaned_avg)}"
                   f"/{self.dqt.max_rating}")
 
     @staticmethod

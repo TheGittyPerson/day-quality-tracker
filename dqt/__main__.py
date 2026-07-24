@@ -15,7 +15,7 @@ try:
 
     except ValueError as e:
         print("\n*!* —————————————————————————————— *!*")
-        print(bld(red("\n❌ Error!")))
+        print(bol(red("\n❌ Error!")))
         print(f"{e}.")
         print("Ensure that you have passed valid configuration keys in "
               "`settings.py`.")
@@ -29,7 +29,7 @@ try:
         print("\nProgram interrupted.")
         print("\nSaving changes...")
         dqt.json.update()
-        print(bld(grn("Success!")))
+        print(bol(grn("Success!")))
         sys.exit()
 
 except ModuleNotFoundError as e:

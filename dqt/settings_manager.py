@@ -3,7 +3,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-from dqt.ui_utils import err
+from dqt.ui_utils import *
 
 
 class SettingsManager:
@@ -52,5 +52,5 @@ class SettingsManager:
             return
 
         print(f"\nFile opened in a new window.")
-        print("Remember to save changes before closing the file!")
+        print(f"Remember to {BOL}save changes before closing the file{RST}!")
         print("(Rerun the program for changes to take effect)")

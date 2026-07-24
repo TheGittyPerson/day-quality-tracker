@@ -244,7 +244,7 @@ class Manager:
                     )
                     continue
                 selected_date = selected_dateobj.strftime(self.dqt.date_format)
-                print(bld(f"Date selected: {selected_date}"))
+                print(bol(f"Date selected: {selected_date}"))
 
             # Else, validate date str
             else:
@@ -397,7 +397,7 @@ class Manager:
         Use as confirmation right before saving (at the end of memory entry
         pipelines)
         """
-        print(bld("\nNew memory entry:\n"))
+        print(bol("\nNew memory entry:\n"))
         print_wrapped(entry, self.dqt.linewrap_maxcol)
 
         if not (confirmed := confirm("Confirm?")):
@@ -543,7 +543,7 @@ class Manager:
             )
 
         warn(
-            f"\nIf you've made changes to the file, {BLD}DO NOT{RST} "
+            f"\nIf you've made changes to the file, {BOL}DO NOT{RST} "
             "close your text editor yet. Copy and paste any text you want "
             "to save to a safe place."
         )
@@ -655,8 +655,8 @@ class _MemoryEditor:
             print("\nOpening memory editor...")
             self._open_memory_edit_file()
             input(
-                f"\n[{BLD}Press ENTER{RST} once you are done editing and "
-                f"have {BLD}{RED}saved the text file{RST}]"
+                f"\n[{BOL}Press ENTER{RST} once you are done editing and "
+                f"have {BOL}{RED}saved the text file{RST}]"
             )
             contents: list[str] = self._read_text_file()
             comments_removed = self._remove_commented_lines(contents)

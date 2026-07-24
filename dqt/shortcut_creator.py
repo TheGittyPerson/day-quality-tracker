@@ -73,11 +73,13 @@ def main() -> None:
     make_executable(dest)
 
     report_success("Success!")
-    print(f"\nExecutable shortcut created at: {bld(dest)}")
+    print(f"\nExecutable shortcut created at: {bol(dest)}")
     print(
         "\nYou can now start DQT by simply double-clicking this shortcut file "
         "on your Desktop instead of running it manually from your terminal."
     )
+
+    cont_on_enter()
 
 
 if __name__ == "__main__":
