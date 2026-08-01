@@ -2,11 +2,11 @@ from datetime import date, datetime, timedelta
 from collections import defaultdict
 from typing import TYPE_CHECKING
 
-from dqt.json_manager import JSONManager
-from dqt.ui_utils import *
+from .json_manager import JSONManager
+from .ui_utils import *
 
 if TYPE_CHECKING:
-    from tracker import Tracker
+    from .tracker import Tracker
 
 _today: datetime = datetime.today()
 

@@ -2,9 +2,9 @@ try:
     import sys
     import traceback
 
-    from dqt.tracker import Tracker
-    from dqt.settings import CONFIGS
-    from dqt.ui_utils import *
+    from .tracker import Tracker
+    from .settings import CONFIGS
+    from .ui_utils import *
 
     dqt: Tracker = Tracker()
 

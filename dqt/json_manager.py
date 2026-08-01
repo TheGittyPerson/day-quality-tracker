@@ -8,11 +8,11 @@ from pathlib import Path
 from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
-from dqt.ui_utils import *
+from .ui_utils import *
 
 if TYPE_CHECKING:
     from datetime import date as date_t
-    from tracker import Tracker
+    from .tracker import Tracker
 
 
 class UnsetType:

@@ -6,11 +6,11 @@ from datetime import datetime, timedelta, date
 from pathlib import Path
 from typing import Literal, TYPE_CHECKING, overload
 
-from dqt.json_manager import JSONManager
-from dqt.ui_utils import *
+from .json_manager import JSONManager
+from .ui_utils import *
 
 if TYPE_CHECKING:
-    from dqt.tracker import Tracker
+    from .tracker import Tracker
 
 # Today's date is initialized at the start and used statically to prevent
 # confusion if the program is run across midnight

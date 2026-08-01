@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from platformdirs import user_desktop_path
 
-from dqt.ui_utils import *
+from .ui_utils import *
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 

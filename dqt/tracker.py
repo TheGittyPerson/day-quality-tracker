@@ -2,14 +2,14 @@ import webbrowser
 from datetime import datetime
 from types import NoneType
 
-from dqt import RELEASE_NUM, SEMVER, _REPO_URL
-from dqt.manager import Manager
-from dqt.json_manager import JSONManager
-from dqt.graph import Graph
-from dqt.stats import Stats
-from dqt.settings_manager import SettingsManager
-from dqt.ui_utils import *
-from dqt import shortcut_creator
+from . import RELEASE_NUM, SEMVER, _REPO_URL
+from .manager import Manager
+from .json_manager import JSONManager
+from .graph import Graph
+from .stats import Stats
+from .settings_manager import SettingsManager
+from .ui_utils import *
+from . import shortcut_creator
 
 # Today's date is initialized at the start and used statically to prevent
 # confusion if the program is run across midnight
