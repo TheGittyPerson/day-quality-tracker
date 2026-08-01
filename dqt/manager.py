@@ -230,7 +230,7 @@ class Manager:
             ).strip()
 
             # If number of days ago/later specified, get date
-            if inp.isdigit():
+            if inp.lstrip("-").isdigit():
                 inp = int(inp)
                 try:
                     if backwards_offset:
