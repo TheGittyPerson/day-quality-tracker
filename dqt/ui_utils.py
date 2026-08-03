@@ -54,7 +54,7 @@ def warning(*message: str) -> str:
     )
 
 
-def report_success(text: str, pause: bool = True) -> None:
+def report_success(text: str, pause: bool = False) -> None:
     """Print formatted message indicating success."""
     print("\n✅ " + bol(grn(text)))
     if pause:
