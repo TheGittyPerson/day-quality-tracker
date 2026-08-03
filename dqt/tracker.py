@@ -2,7 +2,7 @@ import webbrowser
 from datetime import datetime
 from types import NoneType
 
-from . import RELEASE_NUM, SEMVER, _REPO_URL
+from . import __master_version__, __version__, _REPO_URL
 from .manager import Manager
 from .json_manager import JSONManager
 from .graph import Graph
@@ -261,9 +261,9 @@ class Tracker:
 
     @staticmethod
     def _print_header() -> None:
-        title = f"*--- 📆 Day Quality Tracker {RELEASE_NUM}! 📝 ---*"
+        title = f"*--- 📆 Day Quality Tracker {__master_version__}! 📝 ---*"
         print(bol(ylw(f"\n{title}")))
-        semver_str = "~~~ " + SEMVER + " ~~~"
+        semver_str = "~~~ " + __version__ + " ~~~"
         print(dim(f"{semver_str:^{len(title) + 2}}"))
     
     def configure(self, **configs: int | str | bool | None) -> None:
