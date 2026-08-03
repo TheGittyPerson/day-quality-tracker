@@ -1,7 +1,7 @@
 __name__ = "dqt"
 __package__ = "dqt"
 __master_version__ = 5
-__version__ = "v1.4.1"
+__version__ = "v1.4.2"
 __author__ = "Morpheus"
 
 _REPO_URL = "https://github.com/TheGittyPerson/day-quality-tracker"
