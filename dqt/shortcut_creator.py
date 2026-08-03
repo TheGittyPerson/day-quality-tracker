@@ -10,7 +10,7 @@ from platformdirs import user_desktop_path
 
 from .ui_utils import *
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 def write(path: Path) -> None:
@@ -18,14 +18,14 @@ def write(path: Path) -> None:
     if sys.platform == "win32":
         script_contents = (
             f"@echo off\n"
-            f"cd /d \"{PROJECT_ROOT}\"\n"
+            f"cd /d \"{_PROJECT_ROOT}\"\n"
             f"\"{sys.executable}\" -m dqt\n"
             f"pause\n"  # Keeps terminal open if there is an error
         )
     else:
         script_contents = (
             f"#!/bin/bash\n"
-            f"cd \"{PROJECT_ROOT}\"\n"
+            f"cd \"{_PROJECT_ROOT}\"\n"
             f"\"{sys.executable}\" -m dqt\n"
         )
 
