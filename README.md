@@ -145,7 +145,7 @@ Directly opening and running `dqt/__main__.py` may not work.
 Alternatively, create your own script:
 
 ```python
-from dqt.tracker import Tracker
+from dqt import Tracker
 
 dqt = Tracker()
 dqt.run()
