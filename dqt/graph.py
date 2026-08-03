@@ -3,12 +3,11 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from types import NoneType
 
-from .json_manager import JSONManager
-
 import matplotlib.pyplot as plt
 
 if TYPE_CHECKING:
     from .tracker import Tracker
+    from .json_manager import JSONManager
 
 
 class Graph:

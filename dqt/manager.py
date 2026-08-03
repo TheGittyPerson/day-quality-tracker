@@ -6,11 +6,11 @@ from datetime import datetime, timedelta, date
 from pathlib import Path
 from typing import Literal, TYPE_CHECKING, overload
 
-from .json_manager import JSONManager
 from .ui_utils import *
 
 if TYPE_CHECKING:
     from .tracker import Tracker
+    from .json_manager import JSONManager
 
 # Today's date is initialized at the start and used statically to prevent
 # confusion if the program is run across midnight
