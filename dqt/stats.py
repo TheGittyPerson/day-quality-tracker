@@ -2,11 +2,11 @@ from datetime import date, datetime, timedelta
 from collections import defaultdict
 from typing import TYPE_CHECKING
 
-from .json_manager import JSONManager
 from .ui_utils import *
 
 if TYPE_CHECKING:
     from .tracker import Tracker
+    from .json_manager import JSONManager
 
 _today: datetime = datetime.today()
 
