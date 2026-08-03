@@ -3,7 +3,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-from dqt.ui_utils import *
+from .ui_utils import *
 
 
 class SettingsManager:
