@@ -2,7 +2,7 @@
 
 Day Quality Tracker (DQT) is a simple Python CLI that helps you record and track
 daily “day quality” ratings and visualize them over time using the 
-`matplotlib.pyplot` module.
+`matplotlib.pyplot` library.
 
 > By _[Morpheus][profile]_
 
