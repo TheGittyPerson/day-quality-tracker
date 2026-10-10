@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from types import NoneType
 
-import matplotlib.pyplot as plt
+lazy import matplotlib.pyplot as plt
 
 if TYPE_CHECKING:
     from .tracker import Tracker

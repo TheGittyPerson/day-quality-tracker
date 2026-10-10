@@ -39,7 +39,7 @@ daily “day quality” ratings and visualize them over time using the
 
 ## Pre-installation Requirements
 
-- Python 3.12 or later
+- Python 3.15 or later
 - An internet connection (only for dependency installation)
 
 [^ TOC](#table-of-contents)
